@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="${ets-code}-${version}" verbose="0" configfailurepolicy="continue">
+  <parameter name="kml"  value=""/>
+  <parameter name="lvl"  value=""/>
+
+  <listeners>
+    <listener class-name="org.opengis.cite.kml2.TestRunListener" />
+    <listener class-name="org.opengis.cite.kml2.SuiteFixtureListener" />
+    <listener class-name="org.opengis.cite.kml2.TestFailureListener" />
+  </listeners>
+
+  <test name="CL1">
+    <packages>
+      <package name="org.opengis.cite.kml2.c1" />
+    </packages>
+  </test>
+  <test name="CL2">
+    <packages>
+      <package name="org.opengis.cite.kml2.c2" />
+    </packages>
+  </test>
+</suite>

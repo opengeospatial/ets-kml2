@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <title>OGC KML 2.x Conformance Test Suite</title>
+    <meta charset="UTF-8" />
+    <style type="text/css">
+body {
+  color: black;
+  background: white;
+  font-family: Georgia, serif;
+}
+h1, h2, h3 {
+  font-family: Verdana, sans-serif;
+  color: #000099;
+  text-align: left;
+}
+h1 {
+  font-size: 1.4em;
+  margin-top: 2em;
+}
+h2 {
+  font-size: 1.2em;
+}
+h3 {
+  font-size: 1em;
+  margin-bottom: 0.5em;
+}
+table {
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  border-collapse: collapse;
+}
+td, th {
+  padding: 0.25em;
+  border: 1px solid black;
+}
+caption, figcaption {
+  font-weight: bold;
+  text-align: left;
+  margin: 0.25em;
+}
+th {
+  font-weight: bold;
+  font-family: Verdana, sans-serif;
+  text-align: left;
+  vertical-align: top;
+  background: #eeeeee;
+  color: #000099;
+}
+dt {
+  margin-top: 0.5em;
+  font-weight: bold;
+}
+    </style>
+  </head>
+  <body>
+    <h1>OGC KML 2.x Conformance Test Suite</h1>
+    <p>This test suite verifies that a KML 2.x resource conforms to the following 
+    OGC specifications:</p>
+
+    <ul>
+      <li style="list-style: square;"><em>OGC KML, Version 2.3</em> (<a target="_blank" type="application/zip" 
+      href="https://portal.opengeospatial.org/files/?artifact_id=62042&amp;version=1">OGC 12-007r1</a>)
+        <div>
+          <strong>Note:</strong> This pre-release version is only available to OGC members.
+        </div>
+      </li>
+      <li style="list-style: square;"><em>OGC KML, Version 2.2</em> (<a target="_blank" type="application/pdf"
+    href="http://portal.opengeospatial.org/files/?artifact_id=27810">OGC 07-147r2</a>)</li>
+    </ul>
+
+    <p>The KML specification defines three conformance levels indicating the 
+    relative importance or priority of a particular set of constraints; each 
+    level successively increases the test coverage. The highest level (CL3) 
+    indicates full conformance, but a given application or user community may 
+    opt for a lower level of conformance. All three levels are implemented by 
+    the test suite:</p>
+
+    <dl>
+      <dt><strong>CL1</strong></dt>
+      <dd>Includes tests covering requirements that must be satisfied by every 
+    (minimally) conforming KML resource.</dd>
+      <dt><strong>CL2</strong></dt>
+      <dd>As for CL1, plus tests that address recommended constraints that should 
+    be satisfied.</dd>
+      <dt><strong>CL3</strong></dt>
+      <dd>As for CL2, plus tests for optional constraints that are purely informative 
+    in nature.</dd>
+    </dl>
+
+    <p>The test run arguments are summarized in the following table. The 
+      <em>Obligation</em> descriptor can have the following values: M (mandatory), 
+    O (optional), or C (conditional).</p>
+
+    <table border="1" style="border-collapse: collapse;">
+      <caption>Test run arguments</caption>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Value domain</th>
+          <th>Obligation</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>kml</td>
+          <td>URI</td>
+          <td>M</td>
+          <td>An absolute URI that refers to a KML resource. If the URI contains 
+          any ampersand ('&amp;') characters they must be percent-encoded as '%26'.</td>
+        </tr>
+        <tr>
+          <td>lvl</td>
+          <td>Integer (1-3)</td>
+          <td>O</td>
+          <td>The conformance level (default value: 1).</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </body>
+</html>

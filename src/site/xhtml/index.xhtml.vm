@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <title>OGC KML 2.x Conformance Test Suite</title>
+    <meta charset="UTF-8" />
+    <style type="text/css">
+body {
+  color: black;
+  background: white;
+  font-family: Georgia, serif;
+}
+h1, h2, h3 {
+  font-family: Verdana, sans-serif;
+  color: #000099;
+  text-align: left;
+}
+h1 {
+  font-size: 1.4em;
+  margin-top: 2em;
+}
+h2 {
+  font-size: 1.2em;
+}
+h3 {
+  font-size: 1em;
+  margin-bottom: 0.5em;
+}
+table {
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  border-collapse: collapse;
+}
+td, th {
+  padding: 0.25em;
+  border: 1px solid black;
+}
+caption, figcaption {
+  font-weight: bold;
+  text-align: left;
+  margin: 0.25em;
+}
+th {
+  font-weight: bold;
+  font-family: Verdana, sans-serif;
+  text-align: left;
+  vertical-align: top;
+  background: #eeeeee;
+  color: #000099;
+}
+dt {
+  margin-top: 0.5em;
+  font-weight: bold;
+}
+    </style>
+  </head>
+  <body>
+  <h1>OGC KML 2.x Conformance Test Suite</h1>
+	<h2>Scope</h2>
+  <p>This test suite verifies that a KML 2.x resource conforms to the following 
+    OGC specifications:</p>
+
+    <ul>
+      <li><em>OGC KML, Version 2.3</em> (<a target="_blank" type="application/zip"
+    href="https://portal.opengeospatial.org/files/?artifact_id=62042&amp;version=1">OGC 12-007r1</a>)
+        <div>
+          <strong>Note:</strong> This pre-release version is only available to OGC members.
+        </div>
+      </li>
+      <li><em>OGC KML, Version 2.2</em> (<a target="_blank" type="application/pdf"
+    href="http://portal.opengeospatial.org/files/?artifact_id=27810">OGC 07-147r2</a>)</li>
+    </ul>
+
+  <p>The KML specification defines three conformance levels indicating the 
+  relative importance or priority of a particular set of constraints; each 
+  level successively increases the test coverage. The highest level (CL3) 
+  indicates full conformance, but a given application or user community may 
+  opt for a lower level of conformance. All three levels are implemented by 
+  the test suite:</p>
+
+  <dl>
+    <dt>CL1</dt>
+    <dd>Includes tests covering requirements that must be satisfied by every 
+    (minimally) conforming KML resource.</dd>
+    <dt>CL2</dt>
+    <dd>As for CL1, plus tests that address recommended constraints that should 
+    be satisfied.</dd>
+    <dt>CL3</dt>
+    <dd>As for CL2, plus tests for optional constraints that are purely informative 
+    in nature.</dd>
+  </dl>
+
+  <h2>Test suite structure</h2>
+
+  <p>The test suite definition file (testng.xml) is located in the root package, 
+  <code>org.opengis.cite.kml2</code>. A conformance level is denoted by a &lt;test&gt;
+  element; each test element includes a set of test classes that contain the actual 
+  test methods belonging to that conformance level. The general structure of 
+  the test suite is shown in Table 1. Note that the test classes are packaged 
+  by conformance level.</p>
+
+  <table border="1" style="border-collapse: collapse;">
+    <caption>Table 1 - Test suite structure</caption>
+    <thead>
+      <tr style="background-color:#eeeeee;">
+        <th style="width: 35%;">Conformance level</th>
+        <th>Test classes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="vertical-align: top;">
+        <td>CL1</td>
+        <td>
+          <ul style="list-style: none;">
+            <li>org.opengis.cite.kml2.c1.*Tests</li>
+          </ul>
+        </td>
+      </tr>
+      <tr style="vertical-align: top;">
+        <td>CL2</td>
+        <td>
+          <ul style="list-style: none;">
+            <li>org.opengis.cite.kml2.c2.*Tests</li>
+          </ul>
+        </td>
+      </tr>
+      <tr style="vertical-align: top;">
+        <td>CL3</td>
+        <td>
+          <ul style="list-style: none;">
+            <li>org.opengis.cite.kml2.c3.*Tests</li>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>The Javadoc documentation provides more detailed information about the test 
+  methods that constitute the suite.</p>
+
+	<h2>Test requirements</h2>
+	<p>Each KML specification has a companion document that describes an <em>abstract 
+  test suite</em> (ATS) that explicitly identifies test cases for each conformance 
+  level. These ATS documents (see links in the site menu) stipulate requirements 
+  that must be satisfied by a conforming KML resource.</p>
+	<ul>
+    <li style="list-style: square;">[OGC 14-068r1] OGC KML 2.3 - Abstract Test Suite</li>
+	  <li style="list-style: square;">[OGC 07-134r2] OGC KML 2.2 - Abstract Test Suite</li>
+	</ul>
+
+	<h2>How to run the tests</h2>
+	<p>The test suite may be run in any of the following environments:</p>
+	<ul>
+	  <li style="list-style: square;">Integrated development environment (IDE): 
+    The main Java class is <code>TestNGController</code>.</li>
+	  <li style="list-style: square;">RESTful API: Submit a request to the test 
+    run controller (/rest/suites/kml2/${project.version}/run).</li>
+    <li style="list-style: square;">OGC test harness (TEAM-Engine): Run the CTL 
+    script located in the <code>/src/main/ctl/</code> directory.</li>
+	</ul>
+
+	<p>The test run arguments are summarized in Table 2. The <em>Obligation</em> 
+	descriptor can have the following values: M (mandatory), O (optional), or C 
+	(conditional).</p>
+
+  <table border="1" style="border-collapse: collapse;">
+    <caption>Table 2 - Test run arguments</caption>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Value domain</th>
+        <th>Obligation</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>kml</td>
+        <td>URI</td>
+        <td>M</td>
+        <td>An absolute URI that refers to a KML resource. If the URI contains 
+        any ampersand ('&amp;') characters they must be percent-encoded as '%26'.</td>
+      </tr>
+      <tr>
+       <td>lvl</td>
+        <td>Integer (1-3)</td>
+        <td>O</td>
+        <td>The conformance level (default value: 1).</td>
+      </tr>
+    </tbody>
+   </table>
+  </body>
+</html>

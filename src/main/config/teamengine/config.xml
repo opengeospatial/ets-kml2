@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Note: Unpack the *-ctl-scripts.zip archive in the TE_BASE/scripts directory -->
+<organization>
+  <name>OGC</name>
+  <standard>
+    <name>OGC KML 2.x Conformance Test Suite</name>
+    <version>
+      <name>${spec-version}</name>
+      <suite>
+        <namespace-uri>http://www.opengis.net/cite/kml2</namespace-uri>
+        <prefix>tns</prefix>
+        <local-name>ets-kml2-${version}</local-name>
+        <title>OGC KML 2.x Validator</title>
+        <description>Validates the structure and content of OGC KML 2.x documents.</description>
+      </suite>
+      <revision>
+        <name>${version}</name>
+        <status>Beta</status>
+        <sources>
+          <source>kml2/${spec-version}/ctl</source>
+        </sources>
+        <webdir>kml2/${spec-version}/site</webdir>
+      </revision>
+    </version>
+  </standard>
+</organization>
