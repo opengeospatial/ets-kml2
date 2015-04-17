@@ -14,18 +14,22 @@
     <uri name="http://www.w3.org/1999/xlink" uri="./xsd/w3c/2008/06/xlink.xsd" />
   </group>
   <group id="opengis.net">
+    <system systemId="http://schemas.opengis.net/kml/2.3.0/ogckml23_xsd11.xsd"
+          uri="./xsd/opengis/kml/2.3.0/ogckml23_xsd11.xsd" />
+    <system systemId="atom-1.0-subset.xsd" 
+          uri="./xsd/opengis/kml/2.3.0/atom-1.0-subset.xsd"/>
     <system systemId="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd"
-          uri="./xsd/ogc/kml/2.2.0/ogckml22.xsd" />
+          uri="./xsd/opengis/kml/2.2.0/ogckml22.xsd" />
     <system systemId="atom-author-link.xsd" 
-          uri="./xsd/ogc/kml/2.2.0/atom-author-link.xsd"/>
+          uri="./xsd/opengis/kml/2.2.0/atom-author-link.xsd"/>
     <system systemId="http://schemas.opengis.net/gml/3.2.1/gml.xsd"
-          uri="./xsd/ogc/gml/3.2.1/gml-3.2.1.xsd" />
+          uri="./xsd/opengis/gml/3.2.1/gml-3.2.1.xsd" />
     <system systemId="http://schemas.opengis.net/xlink/1.0.0/xlinks.xsd"
-          uri="./xsd/ogc/xlink/1.0/xlink-1.0.xsd" />
+          uri="./xsd/opengis/xlink/1.0/xlink-1.0.xsd" />
     <system systemId="http://schemas.opengis.net/gml/3.2.1/gml.xsd"
       uri="./xsd/opengis/gml/3.2.1/gml-3.2.1.xsd" />
     <uri name="http://www.opengis.net/gml/3.2" uri="./xsd/opengis/gml/3.2.1/gml-3.2.1.xsd" />
-    <uri name="http://www.opengis.net/kml/2.2" uri="./xsd/ogc/kml/2.2.0/ogckml22.xsd"/>
+    <uri name="http://www.opengis.net/kml/2.2" uri="./xsd/opengis/kml/2.3.0/ogckml23_xsd11.xsd"/>
   </group>
   <group id="isotc211.org">
     <system systemId="http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd"

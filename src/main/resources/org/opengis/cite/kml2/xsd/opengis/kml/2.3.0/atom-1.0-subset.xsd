@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+  elementFormDefault="qualified"
+  targetNamespace="http://www.w3.org/2005/Atom" 
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  version="1.0">
+
+  <annotation>
+    <documentation source="http://tools.ietf.org/html/rfc4287">
+    The content model for an Atom document is specified in terms of the XML infoset; 
+    there is no official schema. The RELAX NG grammar appearing in Appendix B is 
+    informative. This XML Schema attempts to follow RFC 4287 as faithfully as 
+    possible.</documentation>
+  </annotation>
+
+  <element name="author" type="atom:atomPersonConstruct"/>
+  <complexType name="atomPersonConstruct">
+    <annotation>
+      <appinfo source="http://tools.ietf.org/html/rfc4287#section-3.2">
+        atomPersonConstruct = 
+          atomCommonAttributes, 
+          (element atom:name { text } 
+          &amp; element atom:uri { atomUri }?
+          &amp; element atom:email { atomEmailAddress }? 
+          &amp; extensionElement*)
+      </appinfo>
+      <documentation>Can't accommodate extension elements within &lt;all&gt; 
+      compositor using XSD 1.0. Also, since an IRI is a generalization of a URI 
+      (e.g. it may contain Unicode characters) the xsd:anyURI datatype is 
+      inadequate.</documentation>
+    </annotation>
+    <all>
+      <element name="name" type="string"/>
+      <element name="uri" type="string" minOccurs="0"/>
+      <element name="email" type="atom:atomEmailAddress" minOccurs="0"/>
+    </all>
+    <anyAttribute namespace="##other" processContents="skip"/>
+  </complexType>
+
+  <element name="link">
+    <complexType>
+      <annotation>
+        <appinfo source="http://tools.ietf.org/html/rfc4287#section-4.2.7">
+          element atom:link {
+            atomCommonAttributes, 
+            attribute href { atomUri }, 
+            attribute rel { atomNCName | atomUri }?,
+            attribute type { atomMediaType }?, 
+            attribute hreflang { atomLanguageTag }?, 
+            attribute title { text }?, 
+            attribute length { text }?, 
+            undefinedContent 
+          }
+        </appinfo>
+      </annotation>
+      <sequence>
+        <any namespace="##other" processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+      <attribute name="href" type="string" use="required" />
+      <attribute name="rel" type="string"/>
+      <attribute name="type" type="atom:atomMediaType"/>
+      <attribute name="hreflang" type="language"/>
+      <attribute name="title" type="string"/>
+      <attribute name="length" type="nonNegativeInteger"/>
+      <anyAttribute namespace="##other" processContents="skip"/>
+    </complexType>
+  </element>
+
+  <simpleType name="atomMediaType">
+    <annotation>
+      <documentation source="http://www.iana.org/assignments/media-types/">
+      Media type of resource should appear in the official IANA register.
+      </documentation>
+    </annotation>
+    <restriction base="string">
+      <pattern value=".+/.+"/>
+    </restriction>
+  </simpleType>
+
+  <simpleType name="atomEmailAddress">
+    <annotation>
+      <documentation>Address may not correspond to an actual mailbox.</documentation>
+    </annotation>
+    <restriction base="string">
+      <pattern value=".+@.+"/>
+    </restriction>
+  </simpleType>
+
+</schema>

@@ -83,7 +83,8 @@ dt {
     (minimally) conforming KML resource.</dd>
     <dt>CL2</dt>
     <dd>As for CL1, plus tests that address recommended constraints that should 
-    be satisfied.</dd>
+    be satisfied; non-conformance at this level may hinder the utility, portability, 
+    or interoperability of the resource.</dd>
     <dt>CL3</dt>
     <dd>As for CL2, plus tests for optional constraints that are purely informative 
     in nature.</dd>
@@ -184,7 +185,7 @@ dt {
        <td>lvl</td>
         <td>Integer (1-3)</td>
         <td>O</td>
-        <td>The conformance level (default value: 1).</td>
+        <td>The level of conformance assessment (default value: 1).</td>
       </tr>
     </tbody>
    </table>

@@ -1,14 +1,9 @@
 /**
- * Conformance Level 1 includes basic facilities. The following capabilities
- * must be supported: 
- * <ul>
- * <li>Capability 1.1</li>
- * <li>Capability 1.2</li>
- * <li>Capability 1.3</li> 
- * </ul>
+ * Conformance level 1 (CL1) includes tests covering requirements that must be 
+ * satisfied by every (minimally) conforming KML document. 
  *
- * @see <a
- * href="http://www.w3.org/TR/html5/infrastructure.html#conformance-classes">HTML5
- * - Conformance classes</a>
+ * @see "OGC 14-068r1: OGC KML 2.3 - Abstract Test Suite"
+ * @see "OGC-07-134r2: OGC KML 2.2 - Abstract Test Suite"
  */
 package org.opengis.cite.kml2.c1;
+
