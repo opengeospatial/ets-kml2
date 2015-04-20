@@ -8,17 +8,20 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 
 import net.sf.saxon.s9api.XdmValue;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.cite.kml2.util.TestSuiteLogger;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.w3c.dom.Document;
 
@@ -62,10 +65,12 @@ public class VerifyTestNGController {
 				outStream.toByteArray()));
 		TestNGController controller = new TestNGController();
 		Source results = controller.doTestRun(testRunArgs);
+		TestSuiteLogger.log(Level.FINE, XMLUtils
+				.writeNodeToString(DOMSource.class.cast(results).getNode()));
 		String xpath = "/testng-results/@failed";
 		XdmValue failed = XMLUtils.evaluateXPath2(results, xpath, null);
-		int numFailed = Integer.parseInt(failed.getUnderlyingValue()
+		int nFailed = Integer.parseInt(failed.getUnderlyingValue()
 				.getStringValue());
-		assertEquals("Unexpected number of fail verdicts.", 3, numFailed);
+		assertEquals("Unexpected number of fail verdicts.", 1, nFailed);
 	}
 }

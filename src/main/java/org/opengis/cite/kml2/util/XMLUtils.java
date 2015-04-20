@@ -384,4 +384,17 @@ public class XMLUtils {
 		}
 		return true;
 	}
+
+	/**
+	 * Gets the qualified name of a DOM node.
+	 * 
+	 * @param node
+	 *            A DOM node.
+	 * @return A QName representing a qualified name.
+	 */
+	public static QName getQName(Node node) {
+		String localName = (null == node.getLocalName()) ? "" : node
+				.getLocalName();
+		return new QName(node.getNamespaceURI(), localName);
+	}
 }

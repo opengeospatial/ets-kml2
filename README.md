@@ -32,10 +32,10 @@ for more information, including the API documentation.
 The KML 2.3 specification adopted [XML Schema 1.1](http://www.w3.org/TR/xmlschema11-1/) 
 as the normative schema language. The [Xerces2 Java](http://xerces.apache.org/xerces2-j/) 
 parser aspires to provide support for the current W3C Recommendation, but it 
-seems to be mired in an interminable beta development cycle (the last release 
-was November 2010!). The test suite uses a component built from the 
+seems to be mired in an interminable beta development phase (the last release 
+was November 2010!). The test suite currently uses a component built from the 
 [`xml-schema-1.1-dev`](http://svn.apache.org/viewvc/xerces/java/branches/xml-schema-1.1-dev/) 
-branch (revision: 1667115). This artifact is available from the central Maven 
+branch (revision: 1667115); this artifact is available from the central Maven 
 repository:
 
     <dependency>
@@ -44,10 +44,10 @@ repository:
       <version>2.12-beta-r1667115</version> 
     </dependency>
 
-In order to enable checking of assertions that may lurk in an XML Schema 1.1 
-grammar, the XPath 2.0 processor bundled with the Eclipse Web Tools Platform 
+In order to enable checking of assertions that may be defined in an XML Schema 
+1.1 grammar, the XPath 2.0 processor bundled with the Eclipse Web Tools Platform 
 (WTP) is required. Unfortunately the Xerces schema processor does not use an 
-official release of this component; instead, it uses a build based on the 
+official release of this component; rather, it uses a build based on the 
 [`R3_2_maintenance`](http://git.eclipse.org/c/sourceediting/webtools.sourceediting.xpath.git/?h=R3_2_maintenance) 
 branch. This special dependency has also been published to the central repository:
 
@@ -57,8 +57,8 @@ branch. This special dependency has also been published to the central repositor
       <version>1.1.5-738bb7b85d</version> 
     </dependency>
 
-__Note__: The WTP 3.2 release included v1.1.4 of the XPath 2.0 processor; WTP 
-3.3 included the v2.0.0 processor. Neither version will work with Xerces.
+__Note__: The WTP 3.2 release included v1.1.4 of the XPath 2.0 processor, and 
+WTP 3.3 included the v2.0.0 processor. Neither version will work with Xerces.
 
 
 ### How to run the tests
@@ -93,7 +93,7 @@ in ${user.home}/testng/ having a UUID value as its name.
 #### Command shell (console)
 
 One of the build artifacts is an "all-in-one" JAR file that includes the test 
-suite with all of its dependencies; this makes it very easy to execute the test 
+suite with all of its dependencies. This makes it very easy to execute the test 
 suite in a command shell like so:
 
 `java -jar ets-kml2-${version}-aio.jar  [test-run-props.xml]`

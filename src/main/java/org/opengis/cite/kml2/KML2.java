@@ -26,6 +26,15 @@ public class KML2 {
 	/** Local name of the root element in a KML document. */
 	public static final String DOC_ELEMENT = "kml";
 
+	/** Local name of the version attribute. */
+	public static final String VER_ATTR = "version";
+
+	/** KML 2.2. */
+	public static final String KML_22 = "2.2";
+
+	/** KML 2.3. */
+	public static final String KML_23 = "2.3";
+
 	/** KML coordinate reference system (see OGC 12-007r1, Annex B). */
 	public static final String KML_CRS = "http://www.opengis.net/def/crs/OGC/0/LonLat84_5773";
 
