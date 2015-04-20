@@ -55,13 +55,15 @@ public class VerifySuiteFixtureListener {
 	}
 
 	@Test
-	public void processIUTParameter() throws URISyntaxException {
-		URL url = this.getClass().getResource("/atom-feed.xml");
+	public void processKMLParameter() throws URISyntaxException {
+		URL url = this.getClass().getResource("/kml23/Placemark-001.xml");
 		Map<String, String> params = new HashMap<String, String>();
 		params.put(TestRunArg.KML.toString(), url.toURI().toString());
 		when(xmlSuite.getParameters()).thenReturn(params);
 		SuiteFixtureListener iut = new SuiteFixtureListener();
 		iut.onStart(suite);
+		verify(suite).setAttribute(Matchers.eq(SuiteAttribute.LEVEL.getName()),
+				Matchers.isA(Integer.class));
 		verify(suite).setAttribute(
 				Matchers.eq(SuiteAttribute.TEST_SUBJECT.getName()),
 				Matchers.isA(Document.class));

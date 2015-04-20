@@ -26,13 +26,14 @@ informative in nature.
 Visit the [project documentation website](http://opengeospatial.github.io/ets-kml2/) 
 for more information, including the API documentation.
 
+
 ### Special dependencies
 
 The KML 2.3 specification adopted [XML Schema 1.1](http://www.w3.org/TR/xmlschema11-1/) 
 as the normative schema language. The [Xerces2 Java](http://xerces.apache.org/xerces2-j/) 
-parser aspires to support the current W3C Recommendation, but it seems to be 
-mired in an interminable beta development cycle (the last release was November 
-2010!). The test suite uses a component built from the 
+parser aspires to provide support for the current W3C Recommendation, but it 
+seems to be mired in an interminable beta development cycle (the last release 
+was November 2010!). The test suite uses a component built from the 
 [`xml-schema-1.1-dev`](http://svn.apache.org/viewvc/xerces/java/branches/xml-schema-1.1-dev/) 
 branch (revision: 1667115). This artifact is available from the central Maven 
 repository:
@@ -43,10 +44,10 @@ repository:
       <version>2.12-beta-r1667115</version> 
     </dependency>
 
-In order to enable assertion checking using XML Schema 1.1 grammars, the XPath 
-2.0 processor bundled with the Eclipse Web Tools Platform (WTP) is required. 
-Unfortunately the Xerces schema processor does not use an official release of 
-this component; instead, it uses a build based on the 
+In order to enable checking of assertions that may lurk in an XML Schema 1.1 
+grammar, the XPath 2.0 processor bundled with the Eclipse Web Tools Platform 
+(WTP) is required. Unfortunately the Xerces schema processor does not use an 
+official release of this component; instead, it uses a build based on the 
 [`R3_2_maintenance`](http://git.eclipse.org/c/sourceediting/webtools.sourceediting.xpath.git/?h=R3_2_maintenance) 
 branch. This special dependency has also been published to the central repository:
 
@@ -56,8 +57,54 @@ branch. This special dependency has also been published to the central repositor
       <version>1.1.5-738bb7b85d</version> 
     </dependency>
 
-__Note__: WTP 3.2 included v1.1.4 of the XPath 2.0 processor; WTP 3.3 included 
-v2.0.0. Neither version will work with Xerces.
+__Note__: The WTP 3.2 release included v1.1.4 of the XPath 2.0 processor; WTP 
+3.3 included the v2.0.0 processor. Neither version will work with Xerces.
+
+
+### How to run the tests
+
+#### Integrated development environment (IDE)
+You can use a Java IDE such as Eclipse, NetBeans, or IntelliJ to run the test 
+suite. Clone the repository and build the project. The runtime configuration 
+is summarized below.
+
+__Main class__: `org.opengis.cite.kml2.TestNGController`
+
+__Arguments__: The first argument must refer to an XML properties file containing 
+the required test run argument (a reference to a KML resource). If not specified, 
+the default location at `${user.home}/test-run-props.xml` will be used.
+   
+You can modify the default settings in the sample [test-run-props.xml](src/main/config/test-run-props.xml) 
+file:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties version="1.0">
+    <comment>Test run arguments (ets-kml2)</comment>
+    <entry key="kml">https://developers.google.com/kml/documentation/KML_Samples.kml</entry>
+    <entry key="lvl">1</entry>
+</properties>
+```
+
+The TestNG results file (testng-results.xml) will be written to a subdirectory 
+in ${user.home}/testng/ having a UUID value as its name.
+
+#### Command shell (console)
+
+One of the build artifacts is an "all-in-one" JAR file that includes the test 
+suite with all of its dependencies; this makes it very easy to execute the test 
+suite in a command shell like so:
+
+`java -jar ets-kml2-${version}-aio.jar  [test-run-props.xml]`
+
+#### OGC test harness
+
+Use [TEAMengine](https://github.com/opengeospatial/teamengine), the official 
+OGC test harness. The latest test suite release should be available at the 
+[beta testing facility](http://cite.opengeospatial.org/te2/). You can also 
+[build and deploy](https://github.com/opengeospatial/teamengine) the test 
+harness yourself and use a local installation.
 
 
 ### How to contribute

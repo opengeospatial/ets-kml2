@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import javax.xml.validation.Schema;
 
 import org.opengis.cite.kml2.util.ClientUtils;
+import org.opengis.cite.kml2.util.KMLUtils;
 import org.opengis.cite.kml2.util.TestSuiteLogger;
 import org.opengis.cite.kml2.util.URIUtils;
 import org.opengis.cite.kml2.util.ValidationUtils;
@@ -16,6 +17,7 @@ import org.opengis.cite.kml2.util.XMLUtils;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.sun.jersey.api.client.Client;
 
@@ -90,9 +92,10 @@ public class SuiteFixtureListener implements ISuiteListener {
 	/**
 	 * Processes test suite arguments and sets suite attributes accordingly. The
 	 * entity referenced by the {@link TestRunArg#KML kml} argument is parsed
-	 * and the resulting Document is set as the value of the "testSubject"
-	 * attribute. The level of conformance assessment is determined by the value
-	 * of the {@link TestRunArg#LVL lvl} argument (default value: 1).
+	 * (or unpacked first if it's a KMZ resource) and the resulting Document is
+	 * set as the value of the "testSubject" attribute. The level of conformance
+	 * assessment is determined by the value of the {@link TestRunArg#LVL lvl}
+	 * argument (default value: 1).
 	 * 
 	 * @param suite
 	 *            An ISuite object representing a TestNG test suite.
@@ -127,17 +130,17 @@ public class SuiteFixtureListener implements ISuiteListener {
 			throw new RuntimeException(
 					"Failed to dereference resource located at " + iutRef, iox);
 		}
-		Document kmlDoc = null;
+		Document kmlDoc;
 		try {
-			kmlDoc = URIUtils.parseURI(entityFile.toURI());
-		} catch (Exception x) {
-			throw new RuntimeException(
-					"Failed to parse resource retrieved from " + iutRef, x);
+			kmlDoc = KMLUtils.parseKMLDocument(entityFile);
+		} catch (IOException | SAXException x) {
+			throw new RuntimeException("Failed to parse KML resource at "
+					+ iutRef, x);
 		}
 		suite.setAttribute(SuiteAttribute.TEST_SUBJECT.getName(), kmlDoc);
 		if (TestSuiteLogger.isLoggable(Level.FINE)) {
 			StringBuilder logMsg = new StringBuilder(
-					"Parsed resource retrieved from ");
+					"Parsed KML resource retrieved from ");
 			logMsg.append(iutRef).append("\n");
 			logMsg.append(XMLUtils.writeNodeToString(kmlDoc));
 			TestSuiteLogger.log(Level.FINE, logMsg.toString());

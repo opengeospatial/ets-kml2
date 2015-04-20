@@ -53,7 +53,7 @@ public class VerifyTestNGController {
 
 	@Test
 	public void doTestRun() throws Exception {
-		URL testSubject = getClass().getResource("/atom-feed-2.xml");
+		URL testSubject = getClass().getResource("/kml22/Placemark-001.xml");
 		this.testRunProps.setProperty(TestRunArg.KML.toString(), testSubject
 				.toURI().toString());
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream(1024);
