@@ -45,6 +45,7 @@ import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -396,5 +397,70 @@ public class XMLUtils {
 		String localName = (null == node.getLocalName()) ? "" : node
 				.getLocalName();
 		return new QName(node.getNamespaceURI(), localName);
+	}
+
+	/**
+	 * Determines the absolute location path of a node in a DOM document. The
+	 * location is specified as a scheme-based XPointer having two parts:
+	 * <ul>
+	 * <li>an xmlns() part that declares a namespace binding context;</li>
+	 * <li>an xpointer() part that includes an XPath expression using the
+	 * abbreviated '//' syntax for selecting a descendant node.</li>
+	 * </ul>
+	 * 
+	 * @param node
+	 *            A node in a DOM document.
+	 * @return A String containing a scheme-based pointer that specifies the
+	 *         absolute location path of the node in the document.
+	 * 
+	 * @see <a href="http://www.w3.org/TR/xptr-xmlns/" target="_blank">XPointer
+	 *      xmlns() Scheme</a>
+	 * @see <a href="http://www.w3.org/TR/xptr-xpointer/"
+	 *      target="_blank">XPointer xpointer() Scheme</a>
+	 */
+	public static String buildXPointer(Node node) {
+		if (null == node) {
+			return "";
+		}
+		StringBuilder xpointer = new StringBuilder();
+		String nsURI = node.getNamespaceURI();
+		String nsPrefix = node.getPrefix();
+		if (null == nsPrefix)
+			nsPrefix = "tns";
+		// WARNING: Escaping rules are currently ignored.
+		xpointer.append("xmlns(").append(nsPrefix).append("=").append(nsURI)
+				.append(")");
+		xpointer.append("xpointer((");
+		switch (node.getNodeType()) {
+		case Node.ELEMENT_NODE:
+			// Find the element in the list of all similarly named descendants
+			// of the document root.
+			NodeList elementsByName = node.getOwnerDocument()
+					.getElementsByTagNameNS(nsURI, node.getLocalName());
+			for (int i = 0; i < elementsByName.getLength(); i++) {
+				if (elementsByName.item(i).isSameNode(node)) {
+					xpointer.append("//");
+					xpointer.append(nsPrefix).append(':')
+							.append(node.getLocalName()).append(")[")
+							.append(i + 1).append("])");
+					break;
+				}
+			}
+			break;
+		case Node.DOCUMENT_NODE:
+			xpointer.append("/");
+			break;
+		case Node.ATTRIBUTE_NODE:
+			Attr attrNode = (Attr) node;
+			xpointer = new StringBuilder(
+					buildXPointer(attrNode.getOwnerElement()));
+			xpointer.insert(xpointer.lastIndexOf(")"),
+					"/@" + attrNode.getName());
+			break;
+		default:
+			xpointer.setLength(0);
+			break;
+		}
+		return xpointer.toString();
 	}
 }

@@ -138,6 +138,12 @@ public class SuiteFixtureListener implements ISuiteListener {
 					+ iutRef, x);
 		}
 		suite.setAttribute(SuiteAttribute.TEST_SUBJECT.getName(), kmlDoc);
+		String kmlVersion = kmlDoc.getDocumentElement().getAttribute(
+				KML2.VER_ATTR);
+		if (kmlVersion.isEmpty()) {
+			kmlVersion = "2.2";
+		}
+		suite.setAttribute(SuiteAttribute.KML_VERSION.getName(), kmlVersion);
 		if (TestSuiteLogger.isLoggable(Level.FINE)) {
 			StringBuilder logMsg = new StringBuilder(
 					"Parsed KML resource retrieved from ");

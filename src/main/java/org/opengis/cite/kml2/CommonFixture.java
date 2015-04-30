@@ -1,17 +1,21 @@
 package org.opengis.cite.kml2;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientRequest;
-import com.sun.jersey.api.client.ClientResponse;
 import java.net.URI;
 import java.util.Map;
+
 import javax.ws.rs.core.MediaType;
+
 import org.opengis.cite.kml2.util.ClientUtils;
 import org.testng.ITestContext;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientRequest;
+import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * A supporting base class that sets up a common test fixture. These
@@ -29,6 +33,18 @@ public class CommonFixture {
 	protected ClientResponse response;
 	/** A DOM Document representing the main KML document. */
 	protected Document kmlDoc;
+	/** The elements to which the tests apply. */
+	protected NodeList targetElements;
+
+	/**
+	 * Facilitates unit testing.
+	 * 
+	 * @param targetElements
+	 *            The collection of elements to which the tests apply.
+	 */
+	void setTargetElements(NodeList targetElements) {
+		this.targetElements = targetElements;
+	}
 
 	/**
 	 * Initializes the common test fixture with a client component for

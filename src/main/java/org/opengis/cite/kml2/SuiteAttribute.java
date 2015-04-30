@@ -26,6 +26,10 @@ public enum SuiteAttribute {
 	 */
 	KML23_SCHEMA("kml23Schema", Schema.class),
 	/**
+	 * The version of the KML document.
+	 */
+	KML_VERSION("kmlVersion", String.class),
+	/**
 	 * A DOM Document representation of the test subject or metadata about it.
 	 */
 	TEST_SUBJECT("testSubject", Document.class),

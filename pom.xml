@@ -59,6 +59,7 @@
     <dependency>
       <groupId>org.opengis.cite</groupId>
       <artifactId>schema-utils</artifactId>
+      <version>1.6</version>
       <exclusions>
         <exclusion>
           <groupId>xerces</groupId>
@@ -71,6 +72,11 @@
       <artifactId>java-cup</artifactId>
       <version>10k</version>
       <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.vividsolutions</groupId>
+      <artifactId>jts</artifactId>
+      <version>1.13</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>

@@ -113,7 +113,7 @@ public class VerifyXMLUtils {
 				nsBindings);
 		assertTrue("Expected non-empty result.", result.size() > 0);
 		assertEquals("Result has unexpected string value.", "true", result
-				.getUnderlyingValue().getStringValue());
+				.itemAt(0).getStringValue());
 	}
 
 	@Test
@@ -129,7 +129,7 @@ public class VerifyXMLUtils {
 				nsBindings);
 		assertTrue("Expected non-empty result.", result.size() > 0);
 		assertEquals("Result has unexpected string value.", "true", result
-				.getUnderlyingValue().getStringValue());
+				.itemAt(0).getStringValue());
 	}
 
 	@Test

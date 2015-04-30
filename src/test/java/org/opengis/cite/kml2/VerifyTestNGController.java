@@ -69,8 +69,7 @@ public class VerifyTestNGController {
 				.writeNodeToString(DOMSource.class.cast(results).getNode()));
 		String xpath = "/testng-results/@failed";
 		XdmValue failed = XMLUtils.evaluateXPath2(results, xpath, null);
-		int nFailed = Integer.parseInt(failed.getUnderlyingValue()
-				.getStringValue());
+		int nFailed = Integer.parseInt(failed.itemAt(0).getStringValue());
 		assertEquals("Unexpected number of fail verdicts.", 1, nFailed);
 	}
 }

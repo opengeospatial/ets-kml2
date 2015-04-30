@@ -60,14 +60,4 @@ public class VerifyETSAssert {
         ETSAssert.assertXPath(xpath, doc, nsBindings);
     }
 
-    @Test
-    public void assertXPath_expectFalse() throws SAXException, IOException {
-        thrown.expect(AssertionError.class);
-        thrown.expectMessage("Unexpected result evaluating XPath expression");
-        Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-                "/capabilities-simple.xml"));
-        // using built-in namespace binding
-        String xpath = "//ows:OperationsMetadata/ows:Constraint[@name='XMLEncoding']/ows:DefaultValue = 'TRUE'";
-        ETSAssert.assertXPath(xpath, doc, null);
-    }
 }

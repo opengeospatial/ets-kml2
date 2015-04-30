@@ -12,7 +12,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOUtils;
-import org.opengis.cite.kml2.KML2;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -46,9 +45,6 @@ public class KMLUtils {
 			} else {
 				kmlDoc = parseKMLDocumentInArchive(file);
 			}
-		}
-		if (!kmlDoc.getDocumentElement().getNamespaceURI().equals(KML2.NS_NAME)) {
-			return null;
 		}
 		return kmlDoc;
 	}
