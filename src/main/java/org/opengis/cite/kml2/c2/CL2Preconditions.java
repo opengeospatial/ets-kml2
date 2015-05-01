@@ -23,7 +23,7 @@ public class CL2Preconditions {
 		Integer level = (Integer) testContext.getSuite().getAttribute(
 				SuiteAttribute.LEVEL.getName());
 		Assert.assertTrue(level > 1,
-				String.format("Skipping CL2 tests: lvl !> 1."));
+				String.format("Skipping tests for CL2 conformance (lvl = 1)."));
 	}
 
 }

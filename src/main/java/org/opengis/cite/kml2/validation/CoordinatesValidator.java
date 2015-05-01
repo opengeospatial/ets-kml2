@@ -43,10 +43,14 @@ public class CoordinatesValidator {
 	 * <li>tuple dimension (must be 2-3)</li>
 	 * </ol>
 	 * 
+	 * <p>
 	 * The OGC KML specifications define a compound geographic 3D coordinate
 	 * reference system in Annex B.
+	 * </p>
 	 * 
+	 * <p>
 	 * The following elements may contain kml:coordinates:
+	 * </p>
 	 * <ul>
 	 * <li>kml:Point</li>
 	 * <li>kml:LineString</li>

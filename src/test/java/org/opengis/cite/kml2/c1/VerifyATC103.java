@@ -51,7 +51,7 @@ public class VerifyATC103 {
 		ATC103 iut = new ATC103();
 		iut.initCommonFixture(testContext);
 		iut.findTargetElements();
-		iut.validCoordinateTuples();
+		iut.validCoordinates();
 	}
 
 	@Test
@@ -64,7 +64,7 @@ public class VerifyATC103 {
 		ATC103 iut = new ATC103();
 		iut.initCommonFixture(testContext);
 		iut.findTargetElements();
-		iut.validCoordinateTuples();
+		iut.validCoordinates();
 	}
 
 }

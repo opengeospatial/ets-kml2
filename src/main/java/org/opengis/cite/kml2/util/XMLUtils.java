@@ -1,6 +1,7 @@
 package org.opengis.cite.kml2.util;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -357,8 +358,8 @@ public class XMLUtils {
 	}
 
 	/**
-	 * Determines if the given stream contains XML content. The stream is reset
-	 * so it can be reused.
+	 * Determines if the given stream contains XML content. The stream will be
+	 * buffered and reset if necessary.
 	 * 
 	 * @param stream
 	 *            The InputStream to read.
@@ -366,22 +367,28 @@ public class XMLUtils {
 	 */
 	public static boolean isXML(InputStream stream) {
 		if (!stream.markSupported()) {
-			stream = new BufferedInputStream(stream);
+			stream = new BufferedInputStream(stream, 1024);
 		}
-		stream.mark(2 * 1024);
+		stream.mark(1024);
+		byte[] bytes = new byte[1024];
+		try {
+			try {
+				stream.read(bytes);
+			} finally {
+				stream.reset();
+			}
+		} catch (IOException iox) {
+			throw new RuntimeException("Failed to read or reset stream. "
+					+ iox.getMessage());
+		}
 		try {
 			XMLInputFactory factory = XMLInputFactory.newInstance();
-			XMLStreamReader reader = factory.createXMLStreamReader(stream);
+			XMLStreamReader reader = factory
+					.createXMLStreamReader(new ByteArrayInputStream(bytes));
 			// If XML, now in START_DOCUMENT state; seek document element.
 			reader.nextTag();
 		} catch (XMLStreamException xse) {
 			return false;
-		} finally {
-			try {
-				stream.reset();
-			} catch (IOException iox) {
-				LOGR.log(Level.WARNING, "Failed to reset stream.", iox);
-			}
 		}
 		return true;
 	}

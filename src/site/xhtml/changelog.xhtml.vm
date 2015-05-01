@@ -7,10 +7,11 @@
   <body>
     <h1>Release Notes</h1>
 
-    <h2>${project.version} (YYYY-MM-DD)</h2>
-    <p>Initial release.</p>
+    <h2>${project.version} (2015-05-01)</h2>
+    <p>This initial release runs the following tests against a KML 2.x document:</p>
     <ul>
-      <li style="list-style: square;">Covers mandatory conformance requirements.</li>
+      <li style="list-style: square;">ATC-102: Schema validity</li>
+      <li style="list-style: square;">ATC-103: Valid geometry coordinates</li>
     </ul>
 
   </body>

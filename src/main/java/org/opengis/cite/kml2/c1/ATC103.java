@@ -56,7 +56,7 @@ public class ATC103 extends CommonFixture {
 	 * </pre>
 	 */
 	@Test(description = "ATC-103")
-	public void validCoordinateTuples() {
+	public void validCoordinates() {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Node coordinates = targetElements.item(i);
 			Assert.assertTrue(validator.isValid(coordinates),
