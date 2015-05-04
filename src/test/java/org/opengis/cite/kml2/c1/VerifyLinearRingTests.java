@@ -7,24 +7,21 @@ import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.validation.Schema;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.opengis.cite.kml2.SuiteAttribute;
-import org.opengis.cite.kml2.util.ValidationUtils;
 import org.testng.ISuite;
 import org.testng.ITestContext;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- * Verifies the behavior of the ATC102 test class. Test stubs replace fixture
- * constituents where appropriate.
+ * Verifies the test methods in the LinearRingTests class.
  */
-public class VerifyATC102 {
+public class VerifyLinearRingTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
 	private static DocumentBuilder docBuilder;
@@ -33,7 +30,7 @@ public class VerifyATC102 {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
-	public VerifyATC102() {
+	public VerifyLinearRingTests() {
 	}
 
 	@BeforeClass
@@ -44,37 +41,19 @@ public class VerifyATC102 {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		dbf.setNamespaceAware(true);
 		docBuilder = dbf.newDocumentBuilder();
-		Schema kml22Schema = ValidationUtils.createKMLSchema("2.2");
-		when(suite.getAttribute(SuiteAttribute.KML22_SCHEMA.getName()))
-				.thenReturn(kml22Schema);
-		Schema kml23Schema = ValidationUtils.createKMLSchema("2.3");
-		when(suite.getAttribute(SuiteAttribute.KML23_SCHEMA.getName()))
-				.thenReturn(kml23Schema);
 	}
 
 	@Test
-	public void invalidKML22Document() throws SAXException, IOException {
+	public void invalidRingInPlacemark() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
-		thrown.expectMessage("cvc-complex-type.2.4.a: Invalid content was found");
+		thrown.expectMessage("LinearRing must be closed");
 		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml22/Placemark-001.xml"));
+				"/kml23/Placemark-002.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
-		ATC102 iut = new ATC102();
+		LinearRingTests iut = new LinearRingTests();
 		iut.initCommonFixture(testContext);
-		iut.getKMLSchemas(testContext);
-		iut.verifySchemaValidity();
+		iut.findLinearRingElements();
+		iut.validLinearRing();
 	}
 
-	@Test
-	public void invalidKML23Document() throws SAXException, IOException {
-		thrown.expect(AssertionError.class);
-		thrown.expectMessage("cvc-assertion: Assertion evaluation");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml23/Placemark-001.xml"));
-		when(suite.getAttribute(SUBJ)).thenReturn(doc);
-		ATC102 iut = new ATC102();
-		iut.initCommonFixture(testContext);
-		iut.getKMLSchemas(testContext);
-		iut.verifySchemaValidity();
-	}
 }

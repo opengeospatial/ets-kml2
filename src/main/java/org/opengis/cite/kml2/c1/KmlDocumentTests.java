@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
  * 
  * @see "OGC 14-068r1: OGC KML 2.3 - Abstract Test Suite, Conformance Level 1"
  */
-public class ATC102 extends CommonFixture {
+public class KmlDocumentTests extends CommonFixture {
 
 	private Map<String, Schema> kmlSchemas;
 

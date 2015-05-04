@@ -4,8 +4,10 @@ import java.net.URI;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.opengis.cite.kml2.util.ClientUtils;
+import org.opengis.cite.kml2.util.XMLUtils;
 import org.testng.ITestContext;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
@@ -44,6 +46,29 @@ public class CommonFixture {
 	 */
 	void setTargetElements(NodeList targetElements) {
 		this.targetElements = targetElements;
+	}
+
+	/**
+	 * Finds KML elements by name. Only elements that occur outside of an update
+	 * context are sought; that is they do not have kml:Update as an ancestor.
+	 * 
+	 * @param localName
+	 *            The local name of some KML element.
+	 */
+	protected void findTargetElements(String localName) {
+		try {
+			String xpath = String.format("//kml:%s[not(ancestor::kml:Update)]",
+					localName);
+			this.targetElements = XMLUtils.evaluateXPath(this.kmlDoc, xpath,
+					null);
+		} catch (XPathExpressionException xpe) {
+			throw new AssertionError(xpe);
+		}
+		if (this.targetElements.getLength() == 0) {
+			throw new SkipException(String.format(
+					"No kml:%s elements found outside of update context.",
+					localName));
+		}
 	}
 
 	/**

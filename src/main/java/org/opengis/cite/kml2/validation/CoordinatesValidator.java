@@ -2,14 +2,45 @@ package org.opengis.cite.kml2.validation;
 
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
+import org.opengis.cite.kml2.KML2;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.validation.ErrorLocator;
 import org.opengis.cite.validation.ErrorSeverity;
 import org.opengis.cite.validation.ValidationErrorHandler;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import com.vividsolutions.jts.geom.Coordinate;
-
+/**
+ * Checks that the content of a kml:coordinates element satisfies all applicable
+ * constraints. The following elements may contain coordinates:
+ * <ul>
+ * <li>kml:Point</li>
+ * <li>kml:LineString</li>
+ * <li>kml:LinearRing</li>
+ * <li>kml:LatLonQuad</li>
+ * </ul>
+ *
+ * The content of a kml:coordinates element is a list of white space-separated
+ * 2D or 3D tuples that contain comma-separated decimal values (lon,lat[,hgt]).
+ * The relevant schema components are shown below.The relevant schema components
+ * are shown below.
+ * 
+ * <pre>
+ * {@literal
+ * <xsd:element name="coordinates" type="kml:coordinatesType"/>
+ * <xsd:simpleType name="coordinatesType">
+ *   <xsd:list itemType="string"/>
+ * </xsd:simpleType>
+ * }
+ * </pre>
+ * 
+ * <p>
+ * The OGC KML specifications define a compound geographic 3D coordinate
+ * reference system in Annex B.
+ * </p>
+ * 
+ */
 public class CoordinatesValidator {
 
 	ValidationErrorHandler errHandler;
@@ -43,73 +74,49 @@ public class CoordinatesValidator {
 	 * <li>tuple dimension (must be 2-3)</li>
 	 * </ol>
 	 * 
-	 * <p>
-	 * The OGC KML specifications define a compound geographic 3D coordinate
-	 * reference system in Annex B.
-	 * </p>
-	 * 
-	 * <p>
-	 * The following elements may contain kml:coordinates:
-	 * </p>
-	 * <ul>
-	 * <li>kml:Point</li>
-	 * <li>kml:LineString</li>
-	 * <li>kml:LinearRing</li>
-	 * <li>kml:LatLonQuad</li>
-	 * </ul>
-	 * 
-	 * @param coordsNode
-	 *            An Element node (kml:coordinates).
+	 * @param node
+	 *            An Element node that contains a kml:coordinates element.
 	 * @return true if the tuple sequence is valid; false otherwise.
 	 */
-	public boolean isValid(Node coordsNode) {
+	public boolean isValid(Node node) {
 		errHandler.reset();
-		String[] tuples = coordsNode.getTextContent().trim().split("\\s+");
-		Node parent = coordsNode.getParentNode();
-		switch (parent.getLocalName()) {
+		Element elem = (Element) node;
+		NodeList coords = elem.getElementsByTagNameNS(KML2.NS_NAME,
+				"coordinates");
+		if (coords.getLength() == 0) {
+			errHandler.addError(ErrorSeverity.ERROR,
+					ErrorMessage.get(ErrorMessageKeys.MISSING_COORDS),
+					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(node)));
+			return false;
+		}
+		String[] tuples = coords.item(0).getTextContent().trim().split("\\s+");
+		switch (node.getLocalName()) {
 		case "Point":
 			if (tuples.length != 1) {
-				errHandler.addError(
-						ErrorSeverity.ERROR,
-						ErrorMessage.format(ErrorMessageKeys.POINT_COORDS,
-								tuples.length),
-						new ErrorLocator(-1, -1, XMLUtils
-								.buildXPointer(coordsNode)));
+				errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+						ErrorMessageKeys.POINT_COORDS, tuples.length),
+						new ErrorLocator(-1, -1, XMLUtils.buildXPointer(node)));
 			}
 			break;
 		case "LineString":
 			if (tuples.length < 2) {
-				errHandler.addError(
-						ErrorSeverity.ERROR,
-						ErrorMessage.format(ErrorMessageKeys.LINE_COORDS,
-								tuples.length),
-						new ErrorLocator(-1, -1, XMLUtils
-								.buildXPointer(coordsNode)));
+				errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+						ErrorMessageKeys.LINE_COORDS, tuples.length),
+						new ErrorLocator(-1, -1, XMLUtils.buildXPointer(node)));
 			}
 			break;
 		case "LinearRing":
 			if (tuples.length < 4) {
-				errHandler.addError(
-						ErrorSeverity.ERROR,
-						ErrorMessage.format(ErrorMessageKeys.RING_COORDS,
-								tuples.length),
-						new ErrorLocator(-1, -1, XMLUtils
-								.buildXPointer(coordsNode)));
-			}
-			if (!isClosed(tuples)) {
-				errHandler.addError(ErrorSeverity.ERROR, ErrorMessage
-						.get(ErrorMessageKeys.OPEN_RING), new ErrorLocator(-1,
-						-1, XMLUtils.buildXPointer(coordsNode)));
+				errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+						ErrorMessageKeys.RING_COORDS, tuples.length),
+						new ErrorLocator(-1, -1, XMLUtils.buildXPointer(node)));
 			}
 			break;
 		case "LatLonQuad":
 			if (tuples.length != 4) {
-				errHandler.addError(
-						ErrorSeverity.ERROR,
-						ErrorMessage.format(ErrorMessageKeys.QUAD_COORDS,
-								tuples.length),
-						new ErrorLocator(-1, -1, XMLUtils
-								.buildXPointer(coordsNode)));
+				errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+						ErrorMessageKeys.QUAD_COORDS, tuples.length),
+						new ErrorLocator(-1, -1, XMLUtils.buildXPointer(node)));
 			}
 			break;
 		default:
@@ -118,12 +125,9 @@ public class CoordinatesValidator {
 		for (int i = 0; i < tuples.length; i++) {
 			String[] tuple = tuples[i].trim().split(",");
 			if (tuple.length < 2 || tuple.length > 3) {
-				errHandler.addError(
-						ErrorSeverity.ERROR,
-						ErrorMessage.format(ErrorMessageKeys.COORD_DIM, i,
-								tuple.length),
-						new ErrorLocator(-1, -1, XMLUtils
-								.buildXPointer(coordsNode)));
+				errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+						ErrorMessageKeys.COORD_DIM, i, tuple.length),
+						new ErrorLocator(-1, -1, XMLUtils.buildXPointer(node)));
 				continue;
 			}
 			for (String val : tuple) {
@@ -134,7 +138,7 @@ public class CoordinatesValidator {
 							ErrorSeverity.ERROR,
 							ErrorMessage.format(ErrorMessageKeys.NAN, val),
 							new ErrorLocator(-1, -1, XMLUtils
-									.buildXPointer(coordsNode)));
+									.buildXPointer(node)));
 					continue;
 				}
 			}
@@ -142,25 +146,4 @@ public class CoordinatesValidator {
 		return !errHandler.errorsDetected();
 	}
 
-	/**
-	 * Determines if the given sequence of coordinate tuples defines a closed
-	 * ring. That is, the first and last positions are coincident.
-	 * 
-	 * @param tuples
-	 *            A sequence of coordinate tuples (2D or 3D).
-	 * @return true if the first and last positions are coincident; false
-	 *         otherwise.
-	 */
-	boolean isClosed(String[] tuples) {
-		String[] firstPos = tuples[0].trim().split(",");
-		double alt = (firstPos.length > 2) ? Double.parseDouble(firstPos[2])
-				: 0;
-		Coordinate firstCoord = new Coordinate(Double.parseDouble(firstPos[0]),
-				Double.parseDouble(firstPos[1]), alt);
-		String[] lastPos = tuples[tuples.length - 1].trim().split(",");
-		alt = (lastPos.length > 2) ? Double.parseDouble(lastPos[2]) : 0;
-		Coordinate lastCoord = new Coordinate(Double.parseDouble(lastPos[0]),
-				Double.parseDouble(lastPos[1]), alt);
-		return (lastCoord.equals3D(firstCoord));
-	}
 }

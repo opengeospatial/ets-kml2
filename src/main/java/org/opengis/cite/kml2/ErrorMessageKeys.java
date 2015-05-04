@@ -24,7 +24,9 @@ public class ErrorMessageKeys {
 	public static final String LINE_COORDS = "LineCoords";
 	public static final String RING_COORDS = "RingCoords";
 	public static final String QUAD_COORDS = "QuadCoords";
+	public static final String MISSING_COORDS = "MissingCoords";
 	public static final String OPEN_RING = "OpenRing";
 	public static final String COORD_DIM = "CoordDim";
 	public static final String NAN = "NaN";
+	public static final String OUTSIDE_CRS = "OutsideCRS";
 }
