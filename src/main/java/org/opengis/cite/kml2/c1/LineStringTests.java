@@ -4,7 +4,6 @@ import org.opengis.cite.kml2.CommonFixture;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.util.JTSGeometryBuilder;
-import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.kml2.validation.CoordinatesValidator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -12,11 +11,11 @@ import org.testng.annotations.Test;
 import org.w3c.dom.Element;
 
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;
 
 /**
- * Implements tests that apply to kml:LinearRing elements. The relevant test
+ * Implements tests that apply to kml:LineString elements. The relevant test
  * cases from the abstract test suite are listed below:
  * <ul>
  * <li>ATC-103: Valid geometry coordinates</li>
@@ -24,50 +23,41 @@ import com.vividsolutions.jts.geom.Polygon;
  * 
  * @see "OGC 14-068r1: OGC KML 2.3 - Abstract Test Suite, Conformance Level 1"
  */
-public class LinearRingTests extends CommonFixture {
+public class LineStringTests extends CommonFixture {
 
 	private CoordinatesValidator coordsValidator;
 
-	public LinearRingTests() {
+	public LineStringTests() {
 		this.coordsValidator = new CoordinatesValidator();
 	}
 
 	/**
-	 * Finds kml:LinearRing elements in the KML document that do not appear in
+	 * Finds kml:LineString elements in the KML document that do not appear in
 	 * an update context. If none are found, all test methods defined in the
 	 * class are skipped.
 	 */
 	@BeforeClass
-	public void findLinearRingElements() {
-		findTargetElements("LinearRing");
+	public void findLineStringElements() {
+		findTargetElements("LineString");
 	}
 
 	/**
-	 * [Test] Verifies that a kml:LinearRing element has valid coordinates. The
-	 * sequence of coordinate tuples must constitute a closed ring. That is, the
-	 * first and last positions are coincident.
+	 * [Test] Verifies that a kml:LineString element has valid coordinates.
 	 */
 	@Test(description = "ATC-103")
-	public void validLinearRingCoordinates() {
+	public void validLineStringCoordinates() {
 		JTSGeometryBuilder geomBuilder = new JTSGeometryBuilder();
 		Polygon crsPolygon = geomBuilder.buildPolygon(new Envelope(-180, 180,
 				-90, 90));
 		for (int i = 0; i < targetElements.getLength(); i++) {
-			Element ring = (Element) targetElements.item(i);
-			Assert.assertTrue(coordsValidator.isValid(ring),
+			Element line = (Element) targetElements.item(i);
+			Assert.assertTrue(coordsValidator.isValid(line),
 					coordsValidator.getErrors());
-			LinearRing jtsRing = null;
-			try {
-				jtsRing = geomBuilder.buildLinearRing(ring);
-			} catch (IllegalArgumentException ex) {
-				throw new AssertionError(ErrorMessage.format(
-						ErrorMessageKeys.OPEN_RING,
-						XMLUtils.buildXPointer(ring)));
-			}
+			LineString jtsLine = geomBuilder.buildLineString(line);
 			Assert.assertTrue(
-					crsPolygon.covers(jtsRing),
+					crsPolygon.covers(jtsLine),
 					ErrorMessage.format(ErrorMessageKeys.OUTSIDE_CRS,
-							jtsRing.toText()));
+							jtsLine.toText()));
 		}
 	}
 

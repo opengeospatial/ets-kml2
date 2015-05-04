@@ -62,7 +62,7 @@ public class VerifyKmlDocumentTests {
 		KmlDocumentTests iut = new KmlDocumentTests();
 		iut.initCommonFixture(testContext);
 		iut.getKMLSchemas(testContext);
-		iut.verifySchemaValidity();
+		iut.isSchemaValid();
 	}
 
 	@Test
@@ -75,6 +75,6 @@ public class VerifyKmlDocumentTests {
 		KmlDocumentTests iut = new KmlDocumentTests();
 		iut.initCommonFixture(testContext);
 		iut.getKMLSchemas(testContext);
-		iut.verifySchemaValidity();
+		iut.isSchemaValid();
 	}
 }

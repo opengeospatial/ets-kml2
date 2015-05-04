@@ -44,16 +44,16 @@ public class VerifyLinearRingTests {
 	}
 
 	@Test
-	public void invalidRingInPlacemark() throws SAXException, IOException {
+	public void openRingInPlacemark() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
-		thrown.expectMessage("LinearRing must be closed");
+		thrown.expectMessage("LinearRing is not closed");
 		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
 				"/kml23/Placemark-002.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		LinearRingTests iut = new LinearRingTests();
 		iut.initCommonFixture(testContext);
 		iut.findLinearRingElements();
-		iut.validLinearRing();
+		iut.validLinearRingCoordinates();
 	}
 
 }

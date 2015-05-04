@@ -17,7 +17,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Implements ATC-102: Schema validity.
+ * Checks constraints that apply to a KML document as a whole. Specifically, it
+ * must be schema-valid. The applicable schema is determined by the value of the
+ * version attribute set on the document element (default value: "2.2").
  * 
  * @see "OGC 14-068r1: OGC KML 2.3 - Abstract Test Suite, Conformance Level 1"
  */
@@ -48,7 +50,7 @@ public class KmlDocumentTests extends CommonFixture {
 	 * attribute).
 	 */
 	@Test(description = "ATC-102")
-	public void verifySchemaValidity() {
+	public void isSchemaValid() {
 		Schema kmlSchema;
 		String kmlVer = this.kmlDoc.getDocumentElement().getAttribute(
 				KML2.VER_ATTR);

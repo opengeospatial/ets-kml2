@@ -51,7 +51,7 @@ public class VerifyPointTests {
 		PointTests iut = new PointTests();
 		iut.initCommonFixture(testContext);
 		iut.findPointElements();
-		iut.validPoint();
+		iut.validPointCoordinates();
 	}
 
 	@Test
@@ -64,7 +64,7 @@ public class VerifyPointTests {
 		PointTests iut = new PointTests();
 		iut.initCommonFixture(testContext);
 		iut.findPointElements();
-		iut.validPoint();
+		iut.validPointCoordinates();
 	}
 
 }
