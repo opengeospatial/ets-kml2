@@ -3,12 +3,16 @@ package org.opengis.cite.kml2.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.xpath.XPathExpressionException;
+
 import org.opengis.cite.kml2.KML2;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -31,7 +35,7 @@ public class JTSGeometryBuilder {
 	 * 
 	 * @param point
 	 *            An Element node (kml:Point).
-	 * @return A Point.
+	 * @return A JTS Point.
 	 */
 	public Point buildPoint(Element point) {
 		if (!point.getLocalName().equals("Point")) {
@@ -52,7 +56,7 @@ public class JTSGeometryBuilder {
 	 * 
 	 * @param line
 	 *            An Element node (kml:LineString).
-	 * @return A LineString.
+	 * @return A JTS LineString.
 	 */
 	public LineString buildLineString(Element line) {
 		if (!line.getLocalName().equals("LineString")) {
@@ -70,7 +74,7 @@ public class JTSGeometryBuilder {
 	 * 
 	 * @param ring
 	 *            An Element node (kml:LinearRing).
-	 * @return A LinearRing.
+	 * @return A JTS LinearRing.
 	 */
 	public LinearRing buildLinearRing(Element ring) {
 		if (!ring.getLocalName().equals("LinearRing")) {
@@ -84,10 +88,51 @@ public class JTSGeometryBuilder {
 	}
 
 	/**
+	 * Builds a Polygon geometry from a kml:Polygon element.
+	 * 
+	 * @param ring
+	 *            An Element node (kml:Polygon).
+	 * @return A JTS Polygon.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             If a boundary element (ring) is not closed or an inner
+	 *             boundary is not inside the outer boundary.
+	 */
+	public Polygon buildPolygon(Element polygon) {
+		if (!polygon.getLocalName().equals("Polygon")) {
+			throw new IllegalArgumentException(
+					"Element does not represent a Polygon.");
+		}
+		LinearRing outerRing = null;
+		NodeList rings = null;
+		try {
+			rings = XMLUtils.evaluateXPath(polygon,
+					"kml:outerBoundaryIs/kml:LinearRing", null);
+			outerRing = buildLinearRing((Element) rings.item(0));
+			rings = XMLUtils.evaluateXPath(polygon,
+					"kml:innerBoundaryIs/kml:LinearRing", null);
+		} catch (XPathExpressionException e) { // expressions ok
+		}
+		Geometry outerPolygon = geomFactory.createPolygon(outerRing);
+		LinearRing[] innerRings = new LinearRing[rings.getLength()];
+		for (int i = 0; i < rings.getLength(); i++) {
+			LinearRing innerRing = buildLinearRing((Element) rings.item(i));
+			if (!outerPolygon.contains(innerRing)) {
+				throw new IllegalArgumentException(
+						String.format(
+								"Inner boundary [%d] not inside outer boundary.",
+								i + 1));
+			}
+			innerRings[i] = innerRing;
+		}
+		return this.geomFactory.createPolygon(outerRing, innerRings);
+	}
+
+	/**
 	 * Builds a Polygon from the given envelope.
 	 * 
 	 * @param env
-	 *            An envelope defining some spatial extent.
+	 *            A JTS envelope defining some spatial extent.
 	 * @return A rectangular polygon that covers the same extent as the
 	 *         envelope.
 	 */

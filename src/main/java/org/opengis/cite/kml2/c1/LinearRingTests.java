@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * cases from the abstract test suite are listed below:
  * <ul>
  * <li>ATC-103: Valid geometry coordinates</li>
+ * <li>ATC-116: LinearRing coordinates</li>
  * </ul>
  * 
  * @see "OGC 14-068r1: OGC KML 2.3 - Abstract Test Suite, Conformance Level 1"
@@ -43,11 +44,12 @@ public class LinearRingTests extends CommonFixture {
 	}
 
 	/**
-	 * [Test] Verifies that a kml:LinearRing element has valid coordinates. The
-	 * sequence of coordinate tuples must constitute a closed ring. That is, the
-	 * first and last positions are coincident.
+	 * [Test] Verifies that a kml:LinearRing element has valid coordinates. It
+	 * must contain a sequence of four or more coordinate tuples in the default
+	 * CRS. Furthermore, the first and last control points must be coincident
+	 * (i.e. the ring is explicitly closed).
 	 */
-	@Test(description = "ATC-103")
+	@Test(description = "ATC-103, ATC-116")
 	public void validLinearRingCoordinates() {
 		JTSGeometryBuilder geomBuilder = new JTSGeometryBuilder();
 		Polygon crsPolygon = geomBuilder.buildPolygon(new Envelope(-180, 180,

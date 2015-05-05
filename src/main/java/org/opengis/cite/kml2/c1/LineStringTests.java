@@ -19,6 +19,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * cases from the abstract test suite are listed below:
  * <ul>
  * <li>ATC-103: Valid geometry coordinates</li>
+ * <li>ATC-115: LineString coordinates</li>
  * </ul>
  * 
  * @see "OGC 14-068r1: OGC KML 2.3 - Abstract Test Suite, Conformance Level 1"
@@ -42,9 +43,10 @@ public class LineStringTests extends CommonFixture {
 	}
 
 	/**
-	 * [Test] Verifies that a kml:LineString element has valid coordinates.
+	 * [Test] Verifies that a kml:LineString element has valid coordinates. It
+	 * must contain two or more coordinate tuple in the default CRS.
 	 */
-	@Test(description = "ATC-103")
+	@Test(description = "ATC-103, ATC-115")
 	public void validLineStringCoordinates() {
 		JTSGeometryBuilder geomBuilder = new JTSGeometryBuilder();
 		Polygon crsPolygon = geomBuilder.buildPolygon(new Envelope(-180, 180,

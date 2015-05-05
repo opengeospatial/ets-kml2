@@ -29,4 +29,5 @@ public class ErrorMessageKeys {
 	public static final String COORD_DIM = "CoordDim";
 	public static final String NAN = "NaN";
 	public static final String OUTSIDE_CRS = "OutsideCRS";
+	public static final String POLYGON_BOUNDARY = "PolygonBoundary";
 }
