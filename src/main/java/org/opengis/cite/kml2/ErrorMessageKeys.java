@@ -30,4 +30,6 @@ public class ErrorMessageKeys {
 	public static final String NAN = "NaN";
 	public static final String OUTSIDE_CRS = "OutsideCRS";
 	public static final String POLYGON_BOUNDARY = "PolygonBoundary";
+	public static final String QUAD_NOT_CONVEX = "QuadNotConvex";
+	public static final String RING_NOT_CCW = "RingNotCCW";
 }

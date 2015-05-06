@@ -141,11 +141,32 @@ public class JTSGeometryBuilder {
 	}
 
 	/**
+	 * Builds a Polygon with an exterior boundary delimited by the given
+	 * sequence of coordinates. The sequence will be closed if necessary such
+	 * that the first and last vertices are coincident.
+	 * 
+	 * @param coords
+	 *            A node containing a list of coordinates (kml:coordinates).
+	 * @return A JTS Polygon (with no interior boundaries).
+	 */
+	public Polygon buildPolygonFromCoordinates(Node coords) {
+		List<Coordinate> coordList = createCoordinateList(coords);
+		Coordinate lastCord = coordList.get(coordList.size() - 1);
+		if (!coordList.get(0).equals2D(lastCord)) {
+			// make a ring (e.g. LatLonQuad)
+			coordList.add(new Coordinate(coordList.get(0)));
+		}
+		Polygon polygon = this.geomFactory.createPolygon(coordList
+				.toArray(new Coordinate[coordList.size()]));
+		return polygon;
+	}
+
+	/**
 	 * Creates a Coordinate sequence from the content of a kml:coordinates
 	 * element.
 	 * 
 	 * @param coords
-	 *            An Element node (kml:coordinates).
+	 *            A node containing a coordinate sequence (kml:coordinates).
 	 * @return A list containing one or more Coordinate objects.
 	 */
 	List<Coordinate> createCoordinateList(Node coords) {
