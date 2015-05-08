@@ -52,6 +52,32 @@ public class JTSGeometryBuilder {
 	}
 
 	/**
+	 * Builds a Point geometry from a kml:Location element.
+	 * 
+	 * @param location
+	 *            An Element node (kml:Location).
+	 * @return A JTS Point.
+	 */
+	public Point buildPointFromLocation(Element location) {
+		if (!location.getLocalName().equals("Location")) {
+			throw new IllegalArgumentException(
+					"Element does not represent a Location.");
+		}
+		NodeList nodes = location.getElementsByTagNameNS(KML2.NS_NAME,
+				"longitude");
+		double lon = (nodes.getLength() > 0) ? Double.parseDouble(nodes.item(0)
+				.getTextContent()) : 0;
+		nodes = location.getElementsByTagNameNS(KML2.NS_NAME, "latitude");
+		double lat = (nodes.getLength() > 0) ? Double.parseDouble(nodes.item(0)
+				.getTextContent()) : 0;
+		nodes = location.getElementsByTagNameNS(KML2.NS_NAME, "altitude");
+		double alt = (nodes.getLength() > 0) ? Double.parseDouble(nodes.item(0)
+				.getTextContent()) : 0;
+		Coordinate coord = new Coordinate(lon, lat, alt);
+		return this.geomFactory.createPoint(coord);
+	}
+
+	/**
 	 * Builds a LineString geometry from a kml:LineString element.
 	 * 
 	 * @param line

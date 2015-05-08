@@ -18,6 +18,7 @@ public class ErrorMessageKeys {
 	public static final String MISSING_INFOSET_ITEM = "MissingInfosetItem";
 	public static final String UNEXPECTED_STATUS = "UnexpectedStatus";
 	public static final String UNEXPECTED_MEDIA_TYPE = "UnexpectedMediaType";
+	public static final String UNACCEPTABLE_MEDIA_TYPE = "UnacceptableMediaType";
 	public static final String MISSING_ENTITY = "MissingEntity";
 	public static final String UNSUPPORTED_VERSION = "UnsupportedVersion";
 	public static final String POINT_COORDS = "PointCoords";
@@ -32,4 +33,6 @@ public class ErrorMessageKeys {
 	public static final String POLYGON_BOUNDARY = "PolygonBoundary";
 	public static final String QUAD_NOT_CONVEX = "QuadNotConvex";
 	public static final String RING_NOT_CCW = "RingNotCCW";
+	public static final String URI_NOT_ACCESSIBLE = "URINotAccessible";
+	public static final String NOT_FOUND = "NotFound";
 }

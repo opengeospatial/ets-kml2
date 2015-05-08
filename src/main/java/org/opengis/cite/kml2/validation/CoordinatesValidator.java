@@ -23,7 +23,7 @@ import org.w3c.dom.NodeList;
  *
  * The content of a kml:coordinates element is a list of white space-separated
  * 2D or 3D tuples that contain comma-separated decimal values (lon,lat[,hgt]).
- * The relevant schema components are shown below.The relevant schema components
+ * The relevant schema components are shown below. The relevant schema components
  * are shown below.
  * 
  * <pre>
