@@ -407,8 +407,11 @@ public class XMLUtils {
 	}
 
 	/**
-	 * Determines the absolute location path of a node in a DOM document. The
-	 * location is specified as a scheme-based XPointer having two parts:
+	 * Builds an XPointer that refers to the given node. If a shorthand pointer
+	 * (using a schema-determined identifier) cannot be constructed, then a
+	 * scheme-based pointer is derived that indicates the absolute location path
+	 * of a node in a DOM document. The location is specified as a scheme-based
+	 * XPointer having two parts:
 	 * <ul>
 	 * <li>an xmlns() part that declares a namespace binding context;</li>
 	 * <li>an xpointer() part that includes an XPath expression using the
@@ -417,9 +420,11 @@ public class XMLUtils {
 	 * 
 	 * @param node
 	 *            A node in a DOM document.
-	 * @return A String containing a scheme-based pointer that specifies the
-	 *         absolute location path of the node in the document.
+	 * @return A String containing either a shorthand or a scheme-based pointer
+	 *         that refers to the node.
 	 * 
+	 * @see <a href="http://www.w3.org/TR/xptr-framework/"target="_blank">
+	 *      XPointer Framework</a>
 	 * @see <a href="http://www.w3.org/TR/xptr-xmlns/" target="_blank">XPointer
 	 *      xmlns() Scheme</a>
 	 * @see <a href="http://www.w3.org/TR/xptr-xpointer/"
@@ -430,6 +435,13 @@ public class XMLUtils {
 			return "";
 		}
 		StringBuilder xpointer = new StringBuilder();
+		if (null != node.getAttributes()
+				&& null != node.getAttributes().getNamedItem("id")) {
+			String id = node.getAttributes().getNamedItem("id").getNodeValue();
+			xpointer.append(node.getLocalName()).append("[@id='").append(id)
+					.append("']");
+			return xpointer.toString();
+		}
 		String nsURI = node.getNamespaceURI();
 		String nsPrefix = node.getPrefix();
 		if (null == nsPrefix)

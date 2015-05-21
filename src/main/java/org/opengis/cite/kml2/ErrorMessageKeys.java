@@ -35,4 +35,6 @@ public class ErrorMessageKeys {
 	public static final String RING_NOT_CCW = "RingNotCCW";
 	public static final String URI_NOT_ACCESSIBLE = "URINotAccessible";
 	public static final String NOT_FOUND = "NotFound";
+	public static final String EMPTY_TIMESPAN = "EmptyTimeSpan";
+	public static final String TIMESPAN_INTERVAL = "TimeSpanInterval";
 }
