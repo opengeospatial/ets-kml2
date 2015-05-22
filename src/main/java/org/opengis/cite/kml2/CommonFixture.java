@@ -44,7 +44,7 @@ public class CommonFixture {
 	 * @param targetElements
 	 *            The collection of elements to which the tests apply.
 	 */
-	void setTargetElements(NodeList targetElements) {
+	public void setTargetElements(NodeList targetElements) {
 		this.targetElements = targetElements;
 	}
 

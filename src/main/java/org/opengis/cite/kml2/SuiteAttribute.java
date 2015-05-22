@@ -1,5 +1,7 @@
 package org.opengis.cite.kml2;
 
+import java.util.Set;
+
 import javax.xml.validation.Schema;
 
 import com.sun.jersey.api.client.Client;
@@ -36,7 +38,11 @@ public enum SuiteAttribute {
 	/**
 	 * An integer (1-3) indicating the level of conformance assesment.
 	 */
-	LEVEL("level", Integer.class);
+	LEVEL("level", Integer.class),
+	/**
+	 * A {@code Set<String>} containing shared style identifiers.
+	 */
+	SHARED_STYLES("sharedStyles", Set.class);
 	private final Class attrType;
 	private final String attrName;
 

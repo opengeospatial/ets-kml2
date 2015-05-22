@@ -116,7 +116,7 @@ public class JTSGeometryBuilder {
 	/**
 	 * Builds a Polygon geometry from a kml:Polygon element.
 	 * 
-	 * @param ring
+	 * @param polygon
 	 *            An Element node (kml:Polygon).
 	 * @return A JTS Polygon.
 	 * 

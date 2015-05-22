@@ -7,9 +7,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import javax.xml.transform.Source;
+
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XdmItem;
+import net.sf.saxon.s9api.XdmValue;
 
 import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
@@ -104,6 +113,43 @@ public class KMLUtils {
 			}
 		}
 		return mainKMLDoc;
+	}
+
+	/**
+	 * Finds shared styles that occur in a KML document. A shared style is any
+	 * element that may substitute for kml:AbstractStyleSelectorGroup
+	 * (kml:Style, kml:StyleMap) that satisfies all of the following conditions:
+	 * <ol>
+	 * <li>its parent element is kml:Document</li>
+	 * <li>it has a non-empty 'id' attribute value</li>
+	 * </ol>
+	 * 
+	 * @param kmlSource
+	 *            A Source for reading a KML document.
+	 * @return A set (possibly empty) of identifiers for shared styles defined
+	 *         in the source resource.
+	 * 
+	 * @see "OGC KML 2.3, 6.4: Shared Styles"
+	 */
+	public static Set<String> findSharedStyles(Source kmlSource) {
+		XdmValue results = null;
+		Set<String> styleIdSet = new HashSet<String>();
+		String expr = "//kml:Document/kml:Style/@id | //kml:Document/kml:StyleMap/@id";
+		try {
+			results = XMLUtils.evaluateXPath2(kmlSource, expr, null);
+		} catch (SaxonApiException e) {
+			Logger.getLogger(KMLUtils.class.getName()).log(Level.WARNING,
+					"Failed to evaluate XPath expression: " + expr, e);
+			return styleIdSet;
+		}
+		for (XdmItem item : results) {
+			String id = item.getStringValue().trim();
+			if (id.isEmpty()) {
+				continue;
+			}
+			styleIdSet.add(id);
+		}
+		return styleIdSet;
 	}
 
 }

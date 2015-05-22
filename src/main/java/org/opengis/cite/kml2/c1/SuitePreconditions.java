@@ -1,14 +1,17 @@
 package org.opengis.cite.kml2.c1;
 
+import java.util.Set;
 import java.util.logging.Level;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.dom.DOMSource;
 
 import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
 import org.opengis.cite.kml2.SuiteAttribute;
+import org.opengis.cite.kml2.util.KMLUtils;
 import org.opengis.cite.kml2.util.TestSuiteLogger;
 import org.testng.Assert;
 import org.testng.ITestContext;
@@ -42,7 +45,7 @@ public class SuitePreconditions {
 					KML2.NS_NAME, KML2.DOC_ELEMENT));
 		} else {
 			String msg = String
-					.format("Value of test suite attribute %s is missing or has the wrong type.",
+					.format("Value of test suite attribute %s is missing or does not refer to an XML resource.",
 							SuiteAttribute.TEST_SUBJECT.getName());
 			TestSuiteLogger.log(Level.SEVERE, msg);
 			throw new AssertionError(msg);
@@ -72,5 +75,23 @@ public class SuitePreconditions {
 			TestSuiteLogger.log(Level.SEVERE, msg);
 			throw new AssertionError(msg);
 		}
+	}
+
+	/**
+	 * Seeks shared styles occurring in the main KML document. The resulting
+	 * collection ({@code Set<String>}) is set as the value of the suite
+	 * attribute {@link SuiteAttribute#SHARED_STYLES}.
+	 * 
+	 * @param testContext
+	 *            Information about the test run.
+	 */
+	@BeforeSuite
+	public void findSharedStyles(ITestContext testContext) {
+		Document kmlDoc = (Document) testContext.getSuite().getAttribute(
+				SuiteAttribute.TEST_SUBJECT.getName());
+		Set<String> sharedStyles = KMLUtils.findSharedStyles(new DOMSource(
+				kmlDoc, kmlDoc.getBaseURI()));
+		testContext.getSuite().setAttribute(
+				SuiteAttribute.SHARED_STYLES.getName(), sharedStyles);
 	}
 }

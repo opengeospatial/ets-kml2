@@ -37,4 +37,6 @@ public class ErrorMessageKeys {
 	public static final String NOT_FOUND = "NotFound";
 	public static final String EMPTY_TIMESPAN = "EmptyTimeSpan";
 	public static final String TIMESPAN_INTERVAL = "TimeSpanInterval";
+	public static final String EMPTY_TIMESTAMP = "EmptyTimeStamp";
+	public static final String SHARED_STYLE_NOT_FOUND = "SharedStyleNotFound";
 }

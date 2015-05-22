@@ -46,6 +46,7 @@ import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
 
+import org.opengis.cite.kml2.KML2;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -216,7 +217,8 @@ public class XMLUtils {
 	 * @param nsBindings
 	 *            A collection of namespace bindings required to evaluate the
 	 *            XPath expression, where each entry maps a namespace URI (key)
-	 *            to a prefix (value); this may be {@code null} if not needed.
+	 *            to a prefix (value); this may be {@code null} if not needed (a
+	 *            binding for the "kml" prefix is always in effect).
 	 * @return An XdmValue object representing a value in the XDM data model;
 	 *         this is a sequence of zero or more items, where each item is
 	 *         either an atomic value or a node.
@@ -228,6 +230,7 @@ public class XMLUtils {
 			Map<String, String> nsBindings) throws SaxonApiException {
 		Processor proc = new Processor(false);
 		XPathCompiler compiler = proc.newXPathCompiler();
+		compiler.declareNamespace("kml", KML2.NS_NAME);
 		if (null != nsBindings) {
 			for (String nsURI : nsBindings.keySet()) {
 				compiler.declareNamespace(nsBindings.get(nsURI), nsURI);
