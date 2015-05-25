@@ -1,19 +1,26 @@
 package org.opengis.cite.kml2.c1;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
 
+import javax.xml.namespace.QName;
+
 import org.opengis.cite.kml2.CommonFixture;
+import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
 import org.opengis.cite.kml2.SuiteAttribute;
+import org.opengis.cite.kml2.util.URIUtils;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Checks constraints that apply to any KML feature (an element that substitutes
@@ -70,13 +77,27 @@ public class KmlFeatureTests extends CommonFixture {
 			}
 			URI styleUrl = URI.create(styleUrlElem.item(0).getTextContent()
 					.trim());
-			if (!styleUrl.isAbsolute()) {
-				// shared style reference
+			if (styleUrl.getPath().isEmpty()) {
+				// same-document style reference
 				String id = styleUrl.getFragment();
 				Assert.assertTrue(this.sharedStyles.contains(id), ErrorMessage
 						.format(ErrorMessageKeys.SHARED_STYLE_NOT_FOUND, id));
+				continue;
 			}
-			// TODO: Dereference styleUrl
+			styleUrl = URIUtils.resolveRelativeURI(
+					this.kmlDoc.getDocumentURI(), styleUrl.toString());
+			Node referent;
+			try {
+				referent = URIUtils.parseURI(styleUrl);
+			} catch (SAXException | IOException e) {
+				throw new AssertionError(ErrorMessage.format(
+						ErrorMessageKeys.XML_ERROR, styleUrl));
+			}
+			Assert.assertNotNull(referent, ErrorMessage.format(
+					ErrorMessageKeys.SHARED_STYLE_NOT_FOUND, styleUrl));
+			ETSAssert.assertQualifiedName(referent, new QName[] {
+					new QName(KML2.NS_NAME, "Style"),
+					new QName(KML2.NS_NAME, "StyleMap") });
 		}
 	}
 }

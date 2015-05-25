@@ -1,10 +1,13 @@
 package org.opengis.cite.kml2;
 
 import com.sun.jersey.api.client.ClientResponse;
+
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -14,6 +17,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
 import org.opengis.cite.kml2.util.NamespaceBindings;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.validation.SchematronValidator;
@@ -36,19 +40,26 @@ public class ETSAssert {
 	}
 
 	/**
-	 * Asserts that the qualified name of a DOM Node matches the expected value.
+	 * Asserts that the qualified name of a DOM node matches one of the expected
+	 * values.
 	 * 
 	 * @param node
 	 *            The Node to check.
-	 * @param qName
-	 *            A QName object containing a namespace name (URI) and a local
-	 *            part.
+	 * @param expectedNames
+	 *            A collection of QName objects.
 	 */
-	public static void assertQualifiedName(Node node, QName qName) {
-		Assert.assertEquals(node.getLocalName(), qName.getLocalPart(),
-				ErrorMessage.get(ErrorMessageKeys.LOCAL_NAME));
-		Assert.assertEquals(node.getNamespaceURI(), qName.getNamespaceURI(),
-				ErrorMessage.get(ErrorMessageKeys.NAMESPACE_NAME));
+	public static void assertQualifiedName(Node node, QName... expectedNames) {
+		QName nodeName = XMLUtils.getQName(node);
+		boolean match = false;
+		for (QName qName : expectedNames) {
+			if (nodeName.equals(qName)) {
+				match = true;
+				break;
+			}
+		}
+		Assert.assertTrue(match, ErrorMessage.format(
+				ErrorMessageKeys.UNEXPECTED_QNAME, nodeName,
+				Arrays.toString(expectedNames)));
 	}
 
 	/**
@@ -229,4 +240,5 @@ public class ETSAssert {
 							locator));
 		}
 	}
+
 }

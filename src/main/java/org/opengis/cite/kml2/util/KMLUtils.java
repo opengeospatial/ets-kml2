@@ -50,7 +50,7 @@ public class KMLUtils {
 		Document kmlDoc = null;
 		try (FileInputStream fileStream = new FileInputStream(file)) {
 			if (XMLUtils.isXML(fileStream)) {
-				kmlDoc = URIUtils.parseURI(file.toURI());
+				kmlDoc = (Document) URIUtils.parseURI(file.toURI());
 			} else {
 				kmlDoc = parseKMLDocumentInArchive(file);
 			}
@@ -103,7 +103,7 @@ public class KMLUtils {
 				IOUtils.closeQuietly(input);
 				IOUtils.closeQuietly(output);
 				if ((null == mainKMLDoc) && destFile.getName().endsWith(".kml")) {
-					mainKMLDoc = URIUtils.parseURI(destFile.toURI());
+					mainKMLDoc = (Document) URIUtils.parseURI(destFile.toURI());
 				}
 				if (TestSuiteLogger.isLoggable(Level.FINER)) {
 					TestSuiteLogger.log(Level.FINER, String.format(

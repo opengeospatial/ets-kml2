@@ -14,6 +14,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.sun.jersey.api.client.Client;
@@ -30,19 +31,34 @@ public class URIUtils {
 
 	/**
 	 * Parses the content of the given URI as an XML document and returns a new
-	 * DOM Document object. Entity reference nodes will not be expanded. XML
-	 * inclusions (xi:include elements) will be processed if present.
+	 * DOM Node object representing the referent. Entity reference nodes will
+	 * not be expanded. XML inclusions (xi:include elements) will be processed
+	 * if present.
+	 * 
+	 * <p>
+	 * If the URI reference contains a fragment identifier, the subresource will
+	 * be returned if the fragment is a valid XPointer; otherwise the primary
+	 * resource is returned (as a Document node). Only the shorthand pointer
+	 * syntax--commonly used to identify an element by identifier--is supported.
+	 * </p>
 	 * 
 	 * @param uriRef
-	 *            An absolute URI specifying the location of an XML resource.
-	 * @return A DOM Document node representing an XML resource.
+	 *            An absolute URI specifying the location of an XML
+	 *            (sub)resource; it may contain a fragment identifier
+	 *            (XPointer).
+	 * @return A DOM node representing an XML (sub)resource.
 	 * @throws SAXException
 	 *             If the resource cannot be parsed.
 	 * @throws IOException
 	 *             If the resource is not accessible.
+	 * 
+	 * @see <a target="_blank"
+	 *      href="https://tools.ietf.org/html/rfc3986">Uniform Resource
+	 *      Identifier (URI): Generic Syntax</a>
+	 * @see <a target="_blank"
+	 *      href="http://www.w3.org/TR/xptr-framework/">XPointer Framework</a>
 	 */
-	public static Document parseURI(URI uriRef) throws SAXException,
-			IOException {
+	public static Node parseURI(URI uriRef) throws SAXException, IOException {
 		if ((null == uriRef) || !uriRef.isAbsolute()) {
 			throw new IllegalArgumentException(
 					"Absolute URI is required, but received " + uriRef);
@@ -65,7 +81,12 @@ public class URIUtils {
 		if (null != doc) {
 			doc.setDocumentURI(uriRef.toString());
 		}
-		return doc;
+		String fragment = uriRef.getFragment();
+		Node subResource = null;
+		if (null != fragment) {
+			subResource = XMLUtils.evaluateXPointer(fragment, doc);
+		}
+		return (null != subResource) ? subResource : doc;
 	}
 
 	/**

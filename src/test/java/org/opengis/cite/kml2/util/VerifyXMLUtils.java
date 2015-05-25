@@ -158,4 +158,14 @@ public class VerifyXMLUtils {
 		reader.read(buf, 0, buf.length);
 		assertEquals("Jabberwock", new String(buf));
 	}
+
+	@Test
+	public void evaluateXPointer() throws SAXException, IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
+				"/kml22/SharedStyle.xml"));
+		Node result = XMLUtils.evaluateXPointer("defaultStyles", doc);
+		assertNotNull("Expected matching node.", result);
+		assertEquals("Node has unexpected [local name].", "Style",
+				result.getLocalName());
+	}
 }

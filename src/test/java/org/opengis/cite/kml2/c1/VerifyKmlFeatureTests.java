@@ -4,6 +4,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collections;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -53,9 +55,40 @@ public class VerifyKmlFeatureTests {
 		when(suite.getAttribute(SuiteAttribute.SHARED_STYLES.getName()))
 				.thenReturn(Collections.singleton("sn_blue-dot_copy3"));
 		KmlFeatureTests iut = new KmlFeatureTests();
+		iut.initCommonFixture(testContext);
 		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
 				"Placemark"));
 		iut.getSharedStyles(testContext);
+		iut.validStyleReference();
+	}
+
+	@Test
+	public void validRemoteStyleReference() throws SAXException, IOException,
+			URISyntaxException {
+		URL url = this.getClass().getResource("/kml22/Placemark-004.xml");
+		Document doc = docBuilder.parse(url.toString());
+		doc.setDocumentURI(url.toString());
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		KmlFeatureTests iut = new KmlFeatureTests();
+		iut.initCommonFixture(testContext);
+		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
+				"Placemark"));
+		iut.validStyleReference();
+	}
+
+	@Test
+	public void invalidRemoteStyleReference() throws SAXException, IOException,
+			URISyntaxException {
+		thrown.expect(AssertionError.class);
+		thrown.expectMessage("Node has unexpected QName: {http://www.opengis.net/kml/2.2}Document");
+		URL url = this.getClass().getResource("/kml22/Placemark-005.xml");
+		Document doc = docBuilder.parse(url.toString());
+		doc.setDocumentURI(url.toString());
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		KmlFeatureTests iut = new KmlFeatureTests();
+		iut.initCommonFixture(testContext);
+		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
+				"Placemark"));
 		iut.validStyleReference();
 	}
 
@@ -69,6 +102,7 @@ public class VerifyKmlFeatureTests {
 		when(suite.getAttribute(SuiteAttribute.SHARED_STYLES.getName()))
 				.thenReturn(Collections.singleton("no-match"));
 		KmlFeatureTests iut = new KmlFeatureTests();
+		iut.initCommonFixture(testContext);
 		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
 				"Placemark"));
 		iut.getSharedStyles(testContext);

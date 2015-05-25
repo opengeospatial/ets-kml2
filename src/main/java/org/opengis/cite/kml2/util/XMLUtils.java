@@ -485,4 +485,34 @@ public class XMLUtils {
 		}
 		return xpointer.toString();
 	}
+
+	/**
+	 * Evaluates an XPointer expression against the given XML document. Only the
+	 * shorthand syntax is supported; however, instead of matching the value of
+	 * a schema-determined ID, all attributes are checked.
+	 * 
+	 * @param xpointer
+	 *            An XPointer expression (shorthand syntax).
+	 * @param doc
+	 *            An XML document.
+	 * @return A Node (Element) representing a subresource (fragment), or null
+	 *         if no match is found.
+	 * 
+	 * @see <a target="_blank"
+	 *      href="http://www.w3.org/TR/xptr-framework/">XPointer Framework</a>
+	 */
+	public static Node evaluateXPointer(String xpointer, Document doc) {
+		if (null == doc || xpointer.contains("(")) {
+			return null; // scheme-based pointer not supported
+		}
+		// look for any matching attribute; in general, validate doc to discover
+		// schema-determined ID (e.g. normalizeDocument to add PSVI)
+		String xpath = String.format("//*[attribute::*='%s']", xpointer);
+		NodeList elements = null;
+		try {
+			elements = evaluateXPath(doc, xpath, null);
+		} catch (XPathExpressionException e) { // expression ok
+		}
+		return elements.item(0);
+	}
 }
