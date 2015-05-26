@@ -80,9 +80,9 @@ public class VerifyXMLUtils {
 		assertTrue("Expected empty results.", results.getLength() == 0);
 	}
 
-	@Test(expected = XPathExpressionException.class)
-	public void evaluateXPathExpression_booleanResult()
-			throws XPathExpressionException, SAXException, IOException {
+	@Test(expected = RuntimeException.class)
+	public void evaluateXPathExpression_booleanResult() throws SAXException,
+			IOException, XPathExpressionException {
 		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
 				"/atom-feed.xml"));
 		String expr = "count(//tns:entry) > 0";

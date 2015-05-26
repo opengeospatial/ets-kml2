@@ -190,12 +190,9 @@ public class XMLUtils {
 	 *            The desired return type (as declared in {@link XPathConstants}
 	 *            ).
 	 * @return The result converted to the desired returnType.
-	 * @throws XPathExpressionException
-	 *             If the expression cannot be evaluated for any reason.
 	 */
 	public static Object evaluateXPath(Node context, String expr,
-			Map<String, String> namespaceBindings, QName returnType)
-			throws XPathExpressionException {
+			Map<String, String> namespaceBindings, QName returnType) {
 		NamespaceBindings bindings = NamespaceBindings.withStandardBindings();
 		bindings.addAllBindings(namespaceBindings);
 		XPathFactory factory = XPATH_FACTORY;
@@ -203,7 +200,12 @@ public class XMLUtils {
 		// use the same Configuration object to avoid IllegalArgumentException
 		XPath xpath = factory.newXPath();
 		xpath.setNamespaceContext(bindings);
-		Object result = xpath.evaluate(expr, context, returnType);
+		Object result;
+		try {
+			result = xpath.evaluate(expr, context, returnType);
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e.getMessage());
+		}
 		return result;
 	}
 

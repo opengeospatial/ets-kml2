@@ -49,4 +49,7 @@ public class KML2 {
 
 	/** Local name of kml:Update element. */
 	public static final String KML_UPDATE = "Update";
+
+	/** Default value of kml:altitudeMode */
+	public static final String DEFAULT_ALT_MODE = "clampToGround";
 }

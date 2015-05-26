@@ -13,6 +13,7 @@ import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
 import org.opengis.cite.kml2.SuiteAttribute;
 import org.opengis.cite.kml2.util.URIUtils;
+import org.opengis.cite.kml2.validation.RegionValidator;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
@@ -33,6 +34,11 @@ import org.xml.sax.SAXException;
 public class KmlFeatureTests extends CommonFixture {
 
 	private Set<String> sharedStyles;
+	private RegionValidator regionValidator;
+
+	public KmlFeatureTests() {
+		this.regionValidator = new RegionValidator();
+	}
 
 	/**
 	 * Get the identifiers of all shared styles in the instance document.
@@ -100,4 +106,23 @@ public class KmlFeatureTests extends CommonFixture {
 					new QName(KML2.NS_NAME, "StyleMap") });
 		}
 	}
+
+	@Test(description = "ATC-108")
+	public void validRegion() {
+		if (null == this.targetElements) {
+			return;
+		}
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element kmlFeature = (Element) targetElements.item(i);
+			NodeList region = kmlFeature.getElementsByTagNameNS(KML2.NS_NAME,
+					"Region");
+			if (region.getLength() == 0) {
+				continue;
+			}
+			Assert.assertTrue(regionValidator.validExtent(region.item(0)),
+					regionValidator.getErrors());
+		}
+
+	}
+
 }
