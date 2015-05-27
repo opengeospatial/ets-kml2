@@ -89,6 +89,8 @@ public class LinkValidator {
 	 * <li>the URI it contains is accessible (using a HEAD request for 'http'
 	 * URIs)</li>
 	 * <li>the media type of the referenced resource is acceptable</li>
+	 * <li>the values of various properties that affect link processing do not
+	 * violate any constraints</li>
 	 * </ol>
 	 * 
 	 * @param node
@@ -141,17 +143,51 @@ public class LinkValidator {
 					ErrorMessageKeys.URI_NOT_ACCESSIBLE, uri, e.getMessage()),
 					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(link)));
 		}
+		checkLinkProperties(link);
 		return !errHandler.errorsDetected();
 	}
 
 	/**
-	 * Determines if the specified content type is compatible with any of the
-	 * given media types. Parameters are ignored.
+	 * Checks various properties that affect link processing.
 	 * 
-	 * <p>
-	 * <strong>WARNING:</strong> This basic check may fail for many XML media
-	 * types that include the suffix '+xml'.
-	 * </p>
+	 * @param link
+	 *            An Element representing a link (of type kml:LinkType).
+	 * 
+	 * @see "OGC 14-068, ATC-109: Link properties"
+	 */
+	void checkLinkProperties(Element link) {
+		Node refresh = link.getElementsByTagNameNS(KML2.NS_NAME,
+				"refreshInterval").item(0);
+		if (null != refresh
+				&& Double.parseDouble(refresh.getTextContent()) <= 0) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.CONSTRAINT_VIOLATION,
+					"kml:refreshInterval > 0"), new ErrorLocator(-1, -1,
+					XMLUtils.buildXPointer(link)));
+		}
+		Node viewRefresh = link.getElementsByTagNameNS(KML2.NS_NAME,
+				"viewRefreshTime").item(0);
+		if (null != viewRefresh
+				&& Double.parseDouble(viewRefresh.getTextContent()) <= 0) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.CONSTRAINT_VIOLATION,
+					"kml:viewRefreshTime > 0"), new ErrorLocator(-1, -1,
+					XMLUtils.buildXPointer(link)));
+		}
+		Node viewBound = link.getElementsByTagNameNS(KML2.NS_NAME,
+				"viewBoundScale").item(0);
+		if (null != viewBound
+				&& Double.parseDouble(viewBound.getTextContent()) <= 0) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.CONSTRAINT_VIOLATION,
+					"kml:viewBoundScale > 0"), new ErrorLocator(-1, -1,
+					XMLUtils.buildXPointer(link)));
+		}
+	}
+
+	/**
+	 * Determines if the given content type is compatible with any of the media
+	 * types that are deemed to be acceptable. Parameters are ignored.
 	 * 
 	 * @param contentType
 	 *            A String denoting a content type.
@@ -167,6 +203,12 @@ public class LinkValidator {
 		MediaType type = MediaType.valueOf(contentType);
 		for (MediaType mediaType : acceptableTypes) {
 			if (mediaType.isCompatible(type)) {
+				isAcceptable = true;
+				break;
+			}
+			// special case for XML media types (may have '+xml' suffix)
+			if (mediaType.getSubtype().endsWith("xml")
+					&& type.getSubtype().endsWith("xml")) {
 				isAcceptable = true;
 				break;
 			}

@@ -80,4 +80,12 @@ public class VerifyLinkValidator {
 				iut.getErrors().contains("Unacceptable media type"));
 	}
 
+	@Test
+	public void acceptableXmlMediaType() {
+		MediaType xmlType = MediaType.APPLICATION_XML_TYPE;
+		LinkValidator iut = new LinkValidator(xmlType);
+		boolean result = iut.isAcceptable("application/atom+xml", xmlType);
+		assertTrue(result);
+	}
+
 }
