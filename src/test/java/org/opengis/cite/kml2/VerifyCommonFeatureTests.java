@@ -1,4 +1,4 @@
-package org.opengis.cite.kml2.c1;
+package org.opengis.cite.kml2;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -15,17 +15,15 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.opengis.cite.kml2.KML2;
-import org.opengis.cite.kml2.SuiteAttribute;
 import org.testng.ISuite;
 import org.testng.ITestContext;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- * Verifies the behavior of the KmlFeatureTests class.
+ * Verifies the behavior of the CommonFeatureTests class.
  */
-public class VerifyKmlFeatureTests {
+public class VerifyCommonFeatureTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
 	private static DocumentBuilder docBuilder;
@@ -34,7 +32,7 @@ public class VerifyKmlFeatureTests {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
-	public VerifyKmlFeatureTests() {
+	public VerifyCommonFeatureTests() {
 	}
 
 	@BeforeClass
@@ -54,7 +52,7 @@ public class VerifyKmlFeatureTests {
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		when(suite.getAttribute(SuiteAttribute.SHARED_STYLES.getName()))
 				.thenReturn(Collections.singleton("sn_blue-dot_copy3"));
-		KmlFeatureTests iut = new KmlFeatureTests();
+		CommonFeatureTests iut = new CommonFeatureTests();
 		iut.initCommonFixture(testContext);
 		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
 				"Placemark"));
@@ -69,7 +67,7 @@ public class VerifyKmlFeatureTests {
 		Document doc = docBuilder.parse(url.toString());
 		doc.setDocumentURI(url.toString());
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
-		KmlFeatureTests iut = new KmlFeatureTests();
+		CommonFeatureTests iut = new CommonFeatureTests();
 		iut.initCommonFixture(testContext);
 		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
 				"Placemark"));
@@ -85,7 +83,7 @@ public class VerifyKmlFeatureTests {
 		Document doc = docBuilder.parse(url.toString());
 		doc.setDocumentURI(url.toString());
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
-		KmlFeatureTests iut = new KmlFeatureTests();
+		CommonFeatureTests iut = new CommonFeatureTests();
 		iut.initCommonFixture(testContext);
 		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
 				"Placemark"));
@@ -101,7 +99,7 @@ public class VerifyKmlFeatureTests {
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		when(suite.getAttribute(SuiteAttribute.SHARED_STYLES.getName()))
 				.thenReturn(Collections.singleton("no-match"));
-		KmlFeatureTests iut = new KmlFeatureTests();
+		CommonFeatureTests iut = new CommonFeatureTests();
 		iut.initCommonFixture(testContext);
 		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
 				"Placemark"));

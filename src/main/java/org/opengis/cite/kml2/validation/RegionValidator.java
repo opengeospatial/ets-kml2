@@ -18,10 +18,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Checks that the content of a kml:Region element satisfies all applicable
- * constraints. The relevant type definition is shown below (with extension
- * points omitted); the spatial extent of the region must be specified using a
- * kml:LatLonAltBox element.
+ * The relevant type definition is shown below (with extension points omitted);
+ * the spatial extent of the region must be specified using a kml:LatLonAltBox
+ * element.
  * 
  * <pre>
  * {@literal

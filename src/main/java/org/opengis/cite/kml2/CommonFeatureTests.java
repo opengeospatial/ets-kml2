@@ -1,4 +1,4 @@
-package org.opengis.cite.kml2.c1;
+package org.opengis.cite.kml2;
 
 import java.io.IOException;
 import java.net.URI;
@@ -6,12 +6,6 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.opengis.cite.kml2.CommonFixture;
-import org.opengis.cite.kml2.ETSAssert;
-import org.opengis.cite.kml2.ErrorMessage;
-import org.opengis.cite.kml2.ErrorMessageKeys;
-import org.opengis.cite.kml2.KML2;
-import org.opengis.cite.kml2.SuiteAttribute;
 import org.opengis.cite.kml2.util.URIUtils;
 import org.opengis.cite.kml2.validation.RegionValidator;
 import org.testng.Assert;
@@ -31,12 +25,12 @@ import org.xml.sax.SAXException;
  * 
  * @see "OGC 14-068r1, OGC KML 2.3 - Abstract Test Suite: Conformance Level 1"
  */
-public class KmlFeatureTests extends CommonFixture {
+public class CommonFeatureTests extends CommonFixture {
 
 	private Set<String> sharedStyles;
 	private RegionValidator regionValidator;
 
-	public KmlFeatureTests() {
+	public CommonFeatureTests() {
 		this.regionValidator = new RegionValidator();
 	}
 
@@ -57,7 +51,7 @@ public class KmlFeatureTests extends CommonFixture {
 	}
 
 	/**
-	 * Checks that a kml:styleUrl element satisfies all of the following
+	 * [Test] Checks that a kml:styleUrl element satisfies all of the following
 	 * constraints:
 	 * <ol>
 	 * <li>its value is a valid relative or absolute URL that refers to a shared
@@ -107,6 +101,12 @@ public class KmlFeatureTests extends CommonFixture {
 		}
 	}
 
+	/**
+	 * [Test] Checks that the content of a kml:Region element satisfies all
+	 * applicable constraints.
+	 * 
+	 * @see RegionValidator
+	 */
 	@Test(description = "ATC-108")
 	public void validRegion() {
 		if (null == this.targetElements) {

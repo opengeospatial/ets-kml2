@@ -57,7 +57,7 @@ public class VerifyLinkValidator {
 	}
 
 	@Test
-	public void linkReferentNotFound() throws SAXException, IOException {
+	public void localReferentNotFound() throws SAXException, IOException {
 		URL url = this.getClass().getResource("/links/Link-001.xml");
 		Document link = docBuilder.parse(url.toString());
 		MediaType imageType = MediaType.valueOf("model/*");
@@ -69,23 +69,20 @@ public class VerifyLinkValidator {
 	}
 
 	@Test
-	public void unacceptableMediaType() throws SAXException, IOException {
-		URL url = this.getClass().getResource("/links/Icon-002.xml");
-		Document link = docBuilder.parse(url.toString());
-		MediaType imageType = MediaType.valueOf("image/svg+xml");
-		LinkValidator iut = new LinkValidator(imageType);
-		boolean isValid = iut.isValid(link.getDocumentElement());
-		assertFalse("Expected invalid Link.", isValid);
-		assertTrue("Unexpected error message.",
-				iut.getErrors().contains("Unacceptable media type"));
-	}
-
-	@Test
 	public void acceptableXmlMediaType() {
 		MediaType xmlType = MediaType.APPLICATION_XML_TYPE;
 		LinkValidator iut = new LinkValidator(xmlType);
 		boolean result = iut.isAcceptable("application/atom+xml", xmlType);
 		assertTrue(result);
+	}
+
+	@Test
+	public void generalXmlMediaTypeIsUnacceptable() {
+		MediaType atomMediaType = MediaType.APPLICATION_ATOM_XML_TYPE;
+		LinkValidator iut = new LinkValidator(atomMediaType);
+		// general type is not substitutable for specific subtype
+		boolean result = iut.isAcceptable("application/xml", atomMediaType);
+		assertFalse("Expected invalid Link.", result);
 	}
 
 }

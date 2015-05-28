@@ -100,28 +100,47 @@ public class LinkValidator {
 	public boolean isValid(Node node) {
 		errHandler.reset();
 		Element link = (Element) node;
+		checkLinkReferent(link);
+		checkLinkProperties(link);
+		return !errHandler.errorsDetected();
+	}
+
+	/**
+	 * Checks that the link URI (href value) refers to an accessible resource
+	 * whose content type is compatible with an acceptable media type.
+	 * 
+	 * @param link
+	 *            An Element representing a link (of type kml:LinkType).
+	 */
+	void checkLinkReferent(Element link) {
 		NodeList hrefList = link.getElementsByTagNameNS(KML2.NS_NAME, "href");
 		if (hrefList.getLength() == 0) {
 			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
 					ErrorMessageKeys.MISSING_INFOSET_ITEM, "kml:href"),
 					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(link)));
-			return false;
+			return;
 		}
 		URI uri = null;
 		try {
 			uri = URI.create(hrefList.item(0).getTextContent());
 			if (!uri.isAbsolute()) {
-				uri = URIUtils.resolveRelativeURI(node.getOwnerDocument()
+				uri = URIUtils.resolveRelativeURI(link.getOwnerDocument()
 						.getBaseURI(), uri.toString());
 			}
 			URLConnection urlConn = uri.toURL().openConnection();
 			if (!uri.getScheme().equalsIgnoreCase("http")) {
 				try (InputStream inStream = urlConn.getInputStream()) {
-					// don't try to read content
+					// don't try to read file content
 				}
 			} else {
 				HttpURLConnection httpConn = (HttpURLConnection) urlConn;
 				httpConn.setRequestMethod("HEAD");
+				StringBuilder acceptHeaderVal = new StringBuilder();
+				for (MediaType type : mediaTypes) {
+					acceptHeaderVal.append(type).append(',');
+				}
+				httpConn.setRequestProperty("Accept",
+						acceptHeaderVal.toString());
 				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
 					errHandler.addError(
 							ErrorSeverity.ERROR,
@@ -130,21 +149,22 @@ public class LinkValidator {
 							new ErrorLocator(-1, -1, XMLUtils
 									.buildXPointer(link)));
 				}
-			}
-			String contentType = urlConn.getContentType();
-			if (!isAcceptable(contentType, mediaTypes)) {
-				errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
-						ErrorMessageKeys.UNACCEPTABLE_MEDIA_TYPE, contentType,
-						Arrays.toString(mediaTypes)), new ErrorLocator(-1, -1,
-						XMLUtils.buildXPointer(link)));
+				String contentType = urlConn.getContentType();
+				if (!isAcceptable(contentType, mediaTypes)) {
+					errHandler.addError(
+							ErrorSeverity.ERROR,
+							ErrorMessage.format(
+									ErrorMessageKeys.UNACCEPTABLE_MEDIA_TYPE,
+									contentType, Arrays.toString(mediaTypes)),
+							new ErrorLocator(-1, -1, XMLUtils
+									.buildXPointer(link)));
+				}
 			}
 		} catch (Exception e) {
 			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
 					ErrorMessageKeys.URI_NOT_ACCESSIBLE, uri, e.getMessage()),
 					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(link)));
 		}
-		checkLinkProperties(link);
-		return !errHandler.errorsDetected();
 	}
 
 	/**
@@ -187,7 +207,11 @@ public class LinkValidator {
 
 	/**
 	 * Determines if the given content type is compatible with any of the media
-	 * types that are deemed to be acceptable. Parameters are ignored.
+	 * types that are deemed to be acceptable. Parameters are ignored. If a
+	 * general XML media type (application/xml or text/xml) is acceptable, then
+	 * a more specific XML-based subtype (with the '+xml' suffix) will be
+	 * accepted; however, the converse will be false (i.e. a more general type
+	 * is not necessarily substitutable for a specific subtype).
 	 * 
 	 * @param contentType
 	 *            A String denoting a content type.
@@ -201,13 +225,13 @@ public class LinkValidator {
 		}
 		boolean isAcceptable = false;
 		MediaType type = MediaType.valueOf(contentType);
-		for (MediaType mediaType : acceptableTypes) {
-			if (mediaType.isCompatible(type)) {
+		for (MediaType acceptType : acceptableTypes) {
+			if (acceptType.isCompatible(type)) {
 				isAcceptable = true;
 				break;
 			}
-			// special case for XML media types (may have '+xml' suffix)
-			if (mediaType.getSubtype().endsWith("xml")
+			// special case for XML-based media types
+			if (acceptType.getSubtype().equals("xml")
 					&& type.getSubtype().endsWith("xml")) {
 				isAcceptable = true;
 				break;
