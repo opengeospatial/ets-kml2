@@ -41,4 +41,5 @@ public class ErrorMessageKeys {
 	public static final String EMPTY_TIMESTAMP = "EmptyTimeStamp";
 	public static final String SHARED_STYLE_NOT_FOUND = "SharedStyleNotFound";
 	public static final String CONSTRAINT_VIOLATION = "ConstraintViolation";
+	public static final String NO_CONTENT = "NoContent";
 }
