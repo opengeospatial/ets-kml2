@@ -49,16 +49,18 @@ public class CommonFixture {
 	}
 
 	/**
-	 * Finds KML elements by name. Only elements that occur outside of an update
-	 * context are sought; that is they do not have kml:Update as an ancestor.
+	 * Finds KML elements (of type kml:AbstractObjectType) by name. Only
+	 * elements that occur outside of an update context are sought; that is, the
+	 * element does not have a <code>targetId</code> attribute.
 	 * 
 	 * @param localName
 	 *            The local name of some KML element.
+	 * 
+	 * @see "OGC KML 2.3, 13.5: kml:Update"
 	 */
 	protected void findTargetElements(String localName) {
 		try {
-			String xpath = String.format("//kml:%s[not(ancestor::kml:Update)]",
-					localName);
+			String xpath = String.format("//kml:%s[not(@targetId)]", localName);
 			this.targetElements = XMLUtils.evaluateXPath(this.kmlDoc, xpath,
 					null);
 		} catch (XPathExpressionException xpe) {

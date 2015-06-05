@@ -1,8 +1,10 @@
 package org.opengis.cite.kml2.validation;
 
+import org.opengis.cite.kml2.AltitudeMode;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
+import org.opengis.cite.kml2.util.KMLUtils;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.validation.ErrorLocator;
 import org.opengis.cite.validation.ErrorSeverity;
@@ -23,8 +25,8 @@ import org.w3c.dom.NodeList;
  *
  * The content of a kml:coordinates element is a list of white space-separated
  * 2D or 3D tuples that contain comma-separated decimal values (lon,lat[,hgt]).
- * The relevant schema components are shown below. The relevant schema components
- * are shown below.
+ * The relevant schema components are shown below. The relevant schema
+ * components are shown below.
  * 
  * <pre>
  * {@literal
@@ -45,6 +47,9 @@ public class CoordinatesValidator {
 
 	ValidationErrorHandler errHandler;
 
+	/**
+	 * Default constructor.
+	 */
 	public CoordinatesValidator() {
 		this.errHandler = new ValidationErrorHandler();
 	}
@@ -126,7 +131,16 @@ public class CoordinatesValidator {
 			String[] tuple = tuples[i].trim().split(",");
 			if (tuple.length < 2 || tuple.length > 3) {
 				errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
-						ErrorMessageKeys.COORD_DIM, i, tuple.length),
+						ErrorMessageKeys.COORD_DIM, i, "2-3", tuple.length),
+						new ErrorLocator(-1, -1, XMLUtils.buildXPointer(node)));
+				continue;
+			}
+			// ATC-202
+			AltitudeMode altMode = KMLUtils.getAltitudeMode(elem);
+			if (altMode != AltitudeMode.CLAMP_TO_GROUND && tuple.length != 3) {
+				errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+						ErrorMessageKeys.COORD_DIM, i,
+						"3 (altitudeMode is not 'clampToGround')", tuple.length),
 						new ErrorLocator(-1, -1, XMLUtils.buildXPointer(node)));
 				continue;
 			}

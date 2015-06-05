@@ -21,7 +21,11 @@ import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmValue;
 
 import org.apache.commons.io.IOUtils;
+import org.opengis.cite.kml2.AltitudeMode;
+import org.opengis.cite.kml2.KML2;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
@@ -150,6 +154,39 @@ public class KMLUtils {
 			styleIdSet.add(id);
 		}
 		return styleIdSet;
+	}
+
+	/**
+	 * Gets the altitude mode for the given KML element. The schema component
+	 * kml:AltitudeModeGroup includes the elements kml:altitudeMode and
+	 * kml:seaFloorAltitudeMode, for which the following values are declared:
+	 * <ul>
+	 * <li>clampToGround (default)</li>
+	 * <li>relativeToGround</li>
+	 * <li>absolute</li>
+	 * <li>clampToSeaFloor</li>
+	 * <li>relativeToSeaFloor</li>
+	 * </ul>
+	 * 
+	 * @param element
+	 *            A KML element.
+	 * @return The AltitudeMode that applies this element, or the default if not
+	 *         explicitly set.
+	 */
+	public static AltitudeMode getAltitudeMode(Element element) {
+		AltitudeMode altMode = AltitudeMode.CLAMP_TO_GROUND;
+		Node altitudeMode = element.getElementsByTagNameNS(KML2.NS_NAME,
+				"altitudeMode").item(0);
+		Node seafloorAltitudeMode = element.getElementsByTagNameNS(
+				KML2.NS_NAME, "seaFloorAltitudeMode").item(0);
+		if (null != seafloorAltitudeMode) {
+			altMode = AltitudeMode.fromString(seafloorAltitudeMode
+					.getTextContent().trim());
+		} else if (null != altitudeMode) {
+			altMode = AltitudeMode.fromString(altitudeMode.getTextContent()
+					.trim());
+		}
+		return altMode;
 	}
 
 }

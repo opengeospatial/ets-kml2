@@ -62,5 +62,4 @@ public class PointTests extends CommonFixture {
 							jtsPoint.toText()));
 		}
 	}
-
 }

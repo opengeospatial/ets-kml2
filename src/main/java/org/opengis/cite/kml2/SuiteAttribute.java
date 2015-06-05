@@ -36,7 +36,7 @@ public enum SuiteAttribute {
 	 */
 	TEST_SUBJECT("testSubject", Document.class),
 	/**
-	 * An integer (1-3) indicating the level of conformance assesment.
+	 * An integer (1-3) indicating the level of conformance assessment.
 	 */
 	LEVEL("level", Integer.class),
 	/**

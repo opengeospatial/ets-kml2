@@ -67,4 +67,18 @@ public class VerifyPointTests {
 		iut.validPointCoordinates();
 	}
 
+	@Test
+	public void invalid2DPointRelativeToGround() throws SAXException,
+			IOException {
+		thrown.expect(AssertionError.class);
+		thrown.expectMessage("altitudeMode is not 'clampToGround'");
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
+				"/geom/PointRelativeToGround.xml"));
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		PointTests iut = new PointTests();
+		iut.initCommonFixture(testContext);
+		iut.findPointElements();
+		iut.validPointCoordinates();
+	}
+
 }
