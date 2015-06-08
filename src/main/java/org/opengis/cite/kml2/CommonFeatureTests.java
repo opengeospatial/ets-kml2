@@ -119,7 +119,8 @@ public class CommonFeatureTests extends CommonFixture {
 			if (region.getLength() == 0) {
 				continue;
 			}
-			Assert.assertTrue(regionValidator.validExtent(region.item(0)),
+			Assert.assertTrue(
+					regionValidator.validateRegionExtent(region.item(0)),
 					regionValidator.getErrors());
 		}
 

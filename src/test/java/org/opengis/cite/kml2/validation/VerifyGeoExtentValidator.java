@@ -1,6 +1,8 @@
 package org.opengis.cite.kml2.validation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -13,15 +15,13 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.opengis.cite.kml2.KML2;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
- * Verifies the behavior of the RegionValidator class.
+ * Verifies the behavior of the GeoExtentValidator class.
  */
-public class VerifyRegionValidator {
+public class VerifyGeoExtentValidator {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -36,34 +36,33 @@ public class VerifyRegionValidator {
 
 	@Test
 	public void validRegionExtent() throws SAXException, IOException {
-		URL url = this.getClass().getResource("/kml23/Region-001.xml");
-		Document region = docBuilder.parse(url.toString());
-		RegionValidator iut = new RegionValidator();
-		boolean isValid = iut.validExtent(region.getDocumentElement());
-		assertTrue("Expected valid Region.", isValid);
+		URL url = this.getClass().getResource("/extents/Box-001.xml");
+		Document box = docBuilder.parse(url.toString());
+		GeoExtentValidator iut = new GeoExtentValidator();
+		boolean isValid = iut.validateBox(box.getDocumentElement());
+		assertTrue("Expected valid LatLonAltBox.", isValid);
 		assertTrue("Expected no errors.", iut.getErrors().isEmpty());
 	}
 
 	@Test
 	public void invalidRegionExtent_nonuniqueLongitudes() throws SAXException,
 			IOException {
-		URL url = this.getClass().getResource("/kml23/Region-002.xml");
-		Document region = docBuilder.parse(url.toString());
-		RegionValidator iut = new RegionValidator();
-		assertFalse("Expected invalid Region.",
-				iut.validExtent(region.getDocumentElement()));
+		URL url = this.getClass().getResource("/extents/Box-002.xml");
+		Document box = docBuilder.parse(url.toString());
+		GeoExtentValidator iut = new GeoExtentValidator();
+		assertFalse("Expected invalid LatLonAltBox.",
+				iut.validateBox(box.getDocumentElement()));
 		assertTrue("Unexpected error message.",
 				iut.getErrors().contains("uniqueness"));
 	}
 
 	@Test
 	public void getLatLonAltBoxProperties() throws SAXException, IOException {
-		URL url = this.getClass().getResource("/kml23/Region-001.xml");
-		Document region = docBuilder.parse(url.toString());
-		Node box = region.getElementsByTagNameNS(KML2.NS_NAME, "LatLonAltBox")
-				.item(0);
-		RegionValidator iut = new RegionValidator();
-		Map<String, Double> boxProperties = iut.getNumericProperties(box, null);
+		URL url = this.getClass().getResource("/extents/Box-001.xml");
+		Document box = docBuilder.parse(url.toString());
+		GeoExtentValidator iut = new GeoExtentValidator();
+		Map<String, Double> boxProperties = iut.getNumericProperties(
+				box.getDocumentElement(), null);
 		assertEquals("Unexpected value for 'east' edge", 28.125,
 				boxProperties.get("east"), 0.001);
 	}

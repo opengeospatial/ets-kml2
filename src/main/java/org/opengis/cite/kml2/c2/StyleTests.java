@@ -31,8 +31,9 @@ public class StyleTests extends CommonFixture {
 
 	/**
 	 * [Test] Verifies that if a Style has a child PolyStyle element, it is not
-	 * empty. In particular, the PolyStyle contains at least one of the
-	 * following elements: kml:color, kml:colorMode, kml:fill, or kml:outline.
+	 * empty. In particular, the PolyStyle must contain at least one of the
+	 * following KML elements: kml:color, kml:colorMode, kml:fill, or
+	 * kml:outline.
 	 */
 	@Test(description = "ATC-201")
 	public void polyStyleNotEmpty() {

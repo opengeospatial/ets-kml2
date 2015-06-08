@@ -1,6 +1,7 @@
 package org.opengis.cite.kml2;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
@@ -49,27 +50,35 @@ public class CommonFixture {
 	}
 
 	/**
-	 * Finds KML elements (of type kml:AbstractObjectType) by name. Only
+	 * Finds KML elements (of type kml:AbstractObjectType) by (local) name. Only
 	 * elements that occur outside of an update context are sought; that is, the
 	 * element does not have a <code>targetId</code> attribute.
 	 * 
-	 * @param localName
-	 *            The local name of some KML element.
+	 * @param localNames
+	 *            A list of KML element names.
 	 * 
 	 * @see "OGC KML 2.3, 13.5: kml:Update"
 	 */
-	protected void findTargetElements(String localName) {
+	protected void findTargetElements(String... localNames) {
+		StringBuilder xpath = new StringBuilder();
+		String[] elemNames = localNames;
+		for (int i = 0; i < elemNames.length; i++) {
+			xpath.append(String
+					.format("//kml:%s[not(@targetId)]", elemNames[i]));
+			if (i < elemNames.length - 1) {
+				xpath.append(" | ");
+			}
+		}
 		try {
-			String xpath = String.format("//kml:%s[not(@targetId)]", localName);
-			this.targetElements = XMLUtils.evaluateXPath(this.kmlDoc, xpath,
-					null);
+			this.targetElements = XMLUtils.evaluateXPath(this.kmlDoc,
+					xpath.toString(), null);
 		} catch (XPathExpressionException xpe) {
 			throw new AssertionError(xpe);
 		}
 		if (this.targetElements.getLength() == 0) {
 			throw new SkipException(String.format(
-					"No kml:%s elements found outside of update context.",
-					localName));
+					"No KML elements (%s) found outside of update context.",
+					Arrays.toString(elemNames)));
 		}
 	}
 
