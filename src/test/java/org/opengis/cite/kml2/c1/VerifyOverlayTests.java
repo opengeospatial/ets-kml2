@@ -57,4 +57,29 @@ public class VerifyOverlayTests {
 		iut.overlayIcon();
 	}
 
+	@Test
+	public void quadBoundaryIsNotCCW() throws SAXException, IOException {
+		thrown.expect(AssertionError.class);
+		thrown.expectMessage("is not oriented counter-clockwise");
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
+				"/kml23/GroundOverlay-001.xml"));
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		OverlayTests iut = new OverlayTests();
+		iut.initCommonFixture(testContext);
+		iut.findOverlayElements();
+		iut.groundOverlayExtent();
+	}
+
+	@Test
+	public void quadIsNotConvex() throws SAXException, IOException {
+		thrown.expect(AssertionError.class);
+		thrown.expectMessage("is not convex");
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
+				"/kml23/GroundOverlay-002.xml"));
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		OverlayTests iut = new OverlayTests();
+		iut.initCommonFixture(testContext);
+		iut.findOverlayElements();
+		iut.groundOverlayExtent();
+	}
 }

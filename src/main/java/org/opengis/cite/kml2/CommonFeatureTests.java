@@ -20,8 +20,11 @@ import org.xml.sax.SAXException;
 /**
  * Checks constraints that apply to any KML feature (an element that substitutes
  * directly or indirectly for kml:AbstractFeatureGroup).
- * 
- * ATC-106,ATC-108
+ * <ul>
+ * <li>ATC-106</li>
+ * <li>ATC-108</li>
+ * <li>ATC-111</li>
+ * </ul>
  * 
  * @see "OGC 14-068r1, OGC KML 2.3 - Abstract Test Suite: Conformance Level 1"
  */
@@ -107,7 +110,7 @@ public class CommonFeatureTests extends CommonFixture {
 	 * 
 	 * @see RegionValidator
 	 */
-	@Test(description = "ATC-108")
+	@Test(description = "ATC-108, ATC-111")
 	public void validRegion() {
 		if (null == this.targetElements) {
 			return;

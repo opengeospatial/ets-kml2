@@ -3,12 +3,17 @@ package org.opengis.cite.kml2.c1;
 import javax.ws.rs.core.MediaType;
 
 import org.opengis.cite.kml2.CommonFixture;
+import org.opengis.cite.kml2.ErrorMessage;
+import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
+import org.opengis.cite.kml2.util.XMLUtils;
+import org.opengis.cite.kml2.validation.GeoExtentValidator;
 import org.opengis.cite.kml2.validation.LinkValidator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -32,9 +37,11 @@ import org.w3c.dom.NodeList;
 public class OverlayTests extends CommonFixture {
 
 	private LinkValidator linkValidator;
+	private GeoExtentValidator geoExtentValidator;
 
 	public OverlayTests() {
 		this.linkValidator = new LinkValidator(MediaType.valueOf("image/*"));
+		this.geoExtentValidator = new GeoExtentValidator();
 	}
 
 	/**
@@ -66,6 +73,35 @@ public class OverlayTests extends CommonFixture {
 				Assert.assertTrue(linkValidator.isValid(icon.item(0)),
 						linkValidator.getErrors());
 			}
+		}
+	}
+
+	/**
+	 * [Test] Verifies that a GroundOverlay element has a valid geographic
+	 * extent (kml:LatLonBox or kml:LatLonQuad).
+	 * 
+	 * @see "[OGC 12-007r2] OGC KML 2.3, 6.3.4: kml:GroundOverlay and kml:Region"
+	 * @see "[OGC 12-007r2] OGC KML 2.3, 11.2: kml:GroundOverlay"
+	 */
+	@Test(description = "ATC-111")
+	public void groundOverlayExtent() {
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element overlay = (Element) targetElements.item(i);
+			if (!overlay.getLocalName().equals("GroundOverlay")) {
+				continue;
+			}
+			Node extent = overlay.getElementsByTagNameNS(KML2.NS_NAME,
+					"LatLonBox").item(0);
+			if (null == extent) {
+				extent = overlay.getElementsByTagNameNS(KML2.NS_NAME,
+						"LatLonQuad").item(0);
+			}
+			Assert.assertNotNull(extent, ErrorMessage.format(
+					ErrorMessageKeys.MISSING_INFOSET_ITEM,
+					"kml:LatLonBox or kml:LatLonQuad",
+					XMLUtils.buildXPointer(overlay)));
+			Assert.assertTrue(geoExtentValidator.validGeoExtent(extent),
+					geoExtentValidator.getErrors());
 		}
 	}
 

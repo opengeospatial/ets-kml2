@@ -57,6 +57,19 @@ public class VerifyGeoExtentValidator {
 	}
 
 	@Test
+	public void invalidQuadOrientation() throws SAXException, IOException {
+		URL url = this.getClass().getResource("/extents/LatLonQuad-001.xml");
+		Document quad = docBuilder.parse(url.toString());
+		GeoExtentValidator iut = new GeoExtentValidator();
+		assertFalse("Expected invalid LatLonQuad.",
+				iut.validateQuadrilateral(quad.getDocumentElement()));
+		assertTrue(
+				"Unexpected error message.",
+				iut.getErrors().contains(
+						"boundary ring is not oriented counter-clockwise"));
+	}
+
+	@Test
 	public void getLatLonAltBoxProperties() throws SAXException, IOException {
 		URL url = this.getClass().getResource("/extents/Box-001.xml");
 		Document box = docBuilder.parse(url.toString());

@@ -9,13 +9,19 @@ import javax.xml.xpath.XPathConstants;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
+import org.opengis.cite.kml2.util.JTSGeometryBuilder;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.validation.ErrorLocator;
 import org.opengis.cite.validation.ErrorSeverity;
 import org.opengis.cite.validation.ValidationErrorHandler;
+import org.testng.Assert;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.vividsolutions.jts.algorithm.CGAlgorithms;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * Validates the content of an element that represents a geographic extent (that
@@ -39,6 +45,7 @@ public class GeoExtentValidator {
 	private static final String BOX_MAX_ALT = "maxAltitude";
 	private static final Map<String, Double> DEFAULT_BOX = initDefaultBox();
 	private ValidationErrorHandler errHandler;
+	private CoordinatesValidator coordsValidator;
 
 	private static Map<String, Double> initDefaultBox() {
 		Map<String, Double> defaultBox = new HashMap<>();
@@ -56,6 +63,7 @@ public class GeoExtentValidator {
 	 */
 	public GeoExtentValidator() {
 		this.errHandler = new ValidationErrorHandler();
+		this.coordsValidator = new CoordinatesValidator();
 	}
 
 	/**
@@ -80,8 +88,63 @@ public class GeoExtentValidator {
 		boolean isValid = false;
 		if (node.getLocalName().endsWith("Box")) {
 			isValid = validateBox(node);
+		} else {
+			isValid = validateQuadrilateral(node);
 		}
 		return isValid;
+	}
+
+	/**
+	 * Checks that a kml:LatLonQuad element has valid coordinates and satisfies
+	 * the following additional constraints:
+	 * <ol>
+	 * <li>the four coordinate tuples are specified in counter-clockwise order
+	 * (the interior is to the left of the boundary curve), with the first
+	 * coordinate corresponding to the lower-left corner of the overlayed image;
+	 * </li>
+	 * <li>the quadrilateral is convex (every interior angle <= 180 degrees).</li>
+	 * </ol>
+	 * 
+	 * @see "ATC-103: Valid geometry coordinates"
+	 * @see "ATC-149: LatLonQuad coordinates"
+	 */
+	// @Test(description = "ATC-103, ATC-149")
+	public boolean validateQuadrilateral(Node latlonQuad) {
+		JTSGeometryBuilder jtsBuilder = new JTSGeometryBuilder();
+		Polygon crsPolygon = jtsBuilder.buildPolygon(new Envelope(-180, 180,
+				-90, 90));
+		Element quad = (Element) latlonQuad;
+		Assert.assertTrue(coordsValidator.isValid(quad),
+				coordsValidator.getErrors());
+		Polygon jtsPolygon = null;
+		try {
+			Node coords = quad.getElementsByTagNameNS(KML2.NS_NAME,
+					"coordinates").item(0);
+			jtsPolygon = jtsBuilder.buildPolygonFromCoordinates(coords);
+		} catch (IllegalArgumentException ex) {
+			errHandler.addError(
+					ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.POLYGON_BOUNDARY,
+							ex.getMessage()),
+					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(quad)));
+		}
+		if (!crsPolygon.covers(jtsPolygon)) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.OUTSIDE_CRS, jtsPolygon.toText()),
+					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(quad)));
+		}
+		if (!CGAlgorithms.isCCW(jtsPolygon.getCoordinates())) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.RING_NOT_CCW, jtsPolygon.toText()),
+					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(quad)));
+		}
+		// if convex, should be topologically equivalent to convex hull
+		if (!jtsPolygon.convexHull().equalsTopo(jtsPolygon)) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.QUAD_NOT_CONVEX, jtsPolygon.toText()),
+					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(quad)));
+		}
+		return !errHandler.errorsDetected();
 	}
 
 	/**
