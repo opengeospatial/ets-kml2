@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URLConnection;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import javax.ws.rs.core.MediaType;
 
@@ -15,6 +16,7 @@ import org.opengis.cite.kml2.util.URIUtils;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.validation.ErrorLocator;
 import org.opengis.cite.validation.ErrorSeverity;
+import org.opengis.cite.validation.ValidationError;
 import org.opengis.cite.validation.ValidationErrorHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -67,13 +69,22 @@ public class LinkValidator {
 	}
 
 	/**
-	 * Returns the error messages reported during the last call to
+	 * Returns all error messages reported during the last call to
 	 * <code>isValid</code>.
 	 * 
-	 * @return A String containing error messages (may be empty).
+	 * @return A String containing the reported error messages (may be empty).
 	 */
-	public String getErrors() {
+	public String getErrorMessages() {
 		return errHandler.toString();
+	}
+
+	/**
+	 * Returns the errors reported during the last call to <code>isValid</code>.
+	 * 
+	 * @return An iterator over the reported validation errors.
+	 */
+	public Iterator<ValidationError> getErrors() {
+		return errHandler.iterator();
 	}
 
 	/**
@@ -135,6 +146,7 @@ public class LinkValidator {
 			} else {
 				HttpURLConnection httpConn = (HttpURLConnection) urlConn;
 				httpConn.setRequestMethod("HEAD");
+				httpConn.setConnectTimeout(5000);
 				StringBuilder acceptHeaderVal = new StringBuilder();
 				for (MediaType type : mediaTypes) {
 					acceptHeaderVal.append(type).append(',');

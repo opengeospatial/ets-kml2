@@ -52,7 +52,7 @@ public class VerifyPolygonTests {
 		PolygonTests iut = new PolygonTests();
 		iut.initCommonFixture(testContext);
 		iut.findPolygonElements();
-		iut.validPolygonCoordinates();
+		iut.validPolygonBoundary();
 	}
 
 }

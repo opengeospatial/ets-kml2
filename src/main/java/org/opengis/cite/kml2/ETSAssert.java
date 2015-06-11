@@ -1,7 +1,5 @@
 package org.opengis.cite.kml2;
 
-import com.sun.jersey.api.client.ClientResponse;
-
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
@@ -18,6 +16,9 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import net.sf.saxon.value.BooleanValue;
+
+import org.opengis.cite.kml2.util.KMLUtils;
 import org.opengis.cite.kml2.util.NamespaceBindings;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.validation.SchematronValidator;
@@ -196,49 +197,49 @@ public class ETSAssert {
 	}
 
 	/**
-	 * Asserts that the given response message contains an OGC exception report.
-	 * The message body must contain an XML document that has a document element
-	 * with the following properties:
-	 *
-	 * <ul>
-	 * <li>[local name] = "ExceptionReport"</li>
-	 * <li>[namespace name] = "http://www.opengis.net/ows/2.0"</li>
-	 * </ul>
-	 *
-	 * @param rsp
-	 *            A ClientResponse object representing an HTTP response message.
-	 * @param exceptionCode
-	 *            The expected OGC exception code.
-	 * @param locator
-	 *            A case-insensitive string value expected to occur in the
-	 *            locator attribute (e.g. a parameter name); the attribute value
-	 *            will be ignored if the argument is null or empty.
+	 * Asserts that the value of the child element kml:altitudeMode is correct
+	 * according to the values of the kml:tessellate and kml:extrude elements.
+	 * 
+	 * @param kmlElement
+	 *            A KML (geometry) element.
+	 * 
+	 * @see "ATC-112: Geometry extrusion"
+	 * @see "ATC-113: Geometry tessellation"
 	 */
-	public static void assertExceptionReport(ClientResponse rsp,
-			String exceptionCode, String locator) {
-		Assert.assertEquals(rsp.getStatus(),
-				ClientResponse.Status.BAD_REQUEST.getStatusCode(),
-				ErrorMessage.get(ErrorMessageKeys.UNEXPECTED_STATUS));
-		Document doc = rsp.getEntity(Document.class);
-		String expr = String.format("//ows:Exception[@exceptionCode = '%s']",
-				exceptionCode);
-		NodeList nodeList = null;
-		try {
-			nodeList = XMLUtils.evaluateXPath(doc, expr, null);
-		} catch (XPathExpressionException xpe) {
-			// won't happen
+	public static void assertValidAltitudeMode(Element kmlElement) {
+		boolean tessellate = false;
+		Node tessellateNode = kmlElement.getElementsByTagNameNS(KML2.NS_NAME,
+				"tessellate").item(0);
+		if (null != tessellateNode) {
+			BooleanValue bool = (BooleanValue) BooleanValue
+					.fromString(tessellateNode.getTextContent());
+			tessellate = bool.getBooleanValue();
 		}
-		Assert.assertTrue(nodeList.getLength() > 0,
-				"Exception not found in response: " + expr);
-		if (null != locator && !locator.isEmpty()) {
-			Element exception = (Element) nodeList.item(0);
-			String locatorValue = exception.getAttribute("locator")
-					.toLowerCase();
-			Assert.assertTrue(locatorValue.contains(locator.toLowerCase()),
-					String.format(
-							"Expected locator attribute to contain '%s']",
-							locator));
+		boolean extrude = false;
+		Node extrudeNode = kmlElement.getElementsByTagNameNS(KML2.NS_NAME,
+				"extrude").item(0);
+		if (null != extrudeNode) {
+			BooleanValue bool = (BooleanValue) BooleanValue
+					.fromString(extrudeNode.getTextContent());
+			extrude = bool.getBooleanValue();
 		}
+		Assert.assertTrue(!tessellate || !extrude, ErrorMessage.format(
+				ErrorMessageKeys.CONSTRAINT_VIOLATION,
+				"kml:tessellate and kml:extrude cannot both be true.",
+				XMLUtils.buildXPointer(kmlElement)));
+		AltitudeMode altMode = KMLUtils.getAltitudeMode(kmlElement);
+		Assert.assertTrue(
+				!tessellate || altMode.equals(AltitudeMode.CLAMP_TO_GROUND),
+				ErrorMessage
+						.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
+								"kml:altitudeMode = 'clampToGround' when kml:tessellate is true.",
+								XMLUtils.buildXPointer(kmlElement)));
+		Assert.assertTrue(
+				!extrude || !altMode.equals(AltitudeMode.CLAMP_TO_GROUND),
+				ErrorMessage
+						.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
+								"kml:altitudeMode is not 'clampToGround' when kml:extrude is true.",
+								XMLUtils.buildXPointer(kmlElement)));
 	}
 
 }

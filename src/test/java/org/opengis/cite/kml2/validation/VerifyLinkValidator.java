@@ -42,7 +42,7 @@ public class VerifyLinkValidator {
 		LinkValidator iut = new LinkValidator(imageType);
 		assertTrue("Expected valid Link.",
 				iut.isValid(link.getDocumentElement()));
-		assertTrue("Expected no errors.", iut.getErrors().isEmpty());
+		assertTrue("Expected no errors.", iut.getErrors().hasNext());
 	}
 
 	@Test
@@ -53,7 +53,7 @@ public class VerifyLinkValidator {
 		LinkValidator iut = new LinkValidator(imageType);
 		boolean isValid = iut.isValid(link.getDocumentElement());
 		assertTrue("Expected valid Link.", isValid);
-		assertTrue("Expected no errors.", iut.getErrors().isEmpty());
+		assertFalse("Expected no errors.", iut.getErrors().hasNext());
 	}
 
 	@Test
@@ -64,8 +64,8 @@ public class VerifyLinkValidator {
 		LinkValidator iut = new LinkValidator(imageType);
 		boolean isValid = iut.isValid(link.getDocumentElement());
 		assertFalse("Expected invalid Link.", isValid);
-		assertTrue("Unexpected error message.",
-				iut.getErrors().contains("URI is not accessible"));
+		assertTrue("Unexpected error message.", iut.getErrorMessages()
+				.contains("URI is not accessible"));
 	}
 
 	@Test

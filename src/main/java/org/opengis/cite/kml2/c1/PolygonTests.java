@@ -3,6 +3,7 @@ package org.opengis.cite.kml2.c1;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.opengis.cite.kml2.CommonFixture;
+import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.util.JTSGeometryBuilder;
@@ -52,7 +53,7 @@ public class PolygonTests extends CommonFixture {
 	 * in the Polygon such that it lies within the exterior boundary.
 	 */
 	@Test(description = "ATC-103, ATC-117")
-	public void validPolygonCoordinates() {
+	public void validPolygonBoundary() {
 		JTSGeometryBuilder geomBuilder = new JTSGeometryBuilder();
 		Polygon crsPolygon = geomBuilder.buildPolygon(new Envelope(-180, 180,
 				-90, 90));
@@ -79,6 +80,19 @@ public class PolygonTests extends CommonFixture {
 			}
 			Assert.assertTrue(crsPolygon.covers(jtsPolygon), ErrorMessage
 					.format(ErrorMessageKeys.OUTSIDE_CRS, jtsPolygon.toText()));
+		}
+	}
+
+	/**
+	 * [Test] Verifies that a kml:Polygon element has a valid altitudeMode value
+	 * as determined by the values of its kml:extrude and kml:tessellate
+	 * elements.
+	 */
+	@Test(description = "ATC-112, ATC-113")
+	public void validAltitudeMode() {
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element polygon = (Element) targetElements.item(i);
+			ETSAssert.assertValidAltitudeMode(polygon);
 		}
 	}
 

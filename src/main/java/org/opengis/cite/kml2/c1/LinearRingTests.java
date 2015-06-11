@@ -1,6 +1,7 @@
 package org.opengis.cite.kml2.c1;
 
 import org.opengis.cite.kml2.CommonFixture;
+import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.util.JTSGeometryBuilder;
@@ -70,6 +71,19 @@ public class LinearRingTests extends CommonFixture {
 					crsPolygon.covers(jtsRing),
 					ErrorMessage.format(ErrorMessageKeys.OUTSIDE_CRS,
 							jtsRing.toText()));
+		}
+	}
+
+	/**
+	 * [Test] Verifies that a kml:LinearRing element has a valid altitudeMode
+	 * value as determined by the values of its kml:extrude and kml:tessellate
+	 * elements.
+	 */
+	@Test(description = "ATC-112, ATC-113")
+	public void validAltitudeMode() {
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element ring = (Element) targetElements.item(i);
+			ETSAssert.assertValidAltitudeMode(ring);
 		}
 	}
 

@@ -14,7 +14,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Implements tests that apply to overlay features (of type
@@ -63,15 +62,15 @@ public class OverlayTests extends CommonFixture {
 	 * @see "[OGC 12-007r1] OGC KML 2.3, 11.1: kml:AbstractOverlayGroup"
 	 * @see "[OGC 12-007r1] OGC KML 2.3, 11.1.3.3: kml:Icon"
 	 */
-	@Test(description = "ATC-110")
+	@Test(description = "ATC-110, ATC-118")
 	public void overlayIcon() {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element overlay = (Element) targetElements.item(i);
-			NodeList icon = overlay
-					.getElementsByTagNameNS(KML2.NS_NAME, "Icon");
-			if (icon.getLength() > 0) {
-				Assert.assertTrue(linkValidator.isValid(icon.item(0)),
-						linkValidator.getErrors());
+			Node icon = overlay.getElementsByTagNameNS(KML2.NS_NAME, "Icon")
+					.item(0);
+			if (null != icon) {
+				Assert.assertTrue(linkValidator.isValid(icon),
+						linkValidator.getErrorMessages());
 			}
 		}
 	}

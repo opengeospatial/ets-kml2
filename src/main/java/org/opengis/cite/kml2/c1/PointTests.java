@@ -1,6 +1,7 @@
 package org.opengis.cite.kml2.c1;
 
 import org.opengis.cite.kml2.CommonFixture;
+import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.util.JTSGeometryBuilder;
@@ -60,6 +61,18 @@ public class PointTests extends CommonFixture {
 					crsPolygon.covers(jtsPoint),
 					ErrorMessage.format(ErrorMessageKeys.OUTSIDE_CRS,
 							jtsPoint.toText()));
+		}
+	}
+
+	/**
+	 * [Test] Verifies that a kml:Point element has a valid altitudeMode value
+	 * as determined by the values of the child kml:extrude element.
+	 */
+	@Test(description = "ATC-112, ATC-113")
+	public void validAltitudeMode() {
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element point = (Element) targetElements.item(i);
+			ETSAssert.assertValidAltitudeMode(point);
 		}
 	}
 }

@@ -102,7 +102,7 @@ public class ModelTests extends CommonFixture {
 						XMLUtils.buildXPointer(model)));
 			}
 			Assert.assertTrue(linkValidator.isValid(link.item(0)),
-					linkValidator.getErrors());
+					linkValidator.getErrorMessages());
 		}
 	}
 

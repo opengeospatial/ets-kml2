@@ -65,7 +65,7 @@ public class NetworkLinkTests extends CommonFeatureTests {
 						XMLUtils.buildXPointer(networkLink)));
 			}
 			Assert.assertTrue(linkValidator.isValid(link.item(0)),
-					linkValidator.getErrors());
+					linkValidator.getErrorMessages());
 		}
 	}
 

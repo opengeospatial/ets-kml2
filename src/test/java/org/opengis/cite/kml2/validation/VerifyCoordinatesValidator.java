@@ -45,7 +45,7 @@ public class VerifyCoordinatesValidator {
 	@Test
 	public void validPoint() throws SAXException, IOException {
 		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml23/Point-001.xml"));
+				"/geom/Point-001.xml"));
 		CoordinatesValidator iut = new CoordinatesValidator();
 		assertTrue("Expected valid Point.",
 				iut.isValid(doc.getDocumentElement()));
@@ -55,7 +55,7 @@ public class VerifyCoordinatesValidator {
 	@Test
 	public void invalidLinearRing() throws SAXException, IOException {
 		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml23/LinearRing-001.xml"));
+				"/geom/LinearRing-001.xml"));
 		CoordinatesValidator iut = new CoordinatesValidator();
 		assertFalse("Expected invalid LinearRing.",
 				iut.isValid(doc.getDocumentElement()));
