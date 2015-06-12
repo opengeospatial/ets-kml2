@@ -82,4 +82,18 @@ public class VerifyOverlayTests {
 		iut.findOverlayElements();
 		iut.groundOverlayExtent();
 	}
+
+	@Test
+	public void photoOverlayHasIncompleteView() throws SAXException,
+			IOException {
+		thrown.expect(AssertionError.class);
+		thrown.expectMessage("2 schema validation error(s) detected");
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
+				"/features/PhotoOverlay-003.xml"));
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		OverlayTests iut = new OverlayTests();
+		iut.initCommonFixture(testContext);
+		iut.findOverlayElements();
+		iut.photoOverlayView();
+	}
 }

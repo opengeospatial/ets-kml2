@@ -517,4 +517,28 @@ public class XMLUtils {
 		}
 		return elements.item(0);
 	}
+
+	/**
+	 * Creates a DOM Document with the given Element as the document element. A
+	 * deep copy of the element is imported--the source element is not altered.
+	 *
+	 * @param elem
+	 *            An Element node.
+	 * @return A Document node.
+	 */
+	public static Document importElement(Element elem) {
+		javax.xml.parsers.DocumentBuilder docBuilder = null;
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
+			factory.setNamespaceAware(true);
+			docBuilder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException ex) {
+			LOGR.log(Level.WARNING, null, ex);
+		}
+		Document newDoc = docBuilder.newDocument();
+		Node newNode = newDoc.importNode(elem, true);
+		newDoc.appendChild(newNode);
+		return newDoc;
+	}
 }

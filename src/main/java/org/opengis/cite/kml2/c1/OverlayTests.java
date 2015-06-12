@@ -1,8 +1,12 @@
 package org.opengis.cite.kml2.c1;
 
+import java.net.URL;
+
 import javax.ws.rs.core.MediaType;
+import javax.xml.transform.dom.DOMSource;
 
 import org.opengis.cite.kml2.CommonFixture;
+import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
@@ -12,6 +16,7 @@ import org.opengis.cite.kml2.validation.LinkValidator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -104,4 +109,23 @@ public class OverlayTests extends CommonFixture {
 		}
 	}
 
+	/**
+	 * [Test] Verifies that a kml:PhotoOverlay feature has a valid field of
+	 * view. The child kml:ViewVolume element is defined by four planes, each of
+	 * which is specified by an angle relative to the view vector.
+	 */
+	@Test(description = "ATC-119")
+	public void photoOverlayView() {
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element overlay = (Element) targetElements.item(i);
+			if (!overlay.getLocalName().equals("PhotoOverlay")) {
+				continue;
+			}
+			URL schRef = this.getClass().getResource(
+					"/org/opengis/cite/kml2/sch/kml-overlay.sch");
+			// Not required if using schema-utils-1.7 or later
+			Document doc = XMLUtils.importElement(overlay);
+			ETSAssert.assertSchematronValid(schRef, new DOMSource(doc));
+		}
+	}
 }
