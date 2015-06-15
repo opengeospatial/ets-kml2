@@ -25,7 +25,7 @@ public class StyleTests extends CommonFixture {
 	 * are skipped.
 	 */
 	@BeforeClass
-	public void findModelElements() {
+	public void findStyleElements() {
 		findTargetElements("Style");
 	}
 

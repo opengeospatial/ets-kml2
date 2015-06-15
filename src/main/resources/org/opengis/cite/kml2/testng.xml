@@ -19,4 +19,9 @@
       <package name="org.opengis.cite.kml2.c2" />
     </packages>
   </test>
+  <test name="CL3">
+    <packages>
+      <package name="org.opengis.cite.kml2.c3" />
+    </packages>
+  </test>
 </suite>
