@@ -16,6 +16,7 @@ import org.w3c.dom.Node;
 
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
 /**
@@ -82,6 +83,26 @@ public class PlacemarkGeometryTests extends CommonFixture {
 			Assert.assertTrue(CGAlgorithms.isCCW(exteriorCoords), ErrorMessage
 					.format(ErrorMessageKeys.EXT_BOUNDARY_ORIENT,
 							XMLUtils.buildXPointer(polygonElem)));
+		}
+	}
+
+	/**
+	 * [Test] Verifies that a LinearRing is simple (does not cross itself).
+	 */
+	@Test(description = "ATC-302")
+	public void simpleRing() {
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element place = (Element) targetElements.item(i);
+			Node kmlRing = place.getElementsByTagNameNS(KML2.NS_NAME,
+					"LinearRing").item(0);
+			if (null == kmlRing) {
+				continue;
+			}
+			Element ringElem = (Element) kmlRing;
+			LinearRing ring = geomBuilder.buildLinearRing(ringElem);
+			Assert.assertTrue(ring.isSimple(), ErrorMessage.format(
+					ErrorMessageKeys.RING_NOT_SIMPLE,
+					XMLUtils.buildXPointer(ringElem)));
 		}
 	}
 }

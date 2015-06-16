@@ -43,7 +43,7 @@ public class VerifyPlacemarkGeometryTests {
 	}
 
 	@Test
-	public void validPolygonOrientation() throws SAXException, IOException {
+	public void invalidPolygonOrientation() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("Exterior boundary of polygon is not oriented CCW");
 		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
@@ -53,6 +53,19 @@ public class VerifyPlacemarkGeometryTests {
 		iut.initCommonFixture(testContext);
 		iut.findPlacemarks();
 		iut.polygonBoundaryOrientation();
+	}
+
+	@Test
+	public void ringIsNotSimple() throws SAXException, IOException {
+		thrown.expect(AssertionError.class);
+		thrown.expectMessage("LinearRing is not simple");
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
+				"/features/Placemark-102.xml"));
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		PlacemarkGeometryTests iut = new PlacemarkGeometryTests();
+		iut.initCommonFixture(testContext);
+		iut.findPlacemarks();
+		iut.simpleRing();
 	}
 
 }
