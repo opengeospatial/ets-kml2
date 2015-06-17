@@ -68,21 +68,4 @@ public class VerifyLinkValidator {
 				.contains("URI is not accessible"));
 	}
 
-	@Test
-	public void acceptableXmlMediaType() {
-		MediaType xmlType = MediaType.APPLICATION_XML_TYPE;
-		LinkValidator iut = new LinkValidator(xmlType);
-		boolean result = iut.isAcceptable("application/atom+xml", xmlType);
-		assertTrue(result);
-	}
-
-	@Test
-	public void generalXmlMediaTypeIsUnacceptable() {
-		MediaType atomMediaType = MediaType.APPLICATION_ATOM_XML_TYPE;
-		LinkValidator iut = new LinkValidator(atomMediaType);
-		// general type is not substitutable for specific subtype
-		boolean result = iut.isAcceptable("application/xml", atomMediaType);
-		assertFalse("Expected invalid Link.", result);
-	}
-
 }

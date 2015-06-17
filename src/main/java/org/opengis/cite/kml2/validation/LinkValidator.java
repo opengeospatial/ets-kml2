@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
+import org.opengis.cite.kml2.util.HttpClientUtils;
 import org.opengis.cite.kml2.util.URIUtils;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.validation.ErrorLocator;
@@ -162,7 +163,8 @@ public class LinkValidator {
 									.buildXPointer(link)));
 				}
 				String contentType = urlConn.getContentType();
-				if (!isAcceptable(contentType, mediaTypes)) {
+				if (!HttpClientUtils.contentIsAcceptable(contentType,
+						mediaTypes)) {
 					errHandler.addError(
 							ErrorSeverity.ERROR,
 							ErrorMessage.format(
@@ -217,38 +219,4 @@ public class LinkValidator {
 		}
 	}
 
-	/**
-	 * Determines if the given content type is compatible with any of the media
-	 * types that are deemed to be acceptable. Parameters are ignored. If a
-	 * general XML media type (application/xml or text/xml) is acceptable, then
-	 * a more specific XML-based subtype (with the '+xml' suffix) will be
-	 * accepted; however, the converse will be false (i.e. a more general type
-	 * is not necessarily substitutable for a specific subtype).
-	 * 
-	 * @param contentType
-	 *            A String denoting a content type.
-	 * @param acceptableTypes
-	 *            A collection of acceptable MediaType specifiers.
-	 * @return true if the content type is acceptable; false otherwise.
-	 */
-	boolean isAcceptable(String contentType, MediaType... acceptableTypes) {
-		if (null == acceptableTypes || acceptableTypes.length == 0) {
-			return true;
-		}
-		boolean isAcceptable = false;
-		MediaType type = MediaType.valueOf(contentType);
-		for (MediaType acceptType : acceptableTypes) {
-			if (acceptType.isCompatible(type)) {
-				isAcceptable = true;
-				break;
-			}
-			// special case for XML-based media types
-			if (acceptType.getSubtype().equals("xml")
-					&& type.getSubtype().endsWith("xml")) {
-				isAcceptable = true;
-				break;
-			}
-		}
-		return isAcceptable;
-	}
 }

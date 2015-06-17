@@ -2,18 +2,20 @@ package org.opengis.cite.kml2;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.opengis.cite.kml2.util.ClientUtils;
+import org.opengis.cite.kml2.util.HttpClientUtils;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.testng.ITestContext;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.sun.jersey.api.client.Client;
@@ -123,12 +125,12 @@ public class CommonFixture {
 	 *            null).
 	 * @return A Document representing the entity.
 	 *
-	 * @see ClientUtils#getResponseEntityAsDocument(com.sun.jersey.api.client.ClientResponse,
+	 * @see HttpClientUtils#getResponseEntityAsDocument(com.sun.jersey.api.client.ClientResponse,
 	 *      java.lang.String)
 	 */
 	public Document getResponseEntityAsDocument(ClientResponse response,
 			String targetURI) {
-		return ClientUtils.getResponseEntityAsDocument(response, targetURI);
+		return HttpClientUtils.getResponseEntityAsDocument(response, targetURI);
 	}
 
 	/**
@@ -145,12 +147,41 @@ public class CommonFixture {
 	 *            XML ("application/xml") is preferred.
 	 * @return A ClientRequest object.
 	 *
-	 * @see ClientUtils#buildGetRequest(java.net.URI, java.util.Map,
+	 * @see HttpClientUtils#buildGetRequest(java.net.URI, java.util.Map,
 	 *      javax.ws.rs.core.MediaType...)
 	 */
 	public ClientRequest buildGetRequest(URI endpoint,
 			Map<String, String> qryParams, MediaType... mediaTypes) {
-		return ClientUtils.buildGetRequest(endpoint, qryParams, mediaTypes);
+		return HttpClientUtils.buildGetRequest(endpoint, qryParams, mediaTypes);
+	}
+
+	/**
+	 * An Iterator suitable for use by a "lazy" data provider. It iterates over
+	 * the target elements.
+	 */
+	protected class TargetElementsIterator implements Iterator<Object> {
+
+		private Iterator<Node> nodeItr;
+
+		public TargetElementsIterator() {
+			this.nodeItr = XMLUtils.asList(targetElements).iterator();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return nodeItr.hasNext();
+		}
+
+		@Override
+		public Object next() {
+			return new Object[] { nodeItr.next() };
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+
 	}
 
 }

@@ -53,7 +53,7 @@ public class VerifyNetworkLinkControlTests {
 		NetworkLinkControlTests iut = new NetworkLinkControlTests();
 		iut.initCommonFixture(testContext);
 		iut.findNetworkLinkControlElements();
-		iut.validRefreshPeriod();
+		iut.refreshPeriod();
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class VerifyNetworkLinkControlTests {
 		NetworkLinkControlTests iut = new NetworkLinkControlTests();
 		iut.initCommonFixture(testContext);
 		iut.findNetworkLinkControlElements();
-		iut.validRefreshPeriod();
+		iut.refreshPeriod();
 	}
 
 	@Test
@@ -79,6 +79,6 @@ public class VerifyNetworkLinkControlTests {
 		NetworkLinkControlTests iut = new NetworkLinkControlTests();
 		iut.initCommonFixture(testContext);
 		iut.findNetworkLinkControlElements();
-		iut.validRefreshPeriod();
+		iut.refreshPeriod();
 	}
 }

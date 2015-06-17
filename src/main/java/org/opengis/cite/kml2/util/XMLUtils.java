@@ -541,4 +541,19 @@ public class XMLUtils {
 		newDoc.appendChild(newNode);
 		return newDoc;
 	}
+
+	/**
+	 * Returns a List view of the nodes in the given NodeList collection.
+	 *
+	 * @param nodeList
+	 *            An ordered collection of DOM nodes.
+	 * @return A List containing the original sequence of Node objects.
+	 */
+	public static List<Node> asList(NodeList nodeList) {
+		List<Node> nodes = new ArrayList<>();
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			nodes.add(nodeList.item(i));
+		}
+		return nodes;
+	}
 }

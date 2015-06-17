@@ -8,7 +8,7 @@ import java.util.logging.Level;
 
 import javax.xml.validation.Schema;
 
-import org.opengis.cite.kml2.util.ClientUtils;
+import org.opengis.cite.kml2.util.HttpClientUtils;
 import org.opengis.cite.kml2.util.KMLUtils;
 import org.opengis.cite.kml2.util.TestSuiteLogger;
 import org.opengis.cite.kml2.util.URIUtils;
@@ -162,7 +162,7 @@ public class SuiteFixtureListener implements ISuiteListener {
 	 *            The test suite instance.
 	 */
 	void registerClientComponent(ISuite suite) {
-		Client client = ClientUtils.buildClient();
+		Client client = HttpClientUtils.buildClient();
 		if (null != client) {
 			suite.setAttribute(SuiteAttribute.CLIENT.getName(), client);
 		}

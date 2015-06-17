@@ -1,11 +1,17 @@
 package org.opengis.cite.kml2;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.ws.rs.core.MediaType;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -18,10 +24,13 @@ import javax.xml.xpath.XPathFactory;
 
 import net.sf.saxon.value.BooleanValue;
 
+import org.opengis.cite.kml2.util.HttpClientUtils;
 import org.opengis.cite.kml2.util.KMLUtils;
 import org.opengis.cite.kml2.util.NamespaceBindings;
 import org.opengis.cite.kml2.util.XMLUtils;
+import org.opengis.cite.validation.ErrorSeverity;
 import org.opengis.cite.validation.SchematronValidator;
+import org.opengis.cite.validation.ValidationError;
 import org.opengis.cite.validation.ValidationErrorHandler;
 import org.testng.Assert;
 import org.w3c.dom.Document;
@@ -242,4 +251,78 @@ public class ETSAssert {
 								XMLUtils.buildXPointer(kmlElement)));
 	}
 
+	/**
+	 * Asserts that the resource referenced by the given element exists and is
+	 * compatible with one of the acceptable media types.
+	 * 
+	 * @param uriRef
+	 *            An element node containing an absolute URI as its text
+	 *            content.
+	 * @param acceptableTypes
+	 *            A list of acceptable media types.
+	 */
+	public static void assertReferentExists(Node uriRef,
+			MediaType... acceptableTypes) {
+		URI uri = URI.create(uriRef.getTextContent().trim());
+		if (!uri.isAbsolute()) {
+			ValidationError err = new ValidationError(ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.URI_NOT_ACCESSIBLE,
+							uri, "The URI is not absolute"), -1, -1,
+					XMLUtils.buildXPointer(uriRef));
+			throw new AssertionError(err);
+		}
+		try {
+			URLConnection urlConn = uri.toURL().openConnection();
+			switch (uri.getScheme().toLowerCase()) {
+			case "file":
+				try (InputStream inStream = urlConn.getInputStream()) {
+					// don't try to read file content
+				}
+				break;
+			case "https":
+			case "http":
+				HttpURLConnection httpConn = (HttpURLConnection) urlConn;
+				httpConn.setRequestMethod("HEAD");
+				httpConn.setConnectTimeout(5000);
+				StringBuilder acceptHeaderVal = new StringBuilder();
+				for (MediaType type : acceptableTypes) {
+					acceptHeaderVal.append(type).append(',');
+				}
+				httpConn.setRequestProperty("Accept",
+						acceptHeaderVal.toString());
+				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+					ValidationError err = new ValidationError(
+							ErrorSeverity.ERROR, ErrorMessage.format(
+									ErrorMessageKeys.UNEXPECTED_STATUS, uri),
+							-1, -1, XMLUtils.buildXPointer(uriRef));
+					throw new AssertionError(err);
+				}
+				String contentType = urlConn.getContentType();
+				if (!HttpClientUtils.contentIsAcceptable(contentType,
+						acceptableTypes)) {
+					ValidationError err = new ValidationError(
+							ErrorSeverity.ERROR, ErrorMessage.format(
+									ErrorMessageKeys.UNACCEPTABLE_MEDIA_TYPE,
+									contentType,
+									Arrays.toString(acceptableTypes)), -1, -1,
+							XMLUtils.buildXPointer(uriRef));
+					throw new AssertionError(err);
+				}
+				break;
+			default:
+				ValidationError err = new ValidationError(ErrorSeverity.ERROR,
+						ErrorMessage.format(
+								ErrorMessageKeys.URI_NOT_ACCESSIBLE, uri,
+								"Unsupported URI scheme."), -1, -1,
+						XMLUtils.buildXPointer(uriRef));
+				throw new AssertionError(err);
+			}
+		} catch (IOException e) {
+			ValidationError err = new ValidationError(ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.URI_NOT_ACCESSIBLE,
+							uri, e.getMessage()), -1, -1,
+					XMLUtils.buildXPointer(uriRef));
+			throw new AssertionError(err);
+		}
+	}
 }
