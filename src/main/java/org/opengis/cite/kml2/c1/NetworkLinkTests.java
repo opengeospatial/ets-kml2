@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Implements tests that apply to kml:Network elements. Outside of an update
+ * Implements tests that apply to kml:NetworkLink elements. Outside of an update
  * context the following constraints apply:
  * <ul>
  * <li>?</li>

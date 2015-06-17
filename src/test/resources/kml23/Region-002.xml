@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- ERROR: Violates uniqueness constraint (longitude intervals) -->
-<Region id="Region-002" xmlns="http://www.opengis.net/kml/2.2"
-	version="2.3">
+<Region id="Region-002" xmlns="http://www.opengis.net/kml/2.2">
 	<Lod>
 		<minLodPixels>128</minLodPixels>
 		<maxLodPixels>1024</maxLodPixels>
