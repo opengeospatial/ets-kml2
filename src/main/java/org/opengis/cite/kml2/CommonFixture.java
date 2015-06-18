@@ -14,6 +14,7 @@ import org.testng.ITestContext;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -153,6 +154,11 @@ public class CommonFixture {
 	public ClientRequest buildGetRequest(URI endpoint,
 			Map<String, String> qryParams, MediaType... mediaTypes) {
 		return HttpClientUtils.buildGetRequest(endpoint, qryParams, mediaTypes);
+	}
+
+	@DataProvider(name = "targetElementsProvider")
+	protected Iterator<Object> targetElementsProvider() {
+		return new TargetElementsIterator();
 	}
 
 	/**

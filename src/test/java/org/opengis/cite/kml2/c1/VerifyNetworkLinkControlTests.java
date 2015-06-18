@@ -13,10 +13,12 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.opengis.cite.kml2.KML2;
 import org.opengis.cite.kml2.SuiteAttribute;
 import org.testng.ISuite;
 import org.testng.ITestContext;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
@@ -53,7 +55,8 @@ public class VerifyNetworkLinkControlTests {
 		NetworkLinkControlTests iut = new NetworkLinkControlTests();
 		iut.initCommonFixture(testContext);
 		iut.findNetworkLinkControlElements();
-		iut.refreshPeriod();
+		Node node = doc.getDocumentElement().getElementsByTagNameNS(KML2.NS_NAME, "*").item(0);
+		iut.refreshPeriod(node);
 	}
 
 	@Test
@@ -65,7 +68,8 @@ public class VerifyNetworkLinkControlTests {
 		NetworkLinkControlTests iut = new NetworkLinkControlTests();
 		iut.initCommonFixture(testContext);
 		iut.findNetworkLinkControlElements();
-		iut.refreshPeriod();
+		Node node = doc.getDocumentElement().getElementsByTagNameNS(KML2.NS_NAME, "*").item(0);
+		iut.refreshPeriod(node);
 	}
 
 	@Test
@@ -79,6 +83,7 @@ public class VerifyNetworkLinkControlTests {
 		NetworkLinkControlTests iut = new NetworkLinkControlTests();
 		iut.initCommonFixture(testContext);
 		iut.findNetworkLinkControlElements();
-		iut.refreshPeriod();
+		Node node = doc.getDocumentElement().getElementsByTagNameNS(KML2.NS_NAME, "*").item(0);
+		iut.refreshPeriod(node);
 	}
 }
