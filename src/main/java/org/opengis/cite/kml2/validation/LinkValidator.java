@@ -54,11 +54,12 @@ import org.w3c.dom.NodeList;
  */
 public class LinkValidator {
 
-	ValidationErrorHandler errHandler;
-	MediaType[] mediaTypes;
+	private int conformanceLevel = 1;
+	private ValidationErrorHandler errHandler;
+	private MediaType[] mediaTypes;
 
 	/**
-	 * Constructs a LinkValidator to check the specified constraints.
+	 * Constructs a LinkValidator to check all mandatory constraints.
 	 * 
 	 * @param mediaTypes
 	 *            A collection of acceptable media types; if null or empty any
@@ -67,6 +68,23 @@ public class LinkValidator {
 	public LinkValidator(MediaType... mediaTypes) {
 		this.errHandler = new ValidationErrorHandler();
 		this.mediaTypes = mediaTypes;
+	}
+
+	/**
+	 * Constructs a LinkValidator to check the constraints that apply to the
+	 * specified conformance level.
+	 * 
+	 * @param level
+	 *            The applicable conformance level.
+	 * @param mediaTypes
+	 *            A collection of acceptable media types; if null or empty any
+	 *            type is acceptable.
+	 */
+	public LinkValidator(int level, MediaType... mediaTypes) {
+		this(mediaTypes);
+		if (level > 0 && level < 4) {
+			this.conformanceLevel = level;
+		}
 	}
 
 	/**
@@ -114,6 +132,9 @@ public class LinkValidator {
 		Element link = (Element) node;
 		checkLinkReferent(link);
 		checkLinkProperties(link);
+		if (this.conformanceLevel > 1) {
+			checkLinkConstraintsAtLevel2(link);
+		}
 		return !errHandler.errorsDetected();
 	}
 
@@ -215,6 +236,36 @@ public class LinkValidator {
 			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
 					ErrorMessageKeys.CONSTRAINT_VIOLATION,
 					"kml:viewBoundScale > 0"), new ErrorLocator(-1, -1,
+					XMLUtils.buildXPointer(link)));
+		}
+	}
+
+	/**
+	 * Checks that all link constraints defined for CL2 are satisfied. The
+	 * applicable test cases are listed below.
+	 * <ul>
+	 * <li>ATC-205: viewFormat element not empty</li>
+	 * <li>ATC-206: httpQuery element not empty</li>
+	 * </ul>
+	 * 
+	 * @param link
+	 *            An Element representing a link (of type kml:LinkType).
+	 */
+	void checkLinkConstraintsAtLevel2(Element link) {
+		Node viewFormat = link.getElementsByTagNameNS(KML2.NS_NAME,
+				"viewFormat").item(0);
+		if (null != viewFormat && viewFormat.getTextContent().isEmpty()) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.CONSTRAINT_VIOLATION,
+					"kml:viewFormat is not empty"), new ErrorLocator(-1, -1,
+					XMLUtils.buildXPointer(link)));
+		}
+		Node httpQuery = link.getElementsByTagNameNS(KML2.NS_NAME, "httpQuery")
+				.item(0);
+		if (null != httpQuery && httpQuery.getTextContent().isEmpty()) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.CONSTRAINT_VIOLATION,
+					"kml:httpQuery is not empty"), new ErrorLocator(-1, -1,
 					XMLUtils.buildXPointer(link)));
 		}
 	}

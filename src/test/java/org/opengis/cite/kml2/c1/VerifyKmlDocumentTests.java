@@ -59,7 +59,7 @@ public class VerifyKmlDocumentTests {
 		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
 				"/kml22/Placemark-001.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
-		KmlDocumentTests iut = new KmlDocumentTests();
+		KmlResourceTests iut = new KmlResourceTests();
 		iut.initCommonFixture(testContext);
 		iut.getKMLSchemas(testContext);
 		iut.isSchemaValid();
@@ -72,7 +72,7 @@ public class VerifyKmlDocumentTests {
 		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
 				"/kml23/Placemark-001.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
-		KmlDocumentTests iut = new KmlDocumentTests();
+		KmlResourceTests iut = new KmlResourceTests();
 		iut.initCommonFixture(testContext);
 		iut.getKMLSchemas(testContext);
 		iut.isSchemaValid();

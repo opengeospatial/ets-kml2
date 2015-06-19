@@ -256,14 +256,21 @@ public class ETSAssert {
 	 * compatible with one of the acceptable media types.
 	 * 
 	 * @param uriRef
-	 *            An element node containing an absolute URI as its text
-	 *            content.
+	 *            An element node containing either an absolute URI as its text
+	 *            content or as the value of a 'uom' (unit of measure)
+	 *            attribute.
 	 * @param acceptableTypes
 	 *            A list of acceptable media types.
 	 */
 	public static void assertReferentExists(Node uriRef,
 			MediaType... acceptableTypes) {
-		URI uri = URI.create(uriRef.getTextContent().trim());
+		URI uri = null;
+		if (null != uriRef.getAttributes().getNamedItem("uom")) {
+			uri = URI.create(uriRef.getAttributes().getNamedItem("uom")
+					.getNodeValue());
+		} else {
+			uri = URI.create(uriRef.getTextContent().trim());
+		}
 		if (!uri.isAbsolute()) {
 			ValidationError err = new ValidationError(ErrorSeverity.ERROR,
 					ErrorMessage.format(ErrorMessageKeys.URI_NOT_ACCESSIBLE,

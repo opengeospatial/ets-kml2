@@ -17,13 +17,13 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Checks constraints that apply to a KML document as a whole. Specifically, it
+ * Checks constraints that apply to a KML resource as a whole. Specifically, it
  * must be schema-valid. The applicable schema is determined by the value of the
  * version attribute set on the document element (default value: "2.2").
  * 
  * @see "OGC 14-068r1, OGC KML 2.3 - Abstract Test Suite: Conformance Level 1"
  */
-public class KmlDocumentTests extends CommonFixture {
+public class KmlResourceTests extends CommonFixture {
 
 	private Map<String, Schema> kmlSchemas;
 

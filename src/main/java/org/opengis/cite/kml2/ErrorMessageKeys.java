@@ -44,4 +44,5 @@ public class ErrorMessageKeys {
 	public static final String NO_CONTENT = "NoContent";
 	public static final String EXT_BOUNDARY_ORIENT = "ExternalBoundaryOrientation";
 	public static final String RING_NOT_SIMPLE = "SimpleRing";
+	public static final String UOM_NOT_DEFN = "UnitOfMeasureNotDefined";
 }
