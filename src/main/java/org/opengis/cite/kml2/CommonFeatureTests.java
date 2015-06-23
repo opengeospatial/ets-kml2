@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import org.opengis.cite.kml2.util.URIUtils;
+import org.opengis.cite.kml2.validation.ExtendedDataValidator;
 import org.opengis.cite.kml2.validation.RegionValidator;
 import org.testng.Assert;
 import org.testng.ITestContext;
@@ -127,6 +128,30 @@ public class CommonFeatureTests extends CommonFixture {
 					regionValidator.getErrors());
 		}
 
+	}
+
+	/**
+	 * [Test] Checks that the content of a kml:ExtendedData element satisfies
+	 * all applicable constraints.
+	 * 
+	 * @see RegionValidator
+	 */
+	@Test(description = "ATC-ijk")
+	public void validExtendedData() {
+		if (null == this.targetElements) {
+			return;
+		}
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element kmlFeature = (Element) targetElements.item(i);
+			Node extData = kmlFeature.getElementsByTagNameNS(KML2.NS_NAME,
+					"ExtendedData").item(0);
+			if (null == extData) {
+				continue;
+			}
+			ExtendedDataValidator validator = new ExtendedDataValidator();
+			Assert.assertTrue(validator.isValid(extData),
+					validator.getErrorMessages());
+		}
 	}
 
 }

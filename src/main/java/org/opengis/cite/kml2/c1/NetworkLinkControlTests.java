@@ -1,6 +1,9 @@
 package org.opengis.cite.kml2.c1;
 
+import java.net.URL;
+
 import javax.ws.rs.core.MediaType;
+import javax.xml.transform.dom.DOMSource;
 
 import org.opengis.cite.kml2.CommonFixture;
 import org.opengis.cite.kml2.ETSAssert;
@@ -11,6 +14,7 @@ import org.opengis.cite.kml2.util.XMLUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -67,23 +71,35 @@ public class NetworkLinkControlTests extends CommonFixture {
 	}
 
 	/**
-	 * [Test] Verifies that a kml:Update/kml:targetHref element contains an
-	 * absolute URI that refers to a KML or KMZ resource.
+	 * [Test] Verifies that a kml:Update element satisfies all applicable
+	 * constraints. In particular:
+	 * <ol>
+	 * <li>kml:targetHref element contains an absolute URI that refers to a KML
+	 * or KMZ resource.</li>
+	 * <li>All KML objects that are the target of an update action (kml:Create,
+	 * kml:Delete, kml:Change) have a {@code targetId} attribute and do not have
+	 * an {@code id} attribute</li>
+	 * </ol>
 	 * 
-	 * @param linkControl
+	 * @param linkControlNode
 	 *            A kml:NetworkLinkControl element.
 	 */
-	@Test(dataProvider = "targetElementsProvider", description = "ATC-122")
-	public void updateReferent(Node linkControl) {
-		Node update = Element.class.cast(linkControl)
+	@Test(dataProvider = "targetElementsProvider", description = "ATC-122, ATC-123")
+	public void validUpdate(Node linkControlNode) {
+		Node updateNode = Element.class.cast(linkControlNode)
 				.getElementsByTagNameNS(KML2.NS_NAME, "Update").item(0);
-		if (null == update) {
+		if (null == updateNode) {
 			return;
 		}
-		Element targetUri = (Element) Element.class.cast(update)
+		Element targetUri = (Element) Element.class.cast(updateNode)
 				.getElementsByTagNameNS(KML2.NS_NAME, "targetHref").item(0);
 		ETSAssert.assertReferentExists(targetUri,
 				MediaType.valueOf(KML2.KML_MEDIA_TYPE),
 				MediaType.valueOf(KML2.KMZ_MEDIA_TYPE));
+		URL schRef = this.getClass().getResource(
+				"/org/opengis/cite/kml2/sch/kml-update.sch");
+		// Not required if using schema-utils-1.7 or later
+		Document doc = XMLUtils.importElement((Element) updateNode);
+		ETSAssert.assertSchematronValid(schRef, new DOMSource(doc));
 	}
 }

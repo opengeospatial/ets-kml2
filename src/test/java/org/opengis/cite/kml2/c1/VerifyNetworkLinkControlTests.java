@@ -55,7 +55,8 @@ public class VerifyNetworkLinkControlTests {
 		NetworkLinkControlTests iut = new NetworkLinkControlTests();
 		iut.initCommonFixture(testContext);
 		iut.findNetworkLinkControlElements();
-		Node node = doc.getDocumentElement().getElementsByTagNameNS(KML2.NS_NAME, "*").item(0);
+		Node node = doc.getDocumentElement()
+				.getElementsByTagNameNS(KML2.NS_NAME, "*").item(0);
 		iut.refreshPeriod(node);
 	}
 
@@ -68,7 +69,8 @@ public class VerifyNetworkLinkControlTests {
 		NetworkLinkControlTests iut = new NetworkLinkControlTests();
 		iut.initCommonFixture(testContext);
 		iut.findNetworkLinkControlElements();
-		Node node = doc.getDocumentElement().getElementsByTagNameNS(KML2.NS_NAME, "*").item(0);
+		Node node = doc.getDocumentElement()
+				.getElementsByTagNameNS(KML2.NS_NAME, "*").item(0);
 		iut.refreshPeriod(node);
 	}
 
@@ -83,7 +85,24 @@ public class VerifyNetworkLinkControlTests {
 		NetworkLinkControlTests iut = new NetworkLinkControlTests();
 		iut.initCommonFixture(testContext);
 		iut.findNetworkLinkControlElements();
-		Node node = doc.getDocumentElement().getElementsByTagNameNS(KML2.NS_NAME, "*").item(0);
+		Node node = doc.getDocumentElement()
+				.getElementsByTagNameNS(KML2.NS_NAME, "*").item(0);
 		iut.refreshPeriod(node);
+	}
+
+	@Test
+	public void invalidDeleteTarget() throws SAXException, IOException {
+		thrown.expect(AssertionError.class);
+		thrown.expectMessage("2 schema validation error(s) detected");
+		URL url = this.getClass().getResource(
+				"/kml23/NetworkLinkControl-005.xml");
+		Document doc = docBuilder.parse(url.toString());
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		NetworkLinkControlTests iut = new NetworkLinkControlTests();
+		iut.initCommonFixture(testContext);
+		iut.findNetworkLinkControlElements();
+		Node node = doc.getDocumentElement()
+				.getElementsByTagNameNS(KML2.NS_NAME, "*").item(0);
+		iut.validUpdate(node);
 	}
 }

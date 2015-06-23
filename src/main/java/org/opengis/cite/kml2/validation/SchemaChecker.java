@@ -103,6 +103,7 @@ public class SchemaChecker {
 		errHandler.reset();
 		Element schema = (Element) node;
 		checkSimpleFields(schema);
+		checkSimpleArrayFields(schema);
 		return !errHandler.errorsDetected();
 	}
 
@@ -111,9 +112,8 @@ public class SchemaChecker {
 	 * constraints.
 	 * 
 	 * @param schema
-	 *            A kml:SimpleField element.
+	 *            A kml:Schema element.
 	 * 
-	 * @see "ATC-118: Icon element refers to image"
 	 */
 	void checkSimpleFields(Element schema) {
 		NodeList simpleFields = schema.getElementsByTagNameNS(KML2.NS_NAME,
@@ -125,31 +125,53 @@ public class SchemaChecker {
 	}
 
 	/**
+	 * Checks that a kml:SimpleArrayField element satisfies all applicable
+	 * constraints.
+	 * 
+	 * @param schema
+	 *            A kml:Schema element.
+	 */
+	void checkSimpleArrayFields(Element schema) {
+		NodeList arrayFields = schema.getElementsByTagNameNS(KML2.NS_NAME,
+				"SimpleArrayField");
+		for (int i = 0; i < arrayFields.getLength(); i++) {
+			Element arrayField = (Element) arrayFields.item(i);
+			checkUnitOfMeasure(arrayField);
+		}
+	}
+
+	/**
 	 * Checks that a definition exists for a given unit of measure reference. If
 	 * the reference is an absolute URI, the definition must exist but the
 	 * format is irrelevant. Otherwise the reference must correspond to a code
 	 * in the <em>Unified Code for Units of Measure</em> (UCUM). Prefix symbols
 	 * may be used (e.g. 'km' for kilometre, 'ha' for hectare).
 	 * 
-	 * @param simpleField
-	 *            A kml:SimpleField element.
+	 * @param schemaField
+	 *            A kml:SimpleField or kml:SimpleArrayField element.
 	 * @see <a target="_blank"
 	 *      href="http://unitsofmeasure.org/ucum.html">Unified Code for Units of
 	 *      Measure</a>
 	 */
-	void checkUnitOfMeasure(Element simpleField) {
-		String uom = simpleField.getAttribute("uom");
+	public void checkUnitOfMeasure(Element schemaField) {
+		String uom = schemaField.getAttribute("uom");
 		if (uom.isEmpty()) {
 			return;
 		}
 		URI uomRef = null;
 		try {
 			uomRef = URI.create(URLEncoder.encode(uom, "UTF-8"));
-		} catch (UnsupportedEncodingException e1) {
-		}
-		if (uomRef.isAbsolute()) {
-			ETSAssert
-					.assertReferentExists(simpleField, MediaType.WILDCARD_TYPE);
+			if (uomRef.isAbsolute()) {
+				ETSAssert.assertReferentExists(schemaField,
+						MediaType.WILDCARD_TYPE);
+				return;
+			}
+		} catch (AssertionError | UnsupportedEncodingException e) {
+			errHandler.addError(
+					ErrorSeverity.ERROR,
+					e.getMessage(),
+					new ErrorLocator(-1, -1, XMLUtils
+							.buildXPointer(schemaField)));
 			return;
 		}
 		String uomCode = uom;
@@ -173,7 +195,7 @@ public class SchemaChecker {
 								ErrorMessage.format(
 										ErrorMessageKeys.UOM_NOT_DEFN, uom),
 								new ErrorLocator(-1, -1, XMLUtils
-										.buildXPointer(simpleField)));
+										.buildXPointer(schemaField)));
 			}
 		} catch (SaxonApiException e) {
 		}
