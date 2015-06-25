@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,8 +12,11 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import net.sf.saxon.s9api.ItemType;
+import net.sf.saxon.s9api.ItemTypeFactory;
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmValue;
 
 import org.opengis.cite.kml2.ETSAssert;
@@ -23,6 +26,7 @@ import org.opengis.cite.kml2.KML2;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.validation.ErrorLocator;
 import org.opengis.cite.validation.ErrorSeverity;
+import org.opengis.cite.validation.ValidationError;
 import org.opengis.cite.validation.ValidationErrorHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -46,14 +50,22 @@ import org.w3c.dom.NodeList;
  * </xsd:complexType>
  * }
  * </pre>
+ * 
+ * The applicable test cases are identified below:
+ * <ul>
+ * <li>ATC-125: Schema identifier</li>
+ * <li>ATC-126: SimpleField definition</li>
+ * </ul>
+ * 
+ * @see "OGC KML 2.3, 9.11: kml:SimpleField"
  */
 public class SchemaChecker {
 
 	private static final String UCUM_NS = "http://unitsofmeasure.org/ucum-essence";
 	ValidationErrorHandler errHandler;
 	URL uomCodeListRef;
-	/** List of prefix symbols in UCUM ('c','k', 'M', ..). */
-	List<String> uomPrefixes;
+	/** List of common prefix symbols in UCUM ('c','k', 'M', ..). */
+	List<String> commonPrefixes;
 
 	/**
 	 * Default constructor.
@@ -61,21 +73,12 @@ public class SchemaChecker {
 	public SchemaChecker() {
 		this.errHandler = new ValidationErrorHandler();
 		this.uomCodeListRef = SchemaChecker.class.getResource("ucum.xml");
-		this.uomPrefixes = new ArrayList<String>();
-		Source uomSource = new StreamSource(uomCodeListRef.toString());
-		try {
-			XdmValue result = XMLUtils.evaluateXPath2(uomSource,
-					"//ucum:prefix/@Code",
-					Collections.singletonMap(UCUM_NS, "ucum"));
-			for (XdmItem item : result) {
-				uomPrefixes.add(item.getStringValue());
-			}
-		} catch (SaxonApiException e) {
-		}
+		this.commonPrefixes = Arrays.asList(new String[] { "E", "P", "T", "G",
+				"M", "k", "h", "da", "d", "c", "m", "u", "n", "p", "f", "a" });
 	}
 
 	List<String> getUomPrefixes() {
-		return uomPrefixes;
+		return commonPrefixes;
 	}
 
 	/**
@@ -86,6 +89,15 @@ public class SchemaChecker {
 	 */
 	public String getErrorMessages() {
 		return errHandler.toString();
+	}
+
+	/**
+	 * Returns all errors reported to the handler.
+	 * 
+	 * @return A list containing error descriptions (may be empty).
+	 */
+	public List<ValidationError> getErrors() {
+		return errHandler.getErrors();
 	}
 
 	/**
@@ -102,6 +114,11 @@ public class SchemaChecker {
 		}
 		errHandler.reset();
 		Element schema = (Element) node;
+		if (schema.getAttribute("id").isEmpty()) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.MISSING_INFOSET_ITEM, "@id"),
+					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(schema)));
+		}
 		checkSimpleFields(schema);
 		checkSimpleArrayFields(schema);
 		return !errHandler.errorsDetected();
@@ -120,6 +137,15 @@ public class SchemaChecker {
 				"SimpleField");
 		for (int i = 0; i < simpleFields.getLength(); i++) {
 			Element simpleField = (Element) simpleFields.item(i);
+			if (simpleField.getAttribute("name").isEmpty()) {
+				errHandler
+						.addError(ErrorSeverity.ERROR,
+								ErrorMessage.format(
+										ErrorMessageKeys.MISSING_INFOSET_ITEM,
+										"@name"), new ErrorLocator(-1, -1,
+										XMLUtils.buildXPointer(simpleField)));
+			}
+			checkDataType(simpleField);
 			checkUnitOfMeasure(simpleField);
 		}
 	}
@@ -137,6 +163,50 @@ public class SchemaChecker {
 		for (int i = 0; i < arrayFields.getLength(); i++) {
 			Element arrayField = (Element) arrayFields.item(i);
 			checkUnitOfMeasure(arrayField);
+		}
+	}
+
+	/**
+	 * Checks that the value of the 'type' attribute is a known (simple)
+	 * datatype. Any of the primitive or derived datatypes defined in XML Schema
+	 * (Part 2) are acceptable.
+	 * 
+	 * <p>
+	 * <strong>Note:</strong> While a simple datatype that is derived from an
+	 * XML Schema datatype is also allowed, such a user-defined datatype is not
+	 * currently verified and will be reported as an error.
+	 * </p>
+	 * 
+	 * @param simpleField
+	 *            A kml:SimpleField element.
+	 * 
+	 * @see "OGC KML 2.3, 9.11.4.1: kml:SimpleField - type"
+	 * @see <a href="http://www.w3.org/TR/xmlschema11-2/" target="_blank">W3C
+	 *      XML Schema Definition Language (XSD) 1.1 Part 2: Datatypes</a>
+	 */
+	void checkDataType(Element simpleField) {
+		String type = simpleField.getAttribute("type");
+		if (type.isEmpty()) {
+			errHandler.addError(
+					ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.MISSING_INFOSET_ITEM,
+							"@type"),
+					new ErrorLocator(-1, -1, XMLUtils
+							.buildXPointer(simpleField)));
+			return;
+		}
+		QName typeName = new QName("http://www.w3.org/2001/XMLSchema", type);
+		ItemTypeFactory typeFactory = new ItemTypeFactory(new Processor(false));
+		try {
+			@SuppressWarnings("unused")
+			ItemType atomicType = typeFactory.getAtomicType(typeName);
+		} catch (SaxonApiException e) {
+			errHandler.addError(
+					ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.INVALID_DATATYPE,
+							e.getMessage()),
+					new ErrorLocator(-1, -1, XMLUtils
+							.buildXPointer(simpleField)));
 		}
 	}
 
@@ -176,7 +246,7 @@ public class SchemaChecker {
 		}
 		String uomCode = uom;
 		// remove prefix if present
-		for (String prefix : uomPrefixes) {
+		for (String prefix : commonPrefixes) {
 			if (uom.startsWith(prefix)) {
 				uomCode = uom.replace(prefix, "");
 				break;

@@ -16,7 +16,6 @@ import org.opengis.cite.kml2.validation.LinkValidator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -123,9 +122,7 @@ public class OverlayTests extends CommonFixture {
 			}
 			URL schRef = this.getClass().getResource(
 					"/org/opengis/cite/kml2/sch/kml-overlay.sch");
-			// Not required if using schema-utils-1.7 or later
-			Document doc = XMLUtils.importElement(overlay);
-			ETSAssert.assertSchematronValid(schRef, new DOMSource(doc));
+			ETSAssert.assertSchematronValid(schRef, new DOMSource(overlay));
 		}
 	}
 }

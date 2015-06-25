@@ -79,7 +79,7 @@ public class ExtendedDataValidator {
 			Element data = (Element) dataList.item(i);
 			schemaChecker.checkUnitOfMeasure(data);
 		}
-		//TODO: add schemaChecker errors to errHandler??
+		this.errHandler.addErrors(schemaChecker.getErrors());
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class ExtendedDataValidator {
 		NodeList schemaDataList = extData.getElementsByTagNameNS(KML2.NS_NAME,
 				"SchemaData");
 		for (int i = 0; i < schemaDataList.getLength(); i++) {
-			Element schemaData = (Element) schemaDataList.item(i);
+			// Element schemaData = (Element) schemaDataList.item(i);
 			// TODO
 		}
 	}

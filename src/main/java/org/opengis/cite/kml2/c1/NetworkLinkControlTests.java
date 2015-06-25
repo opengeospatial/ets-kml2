@@ -14,7 +14,6 @@ import org.opengis.cite.kml2.util.XMLUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -98,8 +97,6 @@ public class NetworkLinkControlTests extends CommonFixture {
 				MediaType.valueOf(KML2.KMZ_MEDIA_TYPE));
 		URL schRef = this.getClass().getResource(
 				"/org/opengis/cite/kml2/sch/kml-update.sch");
-		// Not required if using schema-utils-1.7 or later
-		Document doc = XMLUtils.importElement((Element) updateNode);
-		ETSAssert.assertSchematronValid(schRef, new DOMSource(doc));
+		ETSAssert.assertSchematronValid(schRef, new DOMSource(updateNode));
 	}
 }

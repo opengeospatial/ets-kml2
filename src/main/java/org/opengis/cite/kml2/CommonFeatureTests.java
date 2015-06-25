@@ -3,10 +3,13 @@ package org.opengis.cite.kml2;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
 
 import org.opengis.cite.kml2.util.URIUtils;
+import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.kml2.validation.ExtendedDataValidator;
 import org.opengis.cite.kml2.validation.RegionValidator;
 import org.testng.Assert;
@@ -151,6 +154,37 @@ public class CommonFeatureTests extends CommonFixture {
 			ExtendedDataValidator validator = new ExtendedDataValidator();
 			Assert.assertTrue(validator.isValid(extData),
 					validator.getErrorMessages());
+		}
+	}
+
+	/**
+	 * [Test] Checks that the value of the kml:phoneNumber element is a valid
+	 * 'tel' URI that complies with RFC 3966, <em>The tel URI for Telephone
+	 * Numbers</em>.
+	 * 
+	 * @see <a href="http://tools.ietf.org/html/rfc3966" target="_blank">RFC
+	 *      3966</a>
+	 */
+	@Test(description = "ATC-124")
+	public void validPhoneNumber() {
+		if (null == this.targetElements) {
+			return;
+		}
+		Pattern phoneNumPattern = Pattern
+				.compile("tel:(\\+)?(\\d*([-.()])?)+(\\d{3}?[-.()])?(\\d{3}[-.()])?(\\d{4,10})?([;].*)?");
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element kmlFeature = (Element) targetElements.item(i);
+			Node phoneNum = kmlFeature.getElementsByTagNameNS(KML2.NS_NAME,
+					"phoneNumber").item(0);
+			if (null == phoneNum) {
+				continue;
+			}
+			Matcher matcher = phoneNumPattern
+					.matcher(phoneNum.getTextContent());
+			Assert.assertTrue(matcher.matches(), ErrorMessage.format(
+					ErrorMessageKeys.CONSTRAINT_VIOLATION,
+					"Valid 'tel' URI (RFC 3966)",
+					XMLUtils.buildXPointer(phoneNum)));
 		}
 	}
 
