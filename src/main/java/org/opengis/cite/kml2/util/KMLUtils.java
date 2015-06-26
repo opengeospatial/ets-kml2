@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,10 +18,16 @@ import java.util.zip.ZipFile;
 
 import javax.xml.transform.Source;
 
+import net.sf.saxon.s9api.Axis;
+import net.sf.saxon.s9api.ItemType;
+import net.sf.saxon.s9api.ItemTypeFactory;
+import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmNodeKind;
+import net.sf.saxon.s9api.XdmSequenceIterator;
 import net.sf.saxon.s9api.XdmValue;
 
 import org.apache.commons.io.IOUtils;
@@ -166,7 +174,8 @@ public class KMLUtils {
 		}
 		for (XdmItem item : results) {
 			XdmNode node = (XdmNode) item;
-			String id = node.getAttributeValue(new QName("id"));
+			net.sf.saxon.s9api.QName idName = new net.sf.saxon.s9api.QName("id");
+			String id = node.getAttributeValue(idName);
 			if (null == id || id.isEmpty()) {
 				continue;
 			}
@@ -206,6 +215,42 @@ public class KMLUtils {
 					.trim());
 		}
 		return altMode;
+	}
+
+	/**
+	 * Gets information about the fields declared in a custom schema.
+	 * 
+	 * @param schema
+	 *            A node representing a kml:Schema element.
+	 * @return A Map containing the names (keys) and data types of the fields
+	 *         (kml:SimpleField, kml:SimpleArrayField) declared in the schema.
+	 */
+	public static Map<String, ItemType> getDeclaredFields(XdmNode schema) {
+		if (null == schema
+				|| !schema.getNodeName().getLocalName().equals("Schema")) {
+			throw new IllegalArgumentException("Not a kml:Schema element.");
+		}
+		Map<String, ItemType> schemaFields = new HashMap<>();
+		QName name = new QName("name");
+		QName type = new QName("type");
+		ItemTypeFactory typeFactory = new ItemTypeFactory(new Processor(false));
+		XdmSequenceIterator childItr = schema.axisIterator(Axis.CHILD);
+		while (childItr.hasNext()) {
+			XdmNode child = (XdmNode) childItr.next();
+			if (child.getNodeKind().equals(XdmNodeKind.ELEMENT)) {
+				QName typeName = new QName("http://www.w3.org/2001/XMLSchema",
+						child.getAttributeValue(type));
+				ItemType atomicType;
+				try {
+					atomicType = typeFactory.getAtomicType(typeName);
+				} catch (SaxonApiException e) {
+					// xs:anyAtomicType
+					atomicType = ItemType.ANY_ATOMIC_VALUE;
+				}
+				schemaFields.put(child.getAttributeValue(name), atomicType);
+			}
+		}
+		return schemaFields;
 	}
 
 }

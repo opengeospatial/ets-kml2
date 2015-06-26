@@ -68,7 +68,7 @@ public class VerifyExtendedDataValidator {
 	}
 
 	@Test
-	@Ignore("Works as expected, but avoid network access")
+	@Ignore("Works as expected, but requires network access")
 	public void fetchRemoteSchema() throws SAXException, IOException,
 			SaxonApiException {
 		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
@@ -103,11 +103,45 @@ public class VerifyExtendedDataValidator {
 		Element extData = (Element) doc.getElementsByTagNameNS(KML2.NS_NAME,
 				"ExtendedData").item(0);
 		ExtendedDataValidator iut = new ExtendedDataValidator();
+		iut.setOwnerDocument(doc);
 		iut.checkSchemaData(extData);
 		assertFalse("Expected an error.", iut.getErrorMessages().isEmpty());
 		assertTrue(
 				"Expected error message to contain 'Resource not found: #TrailHeadSchema'",
 				iut.getErrorMessages().contains(
 						"Resource not found: #TrailHeadSchema"));
+	}
+
+	@Test
+	public void checkSchemaData_invalidIntegerValue() throws SAXException,
+			IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
+				"/kml22/Placemark-SchemaData-3.xml"));
+		Element extData = (Element) doc.getElementsByTagNameNS(KML2.NS_NAME,
+				"ExtendedData").item(0);
+		ExtendedDataValidator iut = new ExtendedDataValidator();
+		iut.setOwnerDocument(doc);
+		iut.checkSchemaData(extData);
+		assertFalse("Expected an error.", iut.getErrorMessages().isEmpty());
+		assertTrue(
+				"Expected error message to contain 'Cannot convert string \"Approx 3500 m\" to an integer'",
+				iut.getErrorMessages()
+						.contains(
+								"Cannot convert string \"Approx 3500 m\" to an integer"));
+	}
+
+	@Test
+	public void isValid_invalidIntegerValue() throws SAXException, IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
+				"/kml22/Placemark-SchemaData-3.xml"));
+		Element extData = (Element) doc.getElementsByTagNameNS(KML2.NS_NAME,
+				"ExtendedData").item(0);
+		ExtendedDataValidator iut = new ExtendedDataValidator();
+		iut.isValid(extData);
+		assertFalse("Expected an error.", iut.getErrorMessages().isEmpty());
+		assertTrue(
+				"Expected error message to contain 'Cannot convert string \"Approx 3500 m\"'",
+				iut.getErrorMessages().contains(
+						"Cannot convert string \"Approx 3500 m\""));
 	}
 }

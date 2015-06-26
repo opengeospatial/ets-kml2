@@ -6,15 +6,23 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipException;
 
 import javax.xml.transform.stream.StreamSource;
 
+import net.sf.saxon.s9api.ItemType;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmValue;
+
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.opengis.cite.kml2.KML2;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -71,5 +79,18 @@ public class VerifyKMLUtils {
 		assertEquals("Unexpected number of shared styles", 1, styleIdSet.size());
 		assertTrue("Expected set to contain 'defaultStyles'",
 				styleIdSet.contains("defaultStyles"));
+	}
+
+	@Test
+	public void getDeclaredFieldsInTrailHeadType() throws URISyntaxException,
+			SaxonApiException {
+		URL url = this.getClass().getResource("/schemas/Schema-001.xml");
+		File file = new File(url.toURI());
+		XdmValue value = XMLUtils.evaluateXPath2(new StreamSource(file),
+				"//kml:Schema[@id eq 'TrailHeadType']",
+				Collections.singletonMap(KML2.NS_NAME, "kml"));
+		Map<String, ItemType> fields = KMLUtils
+				.getDeclaredFields((XdmNode) value.itemAt(0));
+		assertEquals("Unexpected number of fields", 4, fields.size());
 	}
 }

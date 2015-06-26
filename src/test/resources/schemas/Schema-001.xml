@@ -11,6 +11,9 @@
 			<SimpleField type="positiveInteger" name="ElevationGain" uom="[ft_i]">
 				<displayName><![CDATA[<i>change in altitude</i>]]></displayName>
 			</SimpleField>
+			<SimpleArrayField type="string" name="difficulty">
+				<displayName>Difficulty rating</displayName>
+			</SimpleArrayField>
 		</Schema>
 	</Document>
 </kml>
