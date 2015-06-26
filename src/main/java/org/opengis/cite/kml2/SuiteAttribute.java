@@ -42,7 +42,12 @@ public enum SuiteAttribute {
 	/**
 	 * A {@code Set<String>} containing shared style identifiers.
 	 */
-	SHARED_STYLES("sharedStyles", Set.class);
+	SHARED_STYLES("sharedStyles", Set.class),
+	/**
+	 * A {@code Set<String>} containing custom schema (kml:Schema) identifiers.
+	 */
+	CUSTOM_SCHEMAS("customSchemas", Set.class);
+
 	private final Class attrType;
 	private final String attrName;
 

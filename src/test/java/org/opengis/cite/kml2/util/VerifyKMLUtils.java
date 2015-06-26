@@ -65,8 +65,9 @@ public class VerifyKMLUtils {
 	public void findSharedStyle() throws URISyntaxException {
 		URL url = this.getClass().getResource("/kml22/SharedStyle.xml");
 		File file = new File(url.toURI());
-		Set<String> styleIdSet = KMLUtils.findSharedStyles(new StreamSource(
-				file));
+		Set<String> styleIdSet = KMLUtils.findElementIdentifiers(
+				new StreamSource(file),
+				"//kml:Document/kml:Style | //kml:Document/kml:StyleMap");
 		assertEquals("Unexpected number of shared styles", 1, styleIdSet.size());
 		assertTrue("Expected set to contain 'defaultStyles'",
 				styleIdSet.contains("defaultStyles"));

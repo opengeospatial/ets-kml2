@@ -16,8 +16,10 @@ import java.util.zip.ZipFile;
 
 import javax.xml.transform.Source;
 
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmItem;
+import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmValue;
 
 import org.apache.commons.io.IOUtils;
@@ -120,40 +122,57 @@ public class KMLUtils {
 	}
 
 	/**
-	 * Finds shared styles that occur in a KML document. A shared style is any
-	 * element that may substitute for kml:AbstractStyleSelectorGroup
-	 * (kml:Style, kml:StyleMap) that satisfies all of the following conditions:
+	 * Finds KML elements selected by the given XPath expression and returns
+	 * their identifiers. This method can be used to find custom schemas and
+	 * shared styles that occur in a KML document and may be referenced by
+	 * identifier.
+	 * <p>
+	 * A shared style is any element that may substitute for
+	 * kml:AbstractStyleSelectorGroup (kml:Style, kml:StyleMap) that satisfies
+	 * all of the following conditions:
+	 * </p>
 	 * <ol>
 	 * <li>its parent element is kml:Document</li>
 	 * <li>it has a non-empty 'id' attribute value</li>
 	 * </ol>
 	 * 
+	 * <p>
+	 * A custom schema (kml:Schema) may be defined in order to add user-defined
+	 * data that occurs within a child kml:ExtendedData element of a KML
+	 * feature.
+	 * </p>
+	 * 
 	 * @param kmlSource
 	 *            A Source for reading a KML document.
-	 * @return A set (possibly empty) of identifiers for shared styles defined
-	 *         in the source resource.
+	 * @param xpath
+	 *            An XPath (2.0) expression that selects the KML objects of
+	 *            interest.
+	 * @return A set (possibly empty) of identifiers for shared resources
+	 *         defined in the source.
 	 * 
 	 * @see "OGC KML 2.3, 6.4: Shared Styles"
+	 * @see "OGC KML 2.3, 9.10: Schema"
 	 */
-	public static Set<String> findSharedStyles(Source kmlSource) {
+	public static Set<String> findElementIdentifiers(Source kmlSource,
+			String xpath) {
 		XdmValue results = null;
-		Set<String> styleIdSet = new HashSet<String>();
-		String expr = "//kml:Document/kml:Style/@id | //kml:Document/kml:StyleMap/@id";
+		Set<String> idSet = new HashSet<String>();
 		try {
-			results = XMLUtils.evaluateXPath2(kmlSource, expr, null);
+			results = XMLUtils.evaluateXPath2(kmlSource, xpath, null);
 		} catch (SaxonApiException e) {
 			Logger.getLogger(KMLUtils.class.getName()).log(Level.WARNING,
-					"Failed to evaluate XPath expression: " + expr, e);
-			return styleIdSet;
+					"Failed to evaluate XPath expression: " + xpath, e);
+			return idSet;
 		}
 		for (XdmItem item : results) {
-			String id = item.getStringValue().trim();
-			if (id.isEmpty()) {
+			XdmNode node = (XdmNode) item;
+			String id = node.getAttributeValue(new QName("id"));
+			if (null == id || id.isEmpty()) {
 				continue;
 			}
-			styleIdSet.add(id);
+			idSet.add(id);
 		}
-		return styleIdSet;
+		return idSet;
 	}
 
 	/**

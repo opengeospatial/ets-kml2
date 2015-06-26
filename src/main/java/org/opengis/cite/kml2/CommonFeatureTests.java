@@ -137,13 +137,14 @@ public class CommonFeatureTests extends CommonFixture {
 	 * [Test] Checks that the content of a kml:ExtendedData element satisfies
 	 * all applicable constraints.
 	 * 
-	 * @see RegionValidator
+	 * @see ExtendedDataValidator
 	 */
-	@Test(description = "ATC-ijk")
+	@Test(description = "ATC-127")
 	public void validExtendedData() {
 		if (null == this.targetElements) {
 			return;
 		}
+		ExtendedDataValidator validator = new ExtendedDataValidator();
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element kmlFeature = (Element) targetElements.item(i);
 			Node extData = kmlFeature.getElementsByTagNameNS(KML2.NS_NAME,
@@ -151,7 +152,6 @@ public class CommonFeatureTests extends CommonFixture {
 			if (null == extData) {
 				continue;
 			}
-			ExtendedDataValidator validator = new ExtendedDataValidator();
 			Assert.assertTrue(validator.isValid(extData),
 					validator.getErrorMessages());
 		}
