@@ -55,6 +55,23 @@ public class VerifyExtendedDataValidator {
 	}
 
 	@Test
+	public void extendedDataWithDuplicateName() throws SAXException,
+			IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
+				"/kml23/ExtendedData-002.xml"));
+		Element extData = (Element) doc.getElementsByTagNameNS(KML2.NS_NAME,
+				"ExtendedData").item(0);
+		ExtendedDataValidator iut = new ExtendedDataValidator();
+		iut.checkData(extData);
+		System.out.println(iut.getErrorMessages());
+		assertFalse("Expected an error.", iut.getErrorMessages().isEmpty());
+		assertTrue(
+				"Expected message to contain \"kml:Data element has non-unique name: 'membership'\"",
+				iut.getErrorMessages().contains(
+						"kml:Data element has non-unique name: 'membership'"));
+	}
+
+	@Test
 	public void fetchSchemaInSameDocument() throws SAXException, IOException,
 			SaxonApiException {
 		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(

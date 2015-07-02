@@ -46,4 +46,5 @@ public class ErrorMessageKeys {
 	public static final String RING_NOT_SIMPLE = "SimpleRing";
 	public static final String UOM_NOT_DEFN = "UnitOfMeasureNotDefined";
 	public static final String INVALID_DATATYPE = "InvalidDatatype";
+	public static final String DUPLICATE_DATA = "DuplicateData";
 }

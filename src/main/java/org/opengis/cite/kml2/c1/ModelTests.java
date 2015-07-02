@@ -1,18 +1,24 @@
 package org.opengis.cite.kml2.c1;
 
+import java.net.URI;
+
 import javax.ws.rs.core.MediaType;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.opengis.cite.kml2.CommonFixture;
+import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
 import org.opengis.cite.kml2.util.JTSGeometryBuilder;
+import org.opengis.cite.kml2.util.URIUtils;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.kml2.validation.LinkValidator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -33,6 +39,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * 
  * The relevant test cases from the abstract test suite are listed below:
  * <ul>
+ * <li>ATC-129: Valid texture alias</li>
  * <li>ATC-131: Model orientation not empty</li>
  * <li>ATC-133: Model referents</li>
  * <li>ATC-214: Model location</li>
@@ -43,10 +50,11 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class ModelTests extends CommonFixture {
 
-	private LinkValidator linkValidator;
+	private LinkValidator modelLinkValidator;
 
 	public ModelTests() {
-		this.linkValidator = new LinkValidator(MediaType.valueOf("model/*"));
+		this.modelLinkValidator = new LinkValidator(
+				MediaType.valueOf("model/*"));
 	}
 
 	/**
@@ -101,9 +109,89 @@ public class ModelTests extends CommonFixture {
 						ErrorMessageKeys.MISSING_INFOSET_ITEM, "kml:Link",
 						XMLUtils.buildXPointer(model)));
 			}
-			Assert.assertTrue(linkValidator.isValid(link.item(0)),
-					linkValidator.getErrorMessages());
+			Assert.assertTrue(modelLinkValidator.isValid(link.item(0)),
+					modelLinkValidator.getErrorMessages());
 		}
 	}
 
+	/**
+	 * [Test] Verifies that the kml:Alias elements appearing in a
+	 * kml:ResourceMap element satisfy all of the following constraints:
+	 * <ol>
+	 * <li>the value of the child kml:targetHref element is a URI reference to
+	 * an image (texture) resource;</li>
+	 * <li>the value of the child kml:sourceHref element corresponds to a file
+	 * reference that appears within the 3D object resource referenced by the
+	 * sibling kml:Link element</li>
+	 * </ol>
+	 * 
+	 * Note: The source file is expected to be a textual (including XML) digital
+	 * asset resource such as a COLLADA file.
+	 */
+	@Test(description = "ATC-129")
+	public void resourceMap() {
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element model = (Element) targetElements.item(i);
+			Element map = (Element) model.getElementsByTagNameNS(KML2.NS_NAME,
+					"ResourceMap").item(0);
+			if (null == map) {
+				continue;
+			}
+			NodeList aliases = map
+					.getElementsByTagNameNS(KML2.NS_NAME, "Alias");
+			Node modelRef = null;
+			try {
+				modelRef = XMLUtils.evaluateXPath(model, "kml:Link/kml:href",
+						null).item(0);
+			} catch (XPathExpressionException e) {
+			}
+			URI modelURI = URI.create(modelRef.getTextContent().trim());
+			if (!modelURI.isAbsolute()) {
+				modelURI = URIUtils.resolveRelativeURI(model.getOwnerDocument()
+						.getBaseURI(), modelURI.toString());
+			}
+			for (int j = 0; j < aliases.getLength(); j++) {
+				assertValidAlias((Element) aliases.item(j), modelURI);
+			}
+		}
+	}
+
+	/**
+	 * Asserts that the given kml:Alias element satisfies all applicable
+	 * constraints.
+	 * 
+	 * @param alias
+	 *            A kml:Alias element.
+	 * @param modelURI
+	 *            An absolute URI that refers to a 3D model (e.g. a COLLADA
+	 *            file); this will be used to resolve relative source URIs if
+	 *            necessary.
+	 */
+	void assertValidAlias(Element alias, URI modelURI) {
+		Element sourceHrefElem = (Element) alias.getElementsByTagNameNS(
+				KML2.NS_NAME, "sourceHref").item(0);
+		Assert.assertNotNull(sourceHrefElem, ErrorMessage.format(
+				ErrorMessageKeys.MISSING_INFOSET_ITEM, "kml:sourceHref",
+				XMLUtils.buildXPointer(alias)));
+		String sourceHref = sourceHrefElem.getTextContent().trim();
+		URI sourceURI = URI.create(sourceHref);
+		if (!sourceURI.isAbsolute()) {
+			// resolve against URI of referring model resource
+			sourceURI = modelURI.resolve(sourceURI);
+		}
+		ETSAssert.assertReferentExists(sourceURI, MediaType.valueOf("image/*"));
+		// TODO: Verify sourceHref occurs in model content
+		Element targetHref = (Element) alias.getElementsByTagNameNS(
+				KML2.NS_NAME, "targetHref").item(0);
+		Assert.assertNotNull(targetHref, ErrorMessage.format(
+				ErrorMessageKeys.MISSING_INFOSET_ITEM, "kml:targetHref",
+				XMLUtils.buildXPointer(alias)));
+		URI targetURI = URI.create(targetHref.getTextContent().trim());
+		if (!targetURI.isAbsolute()) {
+			// resolve against base URI of KML doc
+			targetURI = URIUtils.resolveRelativeURI(alias.getOwnerDocument()
+					.getBaseURI(), targetURI.toString());
+		}
+		ETSAssert.assertReferentExists(targetURI, MediaType.valueOf("image/*"));
+	}
 }

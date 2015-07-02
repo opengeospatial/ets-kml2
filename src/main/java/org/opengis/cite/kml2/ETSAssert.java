@@ -28,9 +28,7 @@ import org.opengis.cite.kml2.util.HttpClientUtils;
 import org.opengis.cite.kml2.util.KMLUtils;
 import org.opengis.cite.kml2.util.NamespaceBindings;
 import org.opengis.cite.kml2.util.XMLUtils;
-import org.opengis.cite.validation.ErrorSeverity;
 import org.opengis.cite.validation.SchematronValidator;
-import org.opengis.cite.validation.ValidationError;
 import org.opengis.cite.validation.ValidationErrorHandler;
 import org.testng.Assert;
 import org.w3c.dom.Document;
@@ -252,31 +250,24 @@ public class ETSAssert {
 	}
 
 	/**
-	 * Asserts that the resource referenced by the given element exists and is
+	 * Asserts that the resource referenced by the given URI exists and is
 	 * compatible with one of the acceptable media types.
 	 * 
-	 * @param uriRef
-	 *            An element node containing either an absolute URI as its text
-	 *            content or as the value of a 'uom' (unit of measure)
-	 *            attribute.
+	 * @param uri
+	 *            An absolute URI based on the 'file' or 'http(s)' schemes.
 	 * @param acceptableTypes
-	 *            A list of acceptable media types.
+	 *            A list of acceptable media types; if empty the media range is
+	 *            unconstrained (any type).
 	 */
-	public static void assertReferentExists(Node uriRef,
+	public static void assertReferentExists(URI uri,
 			MediaType... acceptableTypes) {
-		URI uri = null;
-		if (null != uriRef.getAttributes().getNamedItem("uom")) {
-			uri = URI.create(uriRef.getAttributes().getNamedItem("uom")
-					.getNodeValue());
-		} else {
-			uri = URI.create(uriRef.getTextContent().trim());
-		}
 		if (!uri.isAbsolute()) {
-			ValidationError err = new ValidationError(ErrorSeverity.ERROR,
-					ErrorMessage.format(ErrorMessageKeys.URI_NOT_ACCESSIBLE,
-							uri, "The URI is not absolute"), -1, -1,
-					XMLUtils.buildXPointer(uriRef));
-			throw new AssertionError(err);
+			throw new AssertionError(ErrorMessage.format(
+					ErrorMessageKeys.URI_NOT_ACCESSIBLE, uri,
+					"The URI is not absolute"));
+		}
+		if (null == acceptableTypes || acceptableTypes.length == 0) {
+			acceptableTypes = new MediaType[] { MediaType.WILDCARD_TYPE };
 		}
 		try {
 			URLConnection urlConn = uri.toURL().openConnection();
@@ -298,38 +289,26 @@ public class ETSAssert {
 				httpConn.setRequestProperty("Accept",
 						acceptHeaderVal.toString());
 				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-					ValidationError err = new ValidationError(
-							ErrorSeverity.ERROR, ErrorMessage.format(
-									ErrorMessageKeys.UNEXPECTED_STATUS, uri),
-							-1, -1, XMLUtils.buildXPointer(uriRef));
-					throw new AssertionError(err);
+					throw new AssertionError(ErrorMessage.format(
+							ErrorMessageKeys.UNEXPECTED_STATUS, uri));
 				}
 				String contentType = urlConn.getContentType();
 				if (!HttpClientUtils.contentIsAcceptable(contentType,
 						acceptableTypes)) {
-					ValidationError err = new ValidationError(
-							ErrorSeverity.ERROR, ErrorMessage.format(
-									ErrorMessageKeys.UNACCEPTABLE_MEDIA_TYPE,
-									contentType,
-									Arrays.toString(acceptableTypes)), -1, -1,
-							XMLUtils.buildXPointer(uriRef));
-					throw new AssertionError(err);
+					throw new AssertionError(ErrorMessage.format(
+							ErrorMessageKeys.UNACCEPTABLE_MEDIA_TYPE,
+							contentType, Arrays.toString(acceptableTypes)));
 				}
 				break;
 			default:
-				ValidationError err = new ValidationError(ErrorSeverity.ERROR,
-						ErrorMessage.format(
-								ErrorMessageKeys.URI_NOT_ACCESSIBLE, uri,
-								"Unsupported URI scheme."), -1, -1,
-						XMLUtils.buildXPointer(uriRef));
-				throw new AssertionError(err);
+				throw new AssertionError(ErrorMessage.format(
+						ErrorMessageKeys.URI_NOT_ACCESSIBLE, uri,
+						"Unsupported URI scheme."));
 			}
 		} catch (IOException e) {
-			ValidationError err = new ValidationError(ErrorSeverity.ERROR,
-					ErrorMessage.format(ErrorMessageKeys.URI_NOT_ACCESSIBLE,
-							uri, e.getMessage()), -1, -1,
-					XMLUtils.buildXPointer(uriRef));
-			throw new AssertionError(err);
+			throw new AssertionError(ErrorMessage.format(
+					ErrorMessageKeys.URI_NOT_ACCESSIBLE, uri, e.getMessage()));
 		}
 	}
+
 }

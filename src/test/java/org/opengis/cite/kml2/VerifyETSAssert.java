@@ -1,6 +1,7 @@
 package org.opengis.cite.kml2;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,7 +74,8 @@ public class VerifyETSAssert {
 				"/kml23/NetworkLinkControl-004.xml"));
 		Node uriRef = doc.getElementsByTagNameNS(KML2.NS_NAME, "targetHref")
 				.item(0);
-		ETSAssert.assertReferentExists(uriRef, MediaType.APPLICATION_XML_TYPE);
+		URI uri = URI.create(uriRef.getTextContent().trim());
+		ETSAssert.assertReferentExists(uri, MediaType.APPLICATION_XML_TYPE);
 	}
 
 	@Test
@@ -84,7 +86,8 @@ public class VerifyETSAssert {
 				"/kml23/NetworkLinkControl-005.xml"));
 		Node uriRef = doc.getElementsByTagNameNS(KML2.NS_NAME, "targetHref")
 				.item(0);
-		ETSAssert.assertReferentExists(uriRef,
+		URI uri = URI.create(uriRef.getTextContent().trim());
+		ETSAssert.assertReferentExists(uri,
 				MediaType.valueOf(KML2.KML_MEDIA_TYPE));
 	}
 
@@ -97,7 +100,8 @@ public class VerifyETSAssert {
 				"/kml23/NetworkLinkControl-005.xml"));
 		Node uriRef = doc.getElementsByTagNameNS(KML2.NS_NAME, "targetHref")
 				.item(0);
-		ETSAssert.assertReferentExists(uriRef, MediaType.TEXT_PLAIN_TYPE);
+		URI uri = URI.create(uriRef.getTextContent().trim());
+		ETSAssert.assertReferentExists(uri, MediaType.TEXT_PLAIN_TYPE);
 	}
 
 }

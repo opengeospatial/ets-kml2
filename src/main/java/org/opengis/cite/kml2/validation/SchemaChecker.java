@@ -228,12 +228,10 @@ public class SchemaChecker {
 		if (uom.isEmpty()) {
 			return;
 		}
-		URI uomRef = null;
 		try {
-			uomRef = URI.create(URLEncoder.encode(uom, "UTF-8"));
+			URI uomRef = URI.create(URLEncoder.encode(uom, "UTF-8"));
 			if (uomRef.isAbsolute()) {
-				ETSAssert.assertReferentExists(schemaField,
-						MediaType.WILDCARD_TYPE);
+				ETSAssert.assertReferentExists(uomRef, MediaType.WILDCARD_TYPE);
 				return;
 			}
 		} catch (AssertionError | UnsupportedEncodingException e) {

@@ -1,6 +1,7 @@
 package org.opengis.cite.kml2.validation;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.xml.transform.Source;
@@ -42,6 +43,12 @@ import org.w3c.dom.NodeList;
  * </xsd:complexType>
  * }
  * </pre>
+ * 
+ * The applicable test cases are listed below.
+ * <ul>
+ * <li>ATC-128</li>
+ * <li>ATC-233</li>
+ * </ul>
  */
 public class ExtendedDataValidator {
 
@@ -98,17 +105,35 @@ public class ExtendedDataValidator {
 	}
 
 	/**
-	 * Checks that a kml:Data element satisfies all applicable constraints.
+	 * Checks that a kml:Data element (an untyped name-value pair) satisfies all
+	 * applicable constraints.
+	 * <ol>
+	 * <li>the value of the 'name' attribute is unique within the context of the
+	 * parent kml:ExtendedData element</li>
+	 * <li>if present, the uom attribute identifies a valid unit of measurement</li>
+	 * </ol>
 	 * 
 	 * @param extData
 	 *            A kml:ExtendedData element.
 	 * 
+	 * @see "OGC KML 2.3 – Abstract Test Suite, ATC-128: Data element has distinct name"
+	 * @see "OGC KML 2.3 – Abstract Test Suite, ATC-233: Valid unit of measurement"
 	 */
 	void checkData(Element extData) {
 		NodeList dataList = extData
 				.getElementsByTagNameNS(KML2.NS_NAME, "Data");
+		HashSet<String> nameSet = new HashSet<>(dataList.getLength());
 		for (int i = 0; i < dataList.getLength(); i++) {
 			Element data = (Element) dataList.item(i);
+			String name = data.getAttribute("name");
+			if (!nameSet.add(name)) {
+				errHandler.addError(
+						ErrorSeverity.ERROR,
+						ErrorMessage.format(ErrorMessageKeys.DUPLICATE_DATA,
+								name),
+						new ErrorLocator(-1, -1, XMLUtils
+								.buildXPointer(extData)));
+			}
 			schemaChecker.checkUnitOfMeasure(data);
 		}
 		this.errHandler.addErrors(schemaChecker.getErrors());

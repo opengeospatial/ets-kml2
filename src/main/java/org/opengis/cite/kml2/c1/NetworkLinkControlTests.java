@@ -1,5 +1,6 @@
 package org.opengis.cite.kml2.c1;
 
+import java.net.URI;
 import java.net.URL;
 
 import javax.ws.rs.core.MediaType;
@@ -92,7 +93,8 @@ public class NetworkLinkControlTests extends CommonFixture {
 		}
 		Element targetUri = (Element) Element.class.cast(updateNode)
 				.getElementsByTagNameNS(KML2.NS_NAME, "targetHref").item(0);
-		ETSAssert.assertReferentExists(targetUri,
+		ETSAssert.assertReferentExists(
+				URI.create(targetUri.getTextContent().trim()),
 				MediaType.valueOf(KML2.KML_MEDIA_TYPE),
 				MediaType.valueOf(KML2.KMZ_MEDIA_TYPE));
 		URL schRef = this.getClass().getResource(
