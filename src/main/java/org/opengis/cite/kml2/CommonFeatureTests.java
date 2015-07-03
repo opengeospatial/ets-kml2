@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.opengis.cite.kml2.util.URIUtils;
 import org.opengis.cite.kml2.util.XMLUtils;
@@ -166,7 +167,7 @@ public class CommonFeatureTests extends CommonFixture {
 	 *      3966</a>
 	 */
 	@Test(description = "ATC-124")
-	public void validPhoneNumber() {
+	public void phoneNumber() {
 		if (null == this.targetElements) {
 			return;
 		}
@@ -185,6 +186,52 @@ public class CommonFeatureTests extends CommonFixture {
 					ErrorMessageKeys.CONSTRAINT_VIOLATION,
 					"Valid 'tel' URI (RFC 3966)",
 					XMLUtils.buildXPointer(phoneNum)));
+		}
+	}
+
+	/**
+	 * [Test] Checks that an atom:author element satisfies all of the following
+	 * assertions:
+	 * <ol>
+	 * <li>the content of the child atom:uri element is an IRI reference;</li>
+	 * <li>the content of the child atom:email element conforms to the
+	 * "addr-spec" production rule in RFC 5322 (<em>Internet Message Format</em>
+	 * ).</li>
+	 * </ol>
+	 * 
+	 * <p>
+	 * The content model is specified by the <code>atomPersonConstruct</code>
+	 * pattern in the RELAX NG schema. Note that within a container element
+	 * authorship is inherited by all child feature members; it may be
+	 * overridden on a per-feature basis.
+	 * </p>
+	 *
+	 * @see <a href="http://tools.ietf.org/html/rfc4287#section-3.2"
+	 *      target="_blank">RFC 4287 - Person Constructs</a>
+	 * @see <a href="http://tools.ietf.org/html/rfc5322#section-3.4.1"
+	 *      target="_blank">RFC 5322 - Addr-Spec Specification</a>
+	 */
+	@Test(description = "ATC-130")
+	public void atomAuthor() {
+		if (null == this.targetElements) {
+			return;
+		}
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element kmlFeature = (Element) targetElements.item(i);
+			try {
+				Node uri = XMLUtils.evaluateXPath(kmlFeature,
+						"atom:author/atom:uri", null).item(0);
+				if (null != uri) {
+					ETSAssert.assertValidIRI(uri.getTextContent().trim());
+				}
+				Node email = XMLUtils.evaluateXPath(kmlFeature,
+						"atom:author/atom:email", null).item(0);
+				if (null != email) {
+					ETSAssert.assertValidEmailAddress(email.getTextContent()
+							.trim());
+				}
+			} catch (XPathExpressionException e) {
+			}
 		}
 	}
 

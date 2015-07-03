@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.namespace.QName;
@@ -24,6 +26,9 @@ import javax.xml.xpath.XPathFactory;
 
 import net.sf.saxon.value.BooleanValue;
 
+import org.apache.jena.iri.IRI;
+import org.apache.jena.iri.IRIException;
+import org.apache.jena.iri.IRIFactory;
 import org.opengis.cite.kml2.util.HttpClientUtils;
 import org.opengis.cite.kml2.util.KMLUtils;
 import org.opengis.cite.kml2.util.NamespaceBindings;
@@ -308,6 +313,47 @@ public class ETSAssert {
 		} catch (IOException e) {
 			throw new AssertionError(ErrorMessage.format(
 					ErrorMessageKeys.URI_NOT_ACCESSIBLE, uri, e.getMessage()));
+		}
+	}
+
+	/**
+	 * Asserts that a given email address conforms to the "addr-spec" production
+	 * in RFC 5322.
+	 * 
+	 * @param emailAddr
+	 *            A String denoting an email address.
+	 * 
+	 * @see <a href="http://tools.ietf.org/html/rfc5322#section-3.4.1"
+	 *      target="_blank">RFC 5322: Internet Message Format - Addr-Spec
+	 *      Specification</a>
+	 */
+	public static void assertValidEmailAddress(String emailAddr) {
+		Pattern emailPattern = Pattern.compile("(.+)@(.+)\\.(.+)");
+		Matcher matcher = emailPattern.matcher(emailAddr);
+		if (!matcher.matches()) {
+			throw new AssertionError(ErrorMessage.format(
+					ErrorMessageKeys.INVALID_EMAIL_ADDR, emailAddr));
+		}
+	}
+
+	/**
+	 * Asserts that a resource identifier is a valid internationalized resource
+	 * identifier (IRI). An IRI is a sequence of characters from the Universal
+	 * Character Set (Unicode/ISO 10646).
+	 * 
+	 * @param id
+	 *            A String representing a resource identifier.
+	 * 
+	 * @see <a href="http://tools.ietf.org/html/rfc3987" target="_blank">RFC
+	 *      3987: Internationalized Resource Identifiers (IRIs)</a>
+	 */
+	public static void assertValidIRI(String id) {
+		try {
+			@SuppressWarnings("unused")
+			IRI iri = IRIFactory.iriImplementation().construct(id);
+		} catch (IRIException e) {
+			throw new AssertionError(ErrorMessage.format(
+					ErrorMessageKeys.INVALID_IRI, id));
 		}
 	}
 
