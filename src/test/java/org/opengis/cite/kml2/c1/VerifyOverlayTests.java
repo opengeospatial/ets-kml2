@@ -94,6 +94,20 @@ public class VerifyOverlayTests {
 		OverlayTests iut = new OverlayTests();
 		iut.initCommonFixture(testContext);
 		iut.findOverlayElements();
-		iut.photoOverlayView();
+		iut.checkOverlayConstraints();
+	}
+
+	@Test
+	public void groundOverlayIsMissingAltitude() throws SAXException,
+			IOException {
+		thrown.expect(AssertionError.class);
+		thrown.expectMessage("Expected kml:altitude element when kml:altitudeMode = 'absolute'");
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
+				"/features/GroundOverlay-001.xml"));
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		OverlayTests iut = new OverlayTests();
+		iut.initCommonFixture(testContext);
+		iut.findOverlayElements();
+		iut.checkOverlayConstraints();
 	}
 }

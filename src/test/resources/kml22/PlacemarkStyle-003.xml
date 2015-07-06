@@ -5,8 +5,7 @@
 		<Style id="sn_blue-dot_copy3">
 			<IconStyle>
 				<Icon>
-					<href>http://www.google.com/intl/en_us/mapfiles/ms/icons/blue-dot.png
-					</href>
+					<href>http://www.google.com/intl/en_us/mapfiles/ms/icons/blue-dot.png</href>
 				</Icon>
 			</IconStyle>
 		</Style>

@@ -106,4 +106,18 @@ public class VerifyCommonFeatureTests {
 		iut.getSharedStyles(testContext);
 		iut.validStyleReference();
 	}
+
+	@Test
+	public void incompleteStyleMap() throws SAXException, IOException {
+		thrown.expect(AssertionError.class);
+		thrown.expectMessage("Expected kml:styleURL or kml:Style element in every kml:Pair");
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
+				"/kml22/Document-001.xml"));
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		CommonFeatureTests iut = new CommonFeatureTests();
+		iut.initCommonFixture(testContext);
+		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
+				"Document"));
+		iut.checkFeatureConstraints();
+	}
 }

@@ -2,11 +2,13 @@ package org.opengis.cite.kml2;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.opengis.cite.kml2.util.URIUtils;
@@ -232,6 +234,26 @@ public class CommonFeatureTests extends CommonFixture {
 				}
 			} catch (XPathExpressionException e) {
 			}
+		}
+	}
+
+	/**
+	 * [Test] Checks various Schematron constraints that apply to any KML
+	 * feature:
+	 * <ul>
+	 * <li>ATC-135: Mode-specific feature style (StyleMap)</li>
+	 * </ul>
+	 */
+	@Test(description = "ATC-135")
+	public void checkFeatureConstraints() {
+		if (null == this.targetElements) {
+			return;
+		}
+		URL schRef = this.getClass().getResource(
+				"/org/opengis/cite/kml2/sch/kml-feature.sch");
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element kmlFeature = (Element) targetElements.item(i);
+			ETSAssert.assertSchematronValid(schRef, new DOMSource(kmlFeature));
 		}
 	}
 

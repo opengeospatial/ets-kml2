@@ -115,6 +115,28 @@ public class ModelTests extends CommonFixture {
 	}
 
 	/**
+	 * [Test] Verifies that a kml:Orientation element contains at least one of
+	 * the following elements: kml:heading, kml:tilt, or kml:roll.
+	 */
+	@Test(description = "ATC-131")
+	public void orientation() {
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element model = (Element) targetElements.item(i);
+			Element orientation = (Element) model.getElementsByTagNameNS(
+					KML2.NS_NAME, "Orientation").item(0);
+			if (null == orientation) {
+				continue;
+			}
+			Assert.assertTrue(
+					orientation.getElementsByTagNameNS(KML2.NS_NAME, "*")
+							.getLength() > 0, ErrorMessage.format(
+							ErrorMessageKeys.CONSTRAINT_VIOLATION,
+							"Model orientation is empty.",
+							XMLUtils.buildXPointer(orientation)));
+		}
+	}
+
+	/**
 	 * [Test] Verifies that the kml:Alias elements appearing in a
 	 * kml:ResourceMap element satisfy all of the following constraints:
 	 * <ol>
@@ -180,7 +202,7 @@ public class ModelTests extends CommonFixture {
 			sourceURI = modelURI.resolve(sourceURI);
 		}
 		ETSAssert.assertReferentExists(sourceURI, MediaType.valueOf("image/*"));
-		// TODO: Verify sourceHref occurs in model content
+		// Verify sourceHref occurs in model content?
 		Element targetHref = (Element) alias.getElementsByTagNameNS(
 				KML2.NS_NAME, "targetHref").item(0);
 		Assert.assertNotNull(targetHref, ErrorMessage.format(

@@ -22,6 +22,13 @@
       <iso:assert test="kml:ViewVolume/kml:bottomFov">Expected kml:bottomFov element in kml:ViewVolume</iso:assert>
       <iso:assert test="kml:ViewVolume/kml:topFov">Expected kml:topFov element in kml:ViewVolume</iso:assert>
       <iso:assert test="number(kml:ViewVolume/kml:near) ge 0">Expected kml:ViewVolume/kml:near to be non-negative</iso:assert>
+      <iso:assert test="kml:Icon">Expected kml:Icon element in kml:PhotoOverlay (ATC-134)</iso:assert>
+      <iso:assert test="kml:ViewVolume">Expected kml:ViewVolume element in kml:PhotoOverlay (ATC-134)</iso:assert>
+      <iso:assert test="kml:Point">Expected kml:Point element in kml:PhotoOverlay (ATC-134)</iso:assert>
+      <iso:assert test="kml:Camera">Expected kml:Camera element in kml:PhotoOverlay (ATC-134)</iso:assert>
+    </iso:rule>
+    <iso:rule context="kml:GroundOverlay" id="GroundOverlay" see="OGC-14-068r2.html#atc-132">
+      <iso:assert test="kml:altitudeMode eq 'absolute' and kml:altitude">Expected kml:altitude element when kml:altitudeMode = 'absolute'</iso:assert>
     </iso:rule>
   </iso:pattern>
 

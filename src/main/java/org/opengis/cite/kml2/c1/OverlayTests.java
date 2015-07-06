@@ -109,17 +109,20 @@ public class OverlayTests extends CommonFixture {
 	}
 
 	/**
-	 * [Test] Verifies that a kml:PhotoOverlay feature has a valid field of
-	 * view. The child kml:ViewVolume element is defined by four planes, each of
-	 * which is specified by an angle relative to the view vector.
+	 * [Test] Checks various Schematron constraints that apply to specific types
+	 * of overlay features:
+	 * <ul>
+	 * <li>ATC-119: kml:PhotoOverlay has a valid field of view</li>
+	 * <li>ATC-132: kml:GroundOverlay with an kml:altitudeMode value of
+	 * "absolute" has a kml:altitude element</li>
+	 * <li>ATC-134: kml:PhotoOverlay contains all of the following child
+	 * elements: kml:Icon, kml:ViewVolume, kml:Point, and kml:Camera</li>
+	 * </ul>
 	 */
-	@Test(description = "ATC-119")
-	public void photoOverlayView() {
+	@Test(description = "ATC-119, ATC-132, ATC-134")
+	public void checkOverlayConstraints() {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element overlay = (Element) targetElements.item(i);
-			if (!overlay.getLocalName().equals("PhotoOverlay")) {
-				continue;
-			}
 			URL schRef = this.getClass().getResource(
 					"/org/opengis/cite/kml2/sch/kml-overlay.sch");
 			ETSAssert.assertSchematronValid(schRef, new DOMSource(overlay));
