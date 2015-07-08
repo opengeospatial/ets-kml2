@@ -1,6 +1,7 @@
 package org.opengis.cite.kml2.validation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,7 +13,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.opengis.cite.kml2.KML2;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
@@ -40,6 +43,21 @@ public class VerifyStyleChecker {
 		assertFalse("Expected invalid Link.", isValid);
 		assertTrue("Expected 'URI is not accessible'.", iut.getErrorMessages()
 				.contains("URI is not accessible"));
+	}
+
+	@Test
+	public void fetchingItemIconNotInNetworkLink() throws SAXException,
+			IOException {
+		URL url = this.getClass().getResource("/features/Placemark-103.xml");
+		Node style = docBuilder.parse(url.toString())
+				.getElementsByTagNameNS(KML2.NS_NAME, "Style").item(0);
+		StyleChecker iut = new StyleChecker();
+		boolean isValid = iut.isValid(style);
+		assertFalse("Expected invalid style.", isValid);
+		assertTrue(
+				"Expected message with 'ListStyle applies to NetworkLink'",
+				iut.getErrorMessages().contains(
+						"ListStyle applies to NetworkLink"));
 	}
 
 }

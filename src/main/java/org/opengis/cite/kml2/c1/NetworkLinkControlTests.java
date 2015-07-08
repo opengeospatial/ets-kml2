@@ -1,17 +1,11 @@
 package org.opengis.cite.kml2.c1;
 
-import java.net.URI;
-import java.net.URL;
-
-import javax.ws.rs.core.MediaType;
-import javax.xml.transform.dom.DOMSource;
-
 import org.opengis.cite.kml2.CommonFixture;
-import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
 import org.opengis.cite.kml2.util.XMLUtils;
+import org.opengis.cite.kml2.validation.UpdateValidator;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -35,7 +29,10 @@ import org.w3c.dom.Node;
  */
 public class NetworkLinkControlTests extends CommonFixture {
 
+	private UpdateValidator updateValidator;
+
 	public NetworkLinkControlTests() {
+		this.updateValidator = new UpdateValidator();
 	}
 
 	/**
@@ -91,14 +88,7 @@ public class NetworkLinkControlTests extends CommonFixture {
 		if (null == updateNode) {
 			return;
 		}
-		Element targetUri = (Element) Element.class.cast(updateNode)
-				.getElementsByTagNameNS(KML2.NS_NAME, "targetHref").item(0);
-		ETSAssert.assertReferentExists(
-				URI.create(targetUri.getTextContent().trim()),
-				MediaType.valueOf(KML2.KML_MEDIA_TYPE),
-				MediaType.valueOf(KML2.KMZ_MEDIA_TYPE));
-		URL schRef = this.getClass().getResource(
-				"/org/opengis/cite/kml2/sch/kml-update.sch");
-		ETSAssert.assertSchematronValid(schRef, new DOMSource(updateNode));
+		Assert.assertTrue(updateValidator.isValid(updateNode),
+				updateValidator.getErrorMessages());
 	}
 }

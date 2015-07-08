@@ -121,10 +121,10 @@ public class OverlayTests extends CommonFixture {
 	 */
 	@Test(description = "ATC-119, ATC-132, ATC-134")
 	public void checkOverlayConstraints() {
+		URL schRef = this.getClass().getResource(
+				"/org/opengis/cite/kml2/sch/kml-overlay.sch");
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element overlay = (Element) targetElements.item(i);
-			URL schRef = this.getClass().getResource(
-					"/org/opengis/cite/kml2/sch/kml-overlay.sch");
 			ETSAssert.assertSchematronValid(schRef, new DOMSource(overlay));
 		}
 	}
