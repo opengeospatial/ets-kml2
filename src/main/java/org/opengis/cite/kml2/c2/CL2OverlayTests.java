@@ -34,7 +34,7 @@ public class CL2OverlayTests extends CommonFixture {
 	 * converse must also be true.
 	 */
 	@Test(description = "ATC-211")
-	public void photoOverlayForLargeImage() {
+	public void photoOverlayForTiledImage() {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element overlay = (Element) targetElements.item(i);
 			if (!overlay.getLocalName().equals("PhotoOverlay")) {
@@ -56,6 +56,30 @@ public class CL2OverlayTests extends CommonFixture {
 								.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
 										"Tiling parameters and ImagePyramid are mutually inclusive",
 										XMLUtils.buildXPointer(overlay)));
+			}
+		}
+	}
+
+	/**
+	 * [Test] Verify that the geographic extent of a GroundOverlay feature is
+	 * specified by either a kml:LatLonBox or a kml:LatLonQuad element.
+	 */
+	@Test(description = "ATC-212")
+	public void groundOverlayExtent() {
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element overlay = (Element) targetElements.item(i);
+			if (!overlay.getLocalName().equals("GroundOverlay")) {
+				continue;
+			}
+			try {
+				ETSAssert.assertXPath("kml:LatLonBox or kml:LatLonQuad",
+						overlay, null);
+			} catch (AssertionError e) {
+				// provide more informative error message
+				throw new AssertionError(ErrorMessage.format(
+						ErrorMessageKeys.CONSTRAINT_VIOLATION,
+						"Expected kml:LatLonBox or kml:LatLonQuad",
+						XMLUtils.buildXPointer(overlay)));
 			}
 		}
 	}

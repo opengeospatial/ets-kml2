@@ -54,7 +54,8 @@ public class VerifyCL2OverlayTests {
 		CL2OverlayTests iut = new CL2OverlayTests();
 		iut.initCommonFixture(testContext);
 		iut.findOverlayElements();
-		iut.photoOverlayForLargeImage();
+		iut.photoOverlayForTiledImage();
+		;
 	}
 
 	@Test
@@ -65,6 +66,6 @@ public class VerifyCL2OverlayTests {
 		CL2OverlayTests iut = new CL2OverlayTests();
 		iut.initCommonFixture(testContext);
 		iut.findOverlayElements();
-		iut.photoOverlayForLargeImage();
+		iut.photoOverlayForTiledImage();
 	}
 }

@@ -15,6 +15,7 @@ import org.opengis.cite.kml2.util.URIUtils;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.kml2.validation.ExtendedDataValidator;
 import org.opengis.cite.kml2.validation.RegionValidator;
+import org.opengis.cite.kml2.validation.ViewpointValidator;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
@@ -39,9 +40,11 @@ public class CommonFeatureTests extends CommonFixture {
 
 	private Set<String> sharedStyles;
 	private RegionValidator regionValidator;
+	private ViewpointValidator viewValidator;
 
 	public CommonFeatureTests() {
 		this.regionValidator = new RegionValidator();
+		this.viewValidator = new ViewpointValidator();
 	}
 
 	/**
@@ -132,6 +135,33 @@ public class CommonFeatureTests extends CommonFixture {
 			Assert.assertTrue(
 					regionValidator.validateRegionExtent(region.item(0)),
 					regionValidator.getErrors());
+		}
+
+	}
+
+	/**
+	 * [Test] Checks that the content of a kml:Camera or kml:LookAt element
+	 * satisfies all applicable constraints.
+	 * 
+	 * @see ViewpointValidator
+	 */
+	@Test(description = "ATC-213")
+	public void validViewpoint() {
+		if (null == this.targetElements || this.conformanceLevel == 1) {
+			return;
+		}
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element kmlFeature = (Element) targetElements.item(i);
+			NodeList view = null;
+			try {
+				view = XMLUtils.evaluateXPath(kmlFeature,
+						"kml:Camera | kml:LookAt", null);
+			} catch (XPathExpressionException e) {
+			}
+			if (view.getLength() > 0) {
+				Assert.assertTrue(viewValidator.isValid(view.item(0)),
+						viewValidator.getErrorMessages());
+			}
 		}
 
 	}
