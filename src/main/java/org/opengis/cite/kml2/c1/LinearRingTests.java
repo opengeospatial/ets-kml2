@@ -11,6 +11,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -77,14 +78,17 @@ public class LinearRingTests extends CommonFixture {
 	/**
 	 * [Test] Verifies that a kml:LinearRing element has a valid altitudeMode
 	 * value as determined by the values of its kml:extrude and kml:tessellate
-	 * elements.
+	 * elements. This test applies only to rings that do not constitute the
+	 * boundary of a polygon.
 	 */
 	@Test(description = "ATC-112, ATC-113")
 	public void validAltitudeMode() {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element ring = (Element) targetElements.item(i);
-			ETSAssert.assertValidAltitudeMode(ring);
+			String parentNodeName = ring.getParentNode().getLocalName();
+			if (!parentNodeName.endsWith("BoundaryIs")) {
+				ETSAssert.assertValidAltitudeMode(ring);
+			}
 		}
 	}
-
 }

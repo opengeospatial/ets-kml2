@@ -68,4 +68,16 @@ public class VerifyLinkValidator {
 				.contains("URI is not accessible"));
 	}
 
+	@Test
+	public void invalidRefreshMode() throws SAXException, IOException {
+		URL url = this.getClass().getResource("/links/Link-002.xml");
+		Document link = docBuilder.parse(url.toString());
+		MediaType imageType = MediaType.valueOf("model/*");
+		LinkValidator iut = new LinkValidator(2, imageType);
+		boolean isValid = iut.isValid(link.getDocumentElement());
+		assertFalse("Expected invalid Link.", isValid);
+		assertTrue("Unexpected error message.", iut.getErrorMessages()
+				.contains("not(kml:refreshInterval)"));
+	}
+
 }

@@ -41,6 +41,8 @@ public class CommonFixture {
 	protected Document kmlDoc;
 	/** The elements to which the tests apply. */
 	protected NodeList targetElements;
+	/** The conformance level. */
+	protected int conformanceLevel = 1;
 
 	/**
 	 * Facilitates unit testing.
@@ -87,7 +89,8 @@ public class CommonFixture {
 
 	/**
 	 * Initializes the common test fixture with a client component for
-	 * interacting with HTTP endpoints.
+	 * interacting with HTTP endpoints, the KML document to be tested, and the
+	 * effective conformance level.
 	 *
 	 * @param testContext
 	 *            The test context that contains all the information for a test
@@ -106,6 +109,9 @@ public class CommonFixture {
 			throw new SkipException("Test subject not found in ITestContext.");
 		}
 		this.kmlDoc = Document.class.cast(obj);
+		obj = testContext.getSuite().getAttribute(
+				SuiteAttribute.LEVEL.getName());
+		this.conformanceLevel = Integer.class.cast(obj);
 	}
 
 	@BeforeMethod

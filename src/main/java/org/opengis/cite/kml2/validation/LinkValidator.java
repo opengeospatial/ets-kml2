@@ -9,6 +9,7 @@ import java.util.Iterator;
 
 import javax.ws.rs.core.MediaType;
 
+import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
@@ -246,6 +247,7 @@ public class LinkValidator {
 	 * <ul>
 	 * <li>ATC-205: viewFormat element not empty</li>
 	 * <li>ATC-206: httpQuery element not empty</li>
+	 * <li>ATC-210: Link refresh mode</li>
 	 * </ul>
 	 * 
 	 * @param link
@@ -267,6 +269,18 @@ public class LinkValidator {
 					ErrorMessageKeys.CONSTRAINT_VIOLATION,
 					"kml:httpQuery is not empty"), new ErrorLocator(-1, -1,
 					XMLUtils.buildXPointer(link)));
+		}
+		try { // from ATC-210
+			ETSAssert
+					.assertXPath(
+							"not(kml:refreshInterval) or kml:refreshMode = 'onInterval'",
+							link, null);
+			ETSAssert.assertXPath(
+					"not(kml:viewRefreshTime) or kml:refreshMode = 'onStop'",
+					link, null);
+		} catch (AssertionError e) {
+			errHandler.addError(ErrorSeverity.ERROR, e.getMessage(),
+					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(link)));
 		}
 	}
 

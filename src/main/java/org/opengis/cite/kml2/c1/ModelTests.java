@@ -150,7 +150,7 @@ public class ModelTests extends CommonFixture {
 	 * Note: The source file is expected to be a textual (including XML) digital
 	 * asset resource such as a COLLADA file.
 	 */
-	@Test(description = "ATC-129")
+	@Test(description = "ATC-129, ATC-209")
 	public void resourceMap() {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element model = (Element) targetElements.item(i);
@@ -161,6 +161,11 @@ public class ModelTests extends CommonFixture {
 			}
 			NodeList aliases = map
 					.getElementsByTagNameNS(KML2.NS_NAME, "Alias");
+			if (this.conformanceLevel > 1) {
+				Assert.assertTrue(aliases.getLength() > 0, ErrorMessage.format(
+						ErrorMessageKeys.CONSTRAINT_VIOLATION,
+						"ResourceMap is empty.", XMLUtils.buildXPointer(map)));
+			}
 			Node modelRef = null;
 			try {
 				modelRef = XMLUtils.evaluateXPath(model, "kml:Link/kml:href",
