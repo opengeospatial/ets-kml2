@@ -111,7 +111,9 @@ public class CommonFixture {
 		this.kmlDoc = Document.class.cast(obj);
 		obj = testContext.getSuite().getAttribute(
 				SuiteAttribute.LEVEL.getName());
-		this.conformanceLevel = Integer.class.cast(obj);
+		if (null != obj) {
+			this.conformanceLevel = Integer.class.cast(obj);
+		}
 	}
 
 	@BeforeMethod
