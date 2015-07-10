@@ -28,7 +28,7 @@
       <iso:assert test="kml:Camera">Expected kml:Camera element in kml:PhotoOverlay (ATC-134)</iso:assert>
     </iso:rule>
     <iso:rule context="kml:GroundOverlay" id="GroundOverlay" see="OGC-14-068r2.html#atc-132">
-      <iso:assert test="kml:altitudeMode eq 'absolute' and kml:altitude">Expected kml:altitude element when kml:altitudeMode = 'absolute'</iso:assert>
+      <iso:assert test="not(kml:altitudeMode) or (kml:altitudeMode ne 'absolute') or kml:altitude">Expected kml:altitude element when kml:altitudeMode = 'absolute'</iso:assert>
     </iso:rule>
   </iso:pattern>
 

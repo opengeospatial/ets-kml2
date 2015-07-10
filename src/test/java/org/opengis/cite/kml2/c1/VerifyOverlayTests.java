@@ -110,4 +110,15 @@ public class VerifyOverlayTests {
 		iut.findOverlayElements();
 		iut.checkOverlayConstraints();
 	}
+
+	@Test
+	public void validGroundOverlay() throws SAXException, IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
+				"/features/GroundOverlay-002.xml"));
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		OverlayTests iut = new OverlayTests();
+		iut.initCommonFixture(testContext);
+		iut.findOverlayElements();
+		iut.checkOverlayConstraints();
+	}
 }

@@ -141,7 +141,8 @@ public class LinkValidator {
 
 	/**
 	 * Checks that the link URI (href value) refers to an accessible resource
-	 * whose content type is compatible with an acceptable media type.
+	 * whose content type is compatible with an acceptable media type. Note that
+	 * redirects must use the same URI scheme (protocol).
 	 * 
 	 * @param link
 	 *            An Element representing a link (of type kml:LinkType).
@@ -168,6 +169,8 @@ public class LinkValidator {
 				}
 			} else {
 				HttpURLConnection httpConn = (HttpURLConnection) urlConn;
+				// WARNING: won't automatically redirect from HTTP to HTTPS
+				httpConn.setInstanceFollowRedirects(true);
 				httpConn.setRequestMethod("HEAD");
 				httpConn.setConnectTimeout(5000);
 				StringBuilder acceptHeaderVal = new StringBuilder();
@@ -176,13 +179,12 @@ public class LinkValidator {
 				}
 				httpConn.setRequestProperty("Accept",
 						acceptHeaderVal.toString());
-				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-					errHandler.addError(
-							ErrorSeverity.ERROR,
-							ErrorMessage.format(
-									ErrorMessageKeys.UNEXPECTED_STATUS, uri),
-							new ErrorLocator(-1, -1, XMLUtils
-									.buildXPointer(link)));
+				int statusCode = httpConn.getResponseCode();
+				if (statusCode != HttpURLConnection.HTTP_OK) {
+					errHandler.addError(ErrorSeverity.ERROR, ErrorMessage
+							.format(ErrorMessageKeys.UNEXPECTED_STATUS, uri,
+									statusCode), new ErrorLocator(-1, -1,
+							XMLUtils.buildXPointer(link)));
 				}
 				String contentType = urlConn.getContentType();
 				if (!HttpClientUtils.contentIsAcceptable(contentType,

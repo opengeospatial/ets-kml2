@@ -11,7 +11,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.LinearRing;
