@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ets-kml2</artifactId>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.2</version>
   <packaging>jar</packaging>
 
   <name>OGC KML 2.x Conformance Test Suite</name>
@@ -29,7 +29,7 @@
     <connection>scm:git:https://github.com/opengeospatial/ets-kml2.git</connection>
     <developerConnection>scm:git:git@github.com:opengeospatial/ets-kml2.git</developerConnection>
     <url>https://github.com/opengeospatial/ets-kml2</url>
-    <tag>HEAD</tag>
+    <tag>0.2</tag>
   </scm>
   <issueManagement>
     <system>GitHub Issue Tracker</system>
