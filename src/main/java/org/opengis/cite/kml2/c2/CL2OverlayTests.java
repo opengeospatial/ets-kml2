@@ -1,13 +1,19 @@
 package org.opengis.cite.kml2.c2;
 
+import javax.ws.rs.core.MediaType;
+
 import org.opengis.cite.kml2.CommonFixture;
 import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
+import org.opengis.cite.kml2.KML2;
 import org.opengis.cite.kml2.util.XMLUtils;
+import org.opengis.cite.kml2.validation.LinkValidator;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Checks CL2 constraints that apply to a overlay features (kml:GroundOverlay,
@@ -81,6 +87,50 @@ public class CL2OverlayTests extends CommonFixture {
 						"Expected kml:LatLonBox or kml:LatLonQuad",
 						XMLUtils.buildXPointer(overlay)));
 			}
+		}
+	}
+
+	/**
+	 * [Test] Verify that a ScreenOverlay has a child kml:screenXY element. It
+	 * specifies a point relative to the screen origin that the overlay image is
+	 * mapped to.
+	 */
+	@Test(description = "ATC-216")
+	public void screenOverlayPosition() {
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element overlay = (Element) targetElements.item(i);
+			if (!overlay.getLocalName().equals("ScreenOverlay")) {
+				continue;
+			}
+			try {
+				ETSAssert.assertXPath("kml:screenXY", overlay, null);
+			} catch (AssertionError e) {
+				// provide more informative error message
+				throw new AssertionError(ErrorMessage.format(
+						ErrorMessageKeys.CONSTRAINT_VIOLATION,
+						"Expected kml:screenXY in ScreenOverlay",
+						XMLUtils.buildXPointer(overlay)));
+			}
+		}
+	}
+
+	/**
+	 * [Test] Verify that an overlay feature contains a kml:Icon child element
+	 * that refers to an image resource.
+	 */
+	@Test(description = "ATC-215")
+	public void overlayImage() {
+		LinkValidator linkValidator = new LinkValidator(2,
+				MediaType.valueOf("image/*"));
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element overlay = (Element) targetElements.item(i);
+			Node icon = overlay.getElementsByTagNameNS(KML2.NS_NAME, "Icon")
+					.item(0);
+			Assert.assertNotNull(icon, ErrorMessage.format(
+					ErrorMessageKeys.MISSING_INFOSET_ITEM, "kml:Icon",
+					XMLUtils.buildXPointer(overlay)));
+			Assert.assertTrue(linkValidator.isValid(icon),
+					linkValidator.getErrorMessages());
 		}
 	}
 

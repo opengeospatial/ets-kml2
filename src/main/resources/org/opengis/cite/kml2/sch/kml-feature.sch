@@ -17,8 +17,8 @@
   <iso:pattern id="FeaturePattern">
     <iso:p>Defines rules that apply to any KML feature</iso:p>
     <iso:rule context="kml:StyleMap" id="StyleMap" see="OGC-14-068r2.html#atc-135">
-      <iso:assert test="kml:Pair">Expected at least one kml:Pair element in kml:StyleMap</iso:assert>
-      <iso:assert test="count(distinct-values(kml:Pair/kml:key)) = count(kml:Pair)">kml:Pair/kml:key values must be distinct</iso:assert>
+      <iso:assert test="exists(kml:Pair)">Expected at least one kml:Pair element in kml:StyleMap</iso:assert>
+      <iso:assert test="every $p in kml:Pair satisfies $p[kml:key]">Expected kml:key element in every kml:Pair</iso:assert>
       <iso:assert test="every $p in kml:Pair satisfies $p[kml:styleUrl or kml:Style]">Expected kml:styleURL or kml:Style element in every kml:Pair</iso:assert>
     </iso:rule>
   </iso:pattern>

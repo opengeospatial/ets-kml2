@@ -125,7 +125,7 @@ public class LinkValidator {
 	 * </ol>
 	 * 
 	 * @param node
-	 *            An Element node that contains a kml:Link element.
+	 *            A kml:Link or kml:Icon element.
 	 * @return true if the link is valid; false otherwise.
 	 */
 	public boolean isValid(Node node) {
