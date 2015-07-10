@@ -7,7 +7,11 @@
   <body>
     <h1>Release Notes</h1>
 
-    <h2>${project.version} (2015-05-01)</h2>
+    <h2>${project.version} (2015-07-10)</h2>
+    <p>This update includes tests covering all conformance levels (CL1, CL2, CL3) 
+    in accord with the specifications formally adopted by the OGC.</p>
+
+    <h2>0.1 (2015-05-01)</h2>
     <p>This initial release runs the following tests against a KML 2.x document:</p>
     <ul>
       <li style="list-style: square;">ATC-102: Schema validity</li>

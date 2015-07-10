@@ -31,7 +31,7 @@
       <item href="changelog.html" name="Release Notes" />
     </menu>
     <menu name="Abstract Test Suites">
-      <item href="OGC-14-068r1.html" name="KML 2.3" target="_blank" />
+      <item href="OGC-14-068r2.html" name="KML 2.3" target="_blank" />
       <item href="OGC-07-134r2.html" name="KML 2.2" target="_blank" />
     </menu>
     <menu ref="reports" />
