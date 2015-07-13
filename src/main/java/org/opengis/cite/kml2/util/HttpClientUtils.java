@@ -32,7 +32,7 @@ import org.w3c.dom.Document;
 
 /**
  * Provides various utility methods for creating and configuring HTTP client
- * components.
+ * components using the JAX-RS Client API.
  */
 public class HttpClientUtils {
 
@@ -97,8 +97,8 @@ public class HttpClientUtils {
 	 * @param qryParams
 	 *            A Map containing query parameters (may be null);
 	 * @param mediaTypes
-	 *            A list of acceptable media types; if not specified, generic
-	 *            XML ("application/xml") is preferred.
+	 *            A list of acceptable media types; if not specified, any
+	 *            representation ("*&#47;*") is acceptable.
 	 *
 	 * @return A ClientRequest object.
 	 */
@@ -113,11 +113,32 @@ public class HttpClientUtils {
 		URI uri = uriBuilder.build();
 		ClientRequest.Builder reqBuilder = ClientRequest.create();
 		if (null == mediaTypes || mediaTypes.length == 0) {
-			reqBuilder = reqBuilder.accept(MediaType.APPLICATION_XML_TYPE);
+			reqBuilder = reqBuilder.accept(MediaType.WILDCARD_TYPE);
 		} else {
 			reqBuilder = reqBuilder.accept(mediaTypes);
 		}
 		ClientRequest req = reqBuilder.build(uri, HttpMethod.GET);
+		return req;
+	}
+
+	/**
+	 * Builds an HTTP request message that uses the HEAD method. It is identical
+	 * to GET except that the server does return a message body in the response.
+	 *
+	 * @param endpoint
+	 *            A URI indicating the target resource.
+	 * @param qryParams
+	 *            A Map containing query parameters (may be null);
+	 * @param mediaTypes
+	 *            A list of acceptable media types; if not specified, any
+	 *            representation ("*&#47;*") is acceptable.
+	 *
+	 * @return A ClientRequest object.
+	 */
+	public static ClientRequest buildHeadRequest(URI endpoint,
+			Map<String, String> qryParams, MediaType... mediaTypes) {
+		ClientRequest req = buildGetRequest(endpoint, qryParams, mediaTypes);
+		req.setMethod(HttpMethod.HEAD);
 		return req;
 	}
 
@@ -142,19 +163,28 @@ public class HttpClientUtils {
 	 * @param targetURI
 	 *            The target URI from which the entity was retrieved (may be
 	 *            null).
-	 * @return A Source to read the entity from; its system identifier is set
-	 *         using the given targetURI value (this may be used to resolve any
-	 *         relative URIs found in the source).
+	 * @return A Source to read the entity from, or null if the entity cannot be
+	 *         processed for some reason; its system identifier is set using the
+	 *         given targetURI value (this may be used to resolve any relative
+	 *         URIs found in the source).
 	 */
 	public static Source getResponseEntityAsSource(ClientResponse response,
 			String targetURI) {
-		Source source = response.getEntity(DOMSource.class);
+		Source source;
+		try {
+			source = response.getEntity(DOMSource.class);
+		} catch (RuntimeException rex) {
+			Logger.getLogger(HttpClientUtils.class.getName()).log(
+					Level.WARNING,
+					"Failed to process response entity ({0}). {1}",
+					new Object[] { response.getType(), rex.getMessage() });
+			return null;
+		}
 		if (null != targetURI && !targetURI.isEmpty()) {
 			source.setSystemId(targetURI);
 		}
 		if (response.getEntityInputStream().markSupported()) {
 			try {
-				// NOTE: entity was buffered by client filter
 				response.getEntityInputStream().reset();
 			} catch (IOException ex) {
 				Logger.getLogger(HttpClientUtils.class.getName()).log(
@@ -173,16 +203,20 @@ public class HttpClientUtils {
 	 * @param targetURI
 	 *            The target URI from which the entity was retrieved (may be
 	 *            null).
-	 * @return A Document representing the entity; its base URI is set using the
-	 *         given targetURI value (this may be used to resolve any relative
-	 *         URIs found in the document).
+	 * @return A Document representing the entity, or null if it cannot be
+	 *         parsed; its base URI is set using the given targetURI value (this
+	 *         may be used to resolve any relative URIs found in the document).
 	 */
 	public static Document getResponseEntityAsDocument(ClientResponse response,
 			String targetURI) {
-		DOMSource domSource = (DOMSource) getResponseEntityAsSource(response,
+		Source source = (DOMSource) getResponseEntityAsSource(response,
 				targetURI);
+		if (null == source) {
+			return null;
+		}
+		DOMSource domSource = DOMSource.class.cast(source);
 		Document entityDoc = (Document) domSource.getNode();
-		entityDoc.setDocumentURI(domSource.getSystemId());
+		entityDoc.setDocumentURI(targetURI);
 		return entityDoc;
 	}
 

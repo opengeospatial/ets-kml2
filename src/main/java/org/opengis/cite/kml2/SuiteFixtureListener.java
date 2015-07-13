@@ -40,7 +40,7 @@ public class SuiteFixtureListener implements ISuiteListener {
 	public void onStart(ISuite suite) {
 		processSuiteParameters(suite);
 		buildKMLSchemas(suite);
-		registerClientComponent(suite);
+		registerHttpClient(suite);
 	}
 
 	/**
@@ -154,14 +154,14 @@ public class SuiteFixtureListener implements ISuiteListener {
 	}
 
 	/**
-	 * A client component is added to the suite fixture as the value of the
-	 * {@link SuiteAttribute#CLIENT} attribute; it may be subsequently accessed
-	 * via the {@link org.testng.ITestContext#getSuite()} method.
+	 * An JAX-RS Client component is added to the suite fixture as the value of
+	 * the {@link SuiteAttribute#CLIENT} attribute; it may be subsequently
+	 * accessed via the {@link org.testng.ITestContext#getSuite()} method.
 	 *
 	 * @param suite
 	 *            The test suite instance.
 	 */
-	void registerClientComponent(ISuite suite) {
+	void registerHttpClient(ISuite suite) {
 		Client client = HttpClientUtils.buildClient();
 		if (null != client) {
 			suite.setAttribute(SuiteAttribute.CLIENT.getName(), client);

@@ -1,9 +1,9 @@
 package org.opengis.cite.kml2.validation;
 
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -23,6 +23,10 @@ import org.opengis.cite.validation.ValidationErrorHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientRequest;
+import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * Checks that the content of a kml:Link or kml:Icon element satisfies all
@@ -58,6 +62,7 @@ public class LinkValidator {
 	private int conformanceLevel = 1;
 	private ValidationErrorHandler errHandler;
 	private MediaType[] mediaTypes;
+	private Client httpClient;
 
 	/**
 	 * Constructs a LinkValidator to check all mandatory constraints.
@@ -69,6 +74,7 @@ public class LinkValidator {
 	public LinkValidator(MediaType... mediaTypes) {
 		this.errHandler = new ValidationErrorHandler();
 		this.mediaTypes = mediaTypes;
+		this.httpClient = HttpClientUtils.buildClient();
 	}
 
 	/**
@@ -141,8 +147,7 @@ public class LinkValidator {
 
 	/**
 	 * Checks that the link URI (href value) refers to an accessible resource
-	 * whose content type is compatible with an acceptable media type. Note that
-	 * redirects must use the same URI scheme (protocol).
+	 * whose content type is compatible with an acceptable media type.
 	 * 
 	 * @param link
 	 *            An Element representing a link (of type kml:LinkType).
@@ -162,31 +167,29 @@ public class LinkValidator {
 				uri = URIUtils.resolveRelativeURI(link.getOwnerDocument()
 						.getBaseURI(), uri.toString());
 			}
-			URLConnection urlConn = uri.toURL().openConnection();
-			if (!uri.getScheme().equalsIgnoreCase("http")) {
-				try (InputStream inStream = urlConn.getInputStream()) {
-					// don't try to read file content
+			if (!uri.getScheme().equalsIgnoreCase("http")) { // file URI
+				File file = new File(uri);
+				if (!file.exists()) {
+					throw new FileNotFoundException("File not found");
 				}
 			} else {
-				HttpURLConnection httpConn = (HttpURLConnection) urlConn;
-				// WARNING: won't automatically redirect from HTTP to HTTPS
-				httpConn.setInstanceFollowRedirects(true);
-				httpConn.setRequestMethod("HEAD");
-				httpConn.setConnectTimeout(5000);
-				StringBuilder acceptHeaderVal = new StringBuilder();
-				for (MediaType type : mediaTypes) {
-					acceptHeaderVal.append(type).append(',');
+				ClientRequest req = HttpClientUtils.buildHeadRequest(uri, null,
+						mediaTypes);
+				ClientResponse rsp = this.httpClient.handle(req);
+				if (rsp.getStatus() == HttpURLConnection.HTTP_MOVED_PERM
+						|| rsp.getStatus() == HttpURLConnection.HTTP_SEE_OTHER) {
+					// client won't automatically redirect from HTTP to HTTPS
+					URI newURI = rsp.getLocation();
+					req.setURI(newURI);
+					rsp = this.httpClient.handle(req);
 				}
-				httpConn.setRequestProperty("Accept",
-						acceptHeaderVal.toString());
-				int statusCode = httpConn.getResponseCode();
-				if (statusCode != HttpURLConnection.HTTP_OK) {
+				if (rsp.getStatus() != HttpURLConnection.HTTP_OK) {
 					errHandler.addError(ErrorSeverity.ERROR, ErrorMessage
 							.format(ErrorMessageKeys.UNEXPECTED_STATUS, uri,
-									statusCode), new ErrorLocator(-1, -1,
+									rsp.getStatus()), new ErrorLocator(-1, -1,
 							XMLUtils.buildXPointer(link)));
 				}
-				String contentType = urlConn.getContentType();
+				String contentType = rsp.getType().toString();
 				if (!HttpClientUtils.contentIsAcceptable(contentType,
 						mediaTypes)) {
 					errHandler.addError(
