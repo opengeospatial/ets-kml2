@@ -19,9 +19,9 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- * Verifies the test methods in the CL2OverlayTests class.
+ * Verifies the test methods in the CL2TourTests class.
  */
-public class VerifyCL2OverlayTests {
+public class VerifyCL2TourTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
 	private static DocumentBuilder docBuilder;
@@ -30,7 +30,7 @@ public class VerifyCL2OverlayTests {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
-	public VerifyCL2OverlayTests() {
+	public VerifyCL2TourTests() {
 	}
 
 	@BeforeClass
@@ -44,27 +44,17 @@ public class VerifyCL2OverlayTests {
 	}
 
 	@Test
-	public void photoOverlayMissingImagePyramid() throws SAXException,
-			IOException {
+	public void flyToHasNoMode() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
-		thrown.expectMessage("Tiling parameters and ImagePyramid are mutually inclusive");
-		URL url = this.getClass().getResource("/features/PhotoOverlay-004.xml");
+		thrown.expectMessage("Expected kml:flyToMode in kml:FlyTo");
+		URL url = this.getClass().getResource(
+				"/kml23/Tour-AnimatedUpdate-1.xml");
 		Document doc = docBuilder.parse(url.toString());
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
-		CL2OverlayTests iut = new CL2OverlayTests();
+		CL2TourTests iut = new CL2TourTests();
 		iut.initCommonFixture(testContext);
-		iut.findOverlayElements();
-		iut.photoOverlayForTiledImage();
+		iut.findTourElements();
+		iut.checkTourConstraints();
 	}
 
-	@Test
-	public void photoOverlayOk() throws SAXException, IOException {
-		URL url = this.getClass().getResource("/features/PhotoOverlay-005.xml");
-		Document doc = docBuilder.parse(url.toString());
-		when(suite.getAttribute(SUBJ)).thenReturn(doc);
-		CL2OverlayTests iut = new CL2OverlayTests();
-		iut.initCommonFixture(testContext);
-		iut.findOverlayElements();
-		iut.photoOverlayForTiledImage();
-	}
 }

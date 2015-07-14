@@ -37,7 +37,7 @@ public class CL2OverlayTests extends CommonFixture {
 	 * [Test] Verifies that if a kml:PhotoOverlay element includes a
 	 * kml:Icon/kml:href element containing one or more tiling parameters (e.g.
 	 * level, x, y), then it also includes a child kml:ImagePyramid element; the
-	 * converse must also be true.
+	 * converse must also be true (i.e. they are mutually inclusive).
 	 */
 	@Test(description = "ATC-211")
 	public void photoOverlayForTiledImage() {
@@ -56,7 +56,7 @@ public class CL2OverlayTests extends CommonFixture {
 								"not(kml:ImagePyramid) or contains(kml:Icon/kml:href, '$[')",
 								overlay, null);
 			} catch (AssertionError e) {
-				// provide more informative error message
+				// provide a more informative error message
 				throw new AssertionError(
 						ErrorMessage
 								.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,

@@ -150,8 +150,7 @@ public class ETSAssert {
 
 	/**
 	 * Asserts that an XML resource satisfies all applicable constraints
-	 * specified in a Schematron (ISO 19757-3) schema. The "xslt2" query
-	 * language binding is supported. All patterns are checked.
+	 * specified in a Schematron (ISO 19757-3) schema. All patterns are checked.
 	 * 
 	 * @param schemaRef
 	 *            A URL that denotes the location of a Schematron schema.
@@ -159,10 +158,36 @@ public class ETSAssert {
 	 *            The XML Source to be validated.
 	 */
 	public static void assertSchematronValid(URL schemaRef, Source xmlSource) {
+		assertSchematronValid(schemaRef, xmlSource, "#ALL");
+	}
+
+	/**
+	 * Asserts that an XML resource satisfies all applicable constraints defined
+	 * for the specified phase in a Schematron (ISO 19757-3) schema. The "xslt2"
+	 * query language binding is supported. Two phase names have special
+	 * meanings:
+	 * <ul>
+	 * <li>"#ALL": All patterns are active</li>
+	 * <li>"#DEFAULT": The phase identified by the defaultPhase attribute on the
+	 * schema element should be used.</li>
+	 * </ul>
+	 * 
+	 * @param schemaRef
+	 *            A URL that denotes the location of a Schematron schema.
+	 * @param xmlSource
+	 *            The XML Source to be validated.
+	 * @param activePhase
+	 *            The active phase (pattern set) whose patterns are used for
+	 *            validation; this is set to "#ALL" if not specified.
+	 */
+	public static void assertSchematronValid(URL schemaRef, Source xmlSource,
+			String activePhase) {
+		String phase = (null == activePhase || activePhase.isEmpty()) ? "#ALL"
+				: activePhase;
 		SchematronValidator validator;
 		try {
 			validator = new SchematronValidator(new StreamSource(
-					schemaRef.toString()), "#ALL");
+					schemaRef.toString()), phase);
 		} catch (Exception e) {
 			StringBuilder msg = new StringBuilder(
 					"Failed to process Schematron schema at ");

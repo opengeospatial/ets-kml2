@@ -21,7 +21,7 @@
         <AnimatedUpdate>
           <duration>6.5</duration>
           <Update>
-            <targetHref></targetHref>
+            <targetHref />
             <Change>
                 <IconStyle targetId="iconstyle1">
                   <scale>10.0</scale>

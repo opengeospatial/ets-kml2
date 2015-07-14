@@ -58,7 +58,8 @@ public class TourTests extends CommonFeatureTests {
 				"/org/opengis/cite/kml2/sch/kml-tour.sch");
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element tour = (Element) targetElements.item(i);
-			ETSAssert.assertSchematronValid(schRef, new DOMSource(tour));
+			ETSAssert.assertSchematronValid(schRef, new DOMSource(tour),
+					"#DEFAULT");
 		}
 	}
 
