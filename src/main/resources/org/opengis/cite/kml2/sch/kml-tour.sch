@@ -8,7 +8,6 @@
 
   <iso:title>OGC KML 2.x Tour Constraints</iso:title>
 
-  <iso:ns prefix="atom" uri="http://www.w3.org/2005/Atom" />
   <iso:ns prefix="kml" uri="http://www.opengis.net/kml/2.2" />
 
   <iso:phase id="MainPhase">
@@ -35,7 +34,7 @@
 
   <iso:pattern id="CL2-TourPattern">
     <iso:title>Rules for Tour features at CL2</iso:title>
-    <iso:rule context="kml:FlyTo" id="FlyTo" see="OGC-14-068r2.html#atc-228">
+    <iso:rule context="kml:FlyTo" id="CL2.FlyTo" see="OGC-14-068r2.html#atc-228">
       <iso:assert test="xs:double(kml:duration) gt 0">Expected kml:duration &gt; 0</iso:assert>
       <iso:assert test="kml:flyToMode">Expected kml:flyToMode in kml:FlyTo</iso:assert>
     </iso:rule>

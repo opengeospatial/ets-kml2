@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- ERROR: StyleMap/Pair is missing styleUrl or Style -->
-<kml xmlns="http://www.opengis.net/kml/2.2">
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
   <Document>
     <name>StyleMap.kml</name>
     <open>1</open>
+    <atom:link rel="via" href="http://data.example.org/" />
     <Style id="normalState">
       <IconStyle>
         <scale>1.0</scale>

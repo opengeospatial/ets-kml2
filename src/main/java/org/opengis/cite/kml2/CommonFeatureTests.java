@@ -272,18 +272,21 @@ public class CommonFeatureTests extends CommonFixture {
 	 * feature:
 	 * <ul>
 	 * <li>ATC-135: Mode-specific feature style (StyleMap)</li>
+	 * <li>ATC-232: Feature metadata - atom:link</li>
 	 * </ul>
 	 */
-	@Test(description = "ATC-135")
+	@Test(description = "ATC-135, ATC-232")
 	public void checkFeatureConstraints() {
 		if (null == this.targetElements) {
 			return;
 		}
 		URL schRef = this.getClass().getResource(
 				"/org/opengis/cite/kml2/sch/kml-feature.sch");
+		String activePhase = (this.conformanceLevel > 1) ? "CL2" : "MainPhase";
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element kmlFeature = (Element) targetElements.item(i);
-			ETSAssert.assertSchematronValid(schRef, new DOMSource(kmlFeature));
+			ETSAssert.assertSchematronValid(schRef, new DOMSource(kmlFeature),
+					activePhase);
 		}
 	}
 

@@ -59,7 +59,7 @@ public class TourTests extends CommonFeatureTests {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element tour = (Element) targetElements.item(i);
 			ETSAssert.assertSchematronValid(schRef, new DOMSource(tour),
-					"#DEFAULT");
+					"MainPhase");
 		}
 	}
 

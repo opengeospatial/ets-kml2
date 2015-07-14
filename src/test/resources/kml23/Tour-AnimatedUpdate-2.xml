@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- ERROR: Change target has @id -->
+<!-- ERROR: TourControl missing playMode -->
 <kml xmlns="http://www.opengis.net/kml/2.2" version="2.3">
   <Document>
     <name>AnimatedUpdate example</name>
@@ -30,6 +31,9 @@
             </Change>
           </Update>
         </AnimatedUpdate>
+        <TourControl>
+          <!-- <playMode>pause</playMode> -->
+        </TourControl>
         <FlyTo>
           <duration>4.1</duration>
           <Camera>

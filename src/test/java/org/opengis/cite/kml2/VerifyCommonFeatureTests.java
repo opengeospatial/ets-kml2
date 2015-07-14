@@ -26,6 +26,7 @@ import org.xml.sax.SAXException;
 public class VerifyCommonFeatureTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
+	private static final String LVL = SuiteAttribute.LEVEL.getName();
 	private static DocumentBuilder docBuilder;
 	private static ITestContext testContext;
 	private static ISuite suite;
@@ -110,10 +111,13 @@ public class VerifyCommonFeatureTests {
 	@Test
 	public void incompleteStyleMap() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
+		thrown.expectMessage("2 schema validation error(s) detected");
 		thrown.expectMessage("Expected kml:styleURL or kml:Style element in every kml:Pair");
+		thrown.expectMessage("Expected atom:link with @rel = 'related'");
 		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
 				"/kml22/Document-001.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		when(suite.getAttribute(LVL)).thenReturn(2);
 		CommonFeatureTests iut = new CommonFeatureTests();
 		iut.initCommonFixture(testContext);
 		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,

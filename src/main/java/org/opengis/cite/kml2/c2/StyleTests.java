@@ -3,12 +3,15 @@ package org.opengis.cite.kml2.c2;
 import java.net.URL;
 
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.opengis.cite.kml2.CommonFixture;
 import org.opengis.cite.kml2.ETSAssert;
+import org.opengis.cite.kml2.util.XMLUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Checks CL2 constraints that apply to a style definition (kml:Style or
@@ -39,6 +42,31 @@ public class StyleTests extends CommonFixture {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element style = (Element) targetElements.item(i);
 			ETSAssert.assertSchematronValid(schRef, new DOMSource(style));
+		}
+	}
+
+	/**
+	 * [Test] Verifies that replacement text exists for all entity references
+	 * appearing in a kml:BalloonStyle/kml:text element. The sources of the
+	 * replacement text include the ancestor feature being styled and any
+	 * kml:Schema elements that are associated with it.
+	 * 
+	 * @see "OGC KML 2.3, 6.5: Entity Replacement"
+	 * @see "OGC KML 2.3 - Abstract Test Suite, ATC-231"
+	 */
+	public void entitiesInBalloonStyle() {
+		for (int i = 0; i < targetElements.getLength(); i++) {
+			Element style = (Element) targetElements.item(i);
+			NodeList textNodes = null;
+			try {
+				textNodes = XMLUtils.evaluateXPath(style,
+						"//kml:BalloonStyle/kml:text", null);
+			} catch (XPathExpressionException e) {
+			}
+			for (int j = 0; j < textNodes.getLength(); j++) {
+				// TODO: Find replacement text
+				// If shared style, check all referring features.
+			}
 		}
 	}
 

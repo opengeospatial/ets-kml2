@@ -70,4 +70,17 @@ public class VerifyTourTests {
 		iut.animatedUpdateTarget();
 	}
 
+	@Test
+	public void generalTourConstraints() throws SAXException, IOException {
+		thrown.expect(AssertionError.class);
+		thrown.expectMessage("Expected kml:playMode in kml:TourControl element");
+		URL url = this.getClass().getResource(
+				"/kml23/Tour-AnimatedUpdate-2.xml");
+		Document doc = docBuilder.parse(url.toString());
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		TourTests iut = new TourTests();
+		iut.initCommonFixture(testContext);
+		iut.findTourElements();
+		iut.checkTourConstraints();
+	}
 }
