@@ -41,7 +41,7 @@ public class VerifyGeoExtentValidator {
 		GeoExtentValidator iut = new GeoExtentValidator();
 		boolean isValid = iut.validateBox(box.getDocumentElement());
 		assertTrue("Expected valid LatLonAltBox.", isValid);
-		assertTrue("Expected no errors.", iut.getErrors().isEmpty());
+		assertTrue("Expected no errors.", iut.getErrorMessages().isEmpty());
 	}
 
 	@Test
@@ -53,7 +53,7 @@ public class VerifyGeoExtentValidator {
 		assertFalse("Expected invalid LatLonAltBox.",
 				iut.validateBox(box.getDocumentElement()));
 		assertTrue("Unexpected error message.",
-				iut.getErrors().contains("uniqueness"));
+				iut.getErrorMessages().contains("uniqueness"));
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class VerifyGeoExtentValidator {
 				iut.validateQuadrilateral(quad.getDocumentElement()));
 		assertTrue(
 				"Unexpected error message.",
-				iut.getErrors().contains(
+				iut.getErrorMessages().contains(
 						"boundary ring is not oriented counter-clockwise"));
 	}
 

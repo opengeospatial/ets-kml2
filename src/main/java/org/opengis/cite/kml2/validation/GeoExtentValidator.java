@@ -2,6 +2,7 @@ package org.opengis.cite.kml2.validation;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.xpath.XPathConstants;
@@ -13,6 +14,7 @@ import org.opengis.cite.kml2.util.JTSGeometryBuilder;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.validation.ErrorLocator;
 import org.opengis.cite.validation.ErrorSeverity;
+import org.opengis.cite.validation.ValidationError;
 import org.opengis.cite.validation.ValidationErrorHandler;
 import org.testng.Assert;
 import org.w3c.dom.Element;
@@ -67,13 +69,21 @@ public class GeoExtentValidator {
 	}
 
 	/**
-	 * Returns the error messages reported during the last call to
-	 * <code>isValid</code>.
+	 * Returns the error messages reported during the last validation episode.
 	 * 
 	 * @return A String containing error messages (may be empty).
 	 */
-	public String getErrors() {
+	public String getErrorMessages() {
 		return errHandler.toString();
+	}
+
+	/**
+	 * Returns the errors reported during the last validation episode.
+	 * 
+	 * @return An iterator over the reported validation errors.
+	 */
+	public Iterator<ValidationError> getErrors() {
+		return errHandler.iterator();
 	}
 
 	/**
@@ -237,7 +247,7 @@ public class GeoExtentValidator {
 								ErrorSeverity.ERROR,
 								ErrorMessage
 										.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
-												"[kml:LatLonAltBox] kml:altitudeMode != 'clampToGround'"),
+												"[ATC-108] kml:altitudeMode != 'clampToGround' in kml:LatLonAltBox with kml:minAltitude and kml:maxAltitude"),
 								new ErrorLocator(-1, -1, XMLUtils
 										.buildXPointer(boxNode)));
 			}

@@ -43,7 +43,7 @@ public class CommonFeatureTests extends CommonFixture {
 	private ViewpointValidator viewValidator;
 
 	public CommonFeatureTests() {
-		this.regionValidator = new RegionValidator();
+		this.regionValidator = new RegionValidator(this.conformanceLevel);
 		this.viewValidator = new ViewpointValidator();
 	}
 
@@ -132,9 +132,8 @@ public class CommonFeatureTests extends CommonFixture {
 			if (region.getLength() == 0) {
 				continue;
 			}
-			Assert.assertTrue(
-					regionValidator.validateRegionExtent(region.item(0)),
-					regionValidator.getErrors());
+			Assert.assertTrue(regionValidator.isValid(region.item(0)),
+					regionValidator.getErrorMessages());
 		}
 
 	}

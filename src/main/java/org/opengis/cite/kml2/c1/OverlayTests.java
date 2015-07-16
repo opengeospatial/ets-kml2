@@ -104,7 +104,7 @@ public class OverlayTests extends CommonFixture {
 					"kml:LatLonBox or kml:LatLonQuad",
 					XMLUtils.buildXPointer(overlay)));
 			Assert.assertTrue(geoExtentValidator.validGeoExtent(extent),
-					geoExtentValidator.getErrors());
+					geoExtentValidator.getErrorMessages());
 		}
 	}
 
