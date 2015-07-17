@@ -151,6 +151,8 @@ public class LinkValidator {
 	 * 
 	 * @param link
 	 *            An Element representing a link (of type kml:LinkType).
+	 * 
+	 * @see "OGC KML 2.3 - Abstract Test Suite, ATC-139: Link reference"
 	 */
 	void checkLinkReferent(Element link) {
 		NodeList hrefList = link.getElementsByTagNameNS(KML2.NS_NAME, "href");

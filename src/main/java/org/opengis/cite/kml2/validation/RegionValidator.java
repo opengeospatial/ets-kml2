@@ -33,6 +33,11 @@ import org.w3c.dom.Node;
  * }
  * </pre>
  * 
+ * The applicable test cases are listed below.
+ * <ul>
+ * <li>ATC-138: Region visibility (LOD)</li>
+ * <li>ATC-140: Region</li>
+ * </ul>
  */
 public class RegionValidator {
 
@@ -84,6 +89,7 @@ public class RegionValidator {
 		errHandler.reset();
 		Element region = (Element) node;
 		checkRegionExtent(region);
+		checkRegionVisibility(region);
 		if (this.conformanceLevel > 2) {
 			checkLodFadeRange(region);
 		}
@@ -100,7 +106,14 @@ public class RegionValidator {
 	void checkRegionExtent(Element region) {
 		Node boxNode = region.getElementsByTagNameNS(KML2.NS_NAME,
 				"LatLonAltBox").item(0);
-		if (null != boxNode && !geoExtentValidator.validGeoExtent(boxNode)) {
+		if (null == boxNode) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.CONSTRAINT_VIOLATION,
+					"[ATC-140] Expected LatLonAtlBox"), new ErrorLocator(-1,
+					-1, XMLUtils.buildXPointer(region)));
+			return;
+		}
+		if (!geoExtentValidator.validGeoExtent(boxNode)) {
 			Iterator<ValidationError> errors = geoExtentValidator.getErrors();
 			while (errors.hasNext()) {
 				ValidationError err = errors.next();
@@ -110,6 +123,56 @@ public class RegionValidator {
 						new ErrorLocator(-1, -1, XMLUtils
 								.buildXPointer(boxNode)));
 			}
+		}
+	}
+
+	/**
+	 * Checks that the properties of the kml:Lod element satisfy the following
+	 * constraints:
+	 * <ol>
+	 * <li>it contains the kml:minLodPixels element</li>
+	 * <li>kml:minLodPixels &lt; kml:maxLodPixels (Note: -1 denotes positive
+	 * infinity)</li>
+	 * </ol>
+	 * 
+	 * @param region
+	 *            A kml:Region element
+	 * 
+	 * @see "OGC KML 2.3 - Abstract Test Suite, ATC-138: Region visibility (LOD)"
+	 */
+	void checkRegionVisibility(Element region) {
+		Node lodNode = region.getElementsByTagNameNS(KML2.NS_NAME, "Lod").item(
+				0);
+		if (null == lodNode) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.CONSTRAINT_VIOLATION,
+					"[ATC-140] Expected Lod"), new ErrorLocator(-1, -1,
+					XMLUtils.buildXPointer(region)));
+			return;
+		}
+		Node minLodPixelsNode = region.getElementsByTagNameNS(KML2.NS_NAME,
+				"minLodPixels").item(0);
+		if (null == minLodPixelsNode) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.CONSTRAINT_VIOLATION,
+					"[ATC-138] Expected minLodPixels in Lod"),
+					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(region)));
+			return;
+		}
+		double minLodPixels = Double.parseDouble(minLodPixelsNode
+				.getTextContent());
+		Node maxLodPixelsNode = region.getElementsByTagNameNS(KML2.NS_NAME,
+				"maxLodPixels").item(0);
+		double maxLodPixels = (null == maxLodPixelsNode) ? Double.POSITIVE_INFINITY
+				: Double.parseDouble(maxLodPixelsNode.getTextContent());
+		if (maxLodPixels == -1) {
+			maxLodPixels = Double.POSITIVE_INFINITY;
+		}
+		if (minLodPixels >= maxLodPixels) {
+			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
+					ErrorMessageKeys.CONSTRAINT_VIOLATION,
+					"[ATC-138] Expected minLodPixels < maxLodPixels in Lod"),
+					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(region)));
 		}
 	}
 
@@ -148,10 +211,12 @@ public class RegionValidator {
 	 *            A kml:Region element.
 	 * @param paramName
 	 *            The (local) name of some Lod parameter.
-	 * @return The value of the parameter (default = 0.0).
+	 * @return The actual value of the parameter (or its specified default
+	 *         value).
 	 */
 	double getLodParameterValue(Element region, String paramName) {
-		double lodParamValue = (paramName.equals("maxLodPixels")) ? -1.0 : 0.0;
+		double lodParamValue = (paramName.equals("maxLodPixels")) ? Double.POSITIVE_INFINITY
+				: 0.0;
 		Node lodParam = region.getElementsByTagNameNS(KML2.NS_NAME, paramName)
 				.item(0);
 		if (null != lodParam) {
