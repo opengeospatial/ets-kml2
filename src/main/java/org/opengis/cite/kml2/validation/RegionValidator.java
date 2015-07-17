@@ -100,8 +100,8 @@ public class RegionValidator {
 	 * Checks the spatial extent of a Region (kml:LatLonAltBox). The default
 	 * extent of a region spans the entire surface of the EGM96 geoid.
 	 * 
-	 * @param node
-	 *            An Element node that contains a kml:Region element.
+	 * @param region
+	 *            A kml:Region element.
 	 */
 	void checkRegionExtent(Element region) {
 		Node boxNode = region.getElementsByTagNameNS(KML2.NS_NAME,
@@ -136,7 +136,7 @@ public class RegionValidator {
 	 * </ol>
 	 * 
 	 * @param region
-	 *            A kml:Region element
+	 *            A kml:Region element.
 	 * 
 	 * @see "OGC KML 2.3 - Abstract Test Suite, ATC-138: Region visibility (LOD)"
 	 */

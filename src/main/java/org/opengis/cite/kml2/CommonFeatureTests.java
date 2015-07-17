@@ -144,7 +144,6 @@ public class CommonFeatureTests extends CommonFixture {
 	 * [Test] Checks that the content of a kml:Camera or kml:LookAt element
 	 * satisfies all applicable constraints.
 	 * 
-	 * @see ViewpointValidator
 	 */
 	@Test(description = "ATC-137, ATC-213")
 	public void validViewpoint() {
