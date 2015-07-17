@@ -124,4 +124,20 @@ public class VerifyCommonFeatureTests {
 				"Document"));
 		iut.checkFeatureConstraints();
 	}
+
+	@Test
+	public void cameraMissingAltitudeMode() throws SAXException, IOException {
+		thrown.expect(AssertionError.class);
+		thrown.expectMessage("1 schema validation error");
+		thrown.expectMessage("altitudeMode ne 'clampToGround'");
+		URL url = this.getClass().getResource("/kml23/Placemark-Camera.xml");
+		Document doc = docBuilder.parse(url.toString());
+		when(suite.getAttribute(SUBJ)).thenReturn(doc);
+		when(suite.getAttribute(LVL)).thenReturn(2);
+		CommonFeatureTests iut = new CommonFeatureTests();
+		iut.initCommonFixture(testContext);
+		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
+				"Placemark"));
+		iut.validViewpoint();
+	}
 }

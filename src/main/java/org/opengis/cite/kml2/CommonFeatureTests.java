@@ -15,7 +15,6 @@ import org.opengis.cite.kml2.util.URIUtils;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.kml2.validation.ExtendedDataValidator;
 import org.opengis.cite.kml2.validation.RegionValidator;
-import org.opengis.cite.kml2.validation.ViewpointValidator;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
@@ -32,6 +31,11 @@ import org.xml.sax.SAXException;
  * <li>ATC-106</li>
  * <li>ATC-108</li>
  * <li>ATC-111</li>
+ * <li>ATC-124</li>
+ * <li>ATC-127</li>
+ * <li>ATC-135</li>
+ * <li>ATC-137</li>
+ * <li>ATC-213</li>
  * </ul>
  * 
  * @see "OGC 14-068r1, OGC KML 2.3 - Abstract Test Suite: Conformance Level 1"
@@ -40,11 +44,9 @@ public class CommonFeatureTests extends CommonFixture {
 
 	private Set<String> sharedStyles;
 	private RegionValidator regionValidator;
-	private ViewpointValidator viewValidator;
 
 	public CommonFeatureTests() {
 		this.regionValidator = new RegionValidator(this.conformanceLevel);
-		this.viewValidator = new ViewpointValidator();
 	}
 
 	/**
@@ -144,7 +146,7 @@ public class CommonFeatureTests extends CommonFixture {
 	 * 
 	 * @see ViewpointValidator
 	 */
-	@Test(description = "ATC-213")
+	@Test(description = "ATC-137, ATC-213")
 	public void validViewpoint() {
 		if (null == this.targetElements || this.conformanceLevel == 1) {
 			return;
@@ -158,8 +160,12 @@ public class CommonFeatureTests extends CommonFixture {
 			} catch (XPathExpressionException e) {
 			}
 			if (view.getLength() > 0) {
-				Assert.assertTrue(viewValidator.isValid(view.item(0)),
-						viewValidator.getErrorMessages());
+				String phase = (this.conformanceLevel == 1) ? "MainPhase"
+						: "#ALL";
+				URL schRef = this.getClass().getResource(
+						"/org/opengis/cite/kml2/sch/kml-viewpoint.sch");
+				ETSAssert.assertSchematronValid(schRef,
+						new DOMSource(view.item(0)), phase);
 			}
 		}
 
