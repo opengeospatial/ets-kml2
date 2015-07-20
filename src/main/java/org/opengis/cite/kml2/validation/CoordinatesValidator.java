@@ -60,7 +60,7 @@ public class CoordinatesValidator {
 	 * 
 	 * @return A String containing error messages (may be empty).
 	 */
-	public String getErrors() {
+	public String getErrorMessages() {
 		return errHandler.toString();
 	}
 
@@ -138,10 +138,11 @@ public class CoordinatesValidator {
 			// ATC-202
 			AltitudeMode altMode = KMLUtils.getAltitudeMode(elem);
 			if (altMode != AltitudeMode.CLAMP_TO_GROUND && tuple.length != 3) {
-				errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
-						ErrorMessageKeys.COORD_DIM, i,
-						"3 (altitudeMode is not 'clampToGround')", tuple.length),
-						new ErrorLocator(-1, -1, XMLUtils.buildXPointer(node)));
+				errHandler.addError(ErrorSeverity.ERROR, ErrorMessage
+						.format(ErrorMessageKeys.COORD_DIM, i,
+								"3 (altitudeMode is not 'clampToGround')",
+								tuple.length), new ErrorLocator(-1, -1,
+						XMLUtils.buildXPointer(node)));
 				continue;
 			}
 			for (String val : tuple) {

@@ -55,7 +55,7 @@ public class LineStringTests extends CommonFixture {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element line = (Element) targetElements.item(i);
 			Assert.assertTrue(coordsValidator.isValid(line),
-					coordsValidator.getErrors());
+					coordsValidator.getErrorMessages());
 			LineString jtsLine = geomBuilder.buildLineString(line);
 			Assert.assertTrue(
 					crsPolygon.covers(jtsLine),

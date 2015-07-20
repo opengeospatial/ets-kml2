@@ -39,7 +39,7 @@ public class VerifyCoordinatesValidator {
 		assertFalse("Expected invalid Point.",
 				iut.isValid(doc.getDocumentElement()));
 		assertTrue("Unexpected error message.",
-				iut.getErrors().contains("No kml:coordinates element found"));
+				iut.getErrorMessages().contains("No kml:coordinates element found"));
 	}
 
 	@Test
@@ -49,7 +49,7 @@ public class VerifyCoordinatesValidator {
 		CoordinatesValidator iut = new CoordinatesValidator();
 		assertTrue("Expected valid Point.",
 				iut.isValid(doc.getDocumentElement()));
-		assertTrue("Expected no errors.", iut.getErrors().isEmpty());
+		assertTrue("Expected no errors.", iut.getErrorMessages().isEmpty());
 	}
 
 	@Test
@@ -61,7 +61,7 @@ public class VerifyCoordinatesValidator {
 				iut.isValid(doc.getDocumentElement()));
 		assertTrue(
 				"Unexpected error message.",
-				iut.getErrors().contains(
+				iut.getErrorMessages().contains(
 						"LinearRing element must contain four or more"));
 	}
 }

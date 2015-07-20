@@ -125,7 +125,7 @@ public class GeoExtentValidator {
 				-90, 90));
 		Element quad = (Element) latlonQuad;
 		Assert.assertTrue(coordsValidator.isValid(quad),
-				coordsValidator.getErrors());
+				coordsValidator.getErrorMessages());
 		Polygon jtsPolygon = null;
 		try {
 			Node coords = quad.getElementsByTagNameNS(KML2.NS_NAME,

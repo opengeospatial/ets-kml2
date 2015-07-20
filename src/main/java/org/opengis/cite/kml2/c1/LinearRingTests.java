@@ -58,7 +58,7 @@ public class LinearRingTests extends CommonFixture {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element ring = (Element) targetElements.item(i);
 			Assert.assertTrue(coordsValidator.isValid(ring),
-					coordsValidator.getErrors());
+					coordsValidator.getErrorMessages());
 			LinearRing jtsRing = null;
 			try {
 				jtsRing = geomBuilder.buildLinearRing(ring);

@@ -55,7 +55,7 @@ public class PointTests extends CommonFixture {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element point = (Element) targetElements.item(i);
 			Assert.assertTrue(coordsValidator.isValid(point),
-					coordsValidator.getErrors());
+					coordsValidator.getErrorMessages());
 			Point jtsPoint = geomBuilder.buildPoint(point);
 			Assert.assertTrue(
 					crsPolygon.covers(jtsPoint),

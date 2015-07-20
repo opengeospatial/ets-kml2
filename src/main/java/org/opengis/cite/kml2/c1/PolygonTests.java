@@ -69,7 +69,7 @@ public class PolygonTests extends CommonFixture {
 					ErrorMessageKeys.POLYGON_BOUNDARY,
 					"Missing outer boundary", XMLUtils.buildXPointer(polygon)));
 			Assert.assertTrue(coordsValidator.isValid(outerRing.item(0)),
-					coordsValidator.getErrors());
+					coordsValidator.getErrorMessages());
 			Polygon jtsPolygon = null;
 			try {
 				jtsPolygon = geomBuilder.buildPolygon(polygon);
