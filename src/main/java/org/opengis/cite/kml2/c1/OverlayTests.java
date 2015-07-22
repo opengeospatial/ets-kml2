@@ -5,7 +5,7 @@ import java.net.URL;
 import javax.ws.rs.core.MediaType;
 import javax.xml.transform.dom.DOMSource;
 
-import org.opengis.cite.kml2.CommonFixture;
+import org.opengis.cite.kml2.CommonFeatureTests;
 import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
@@ -37,7 +37,7 @@ import org.w3c.dom.Node;
  * @see "OGC 12-007r1: OGC KML 2.3, 10.9.2"
  * @see "OGC 14-068r1: OGC KML 2.3 - Abstract Test Suite, Conformance Level 1"
  */
-public class OverlayTests extends CommonFixture {
+public class OverlayTests extends CommonFeatureTests {
 
 	private LinkValidator linkValidator;
 	private GeoExtentValidator geoExtentValidator;

@@ -21,10 +21,10 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- * Verifies the behavior of the KmlDocumentTests class. Test stubs replace
+ * Verifies the behavior of the KmlResourceTests class. Test stubs replace
  * fixture constituents where appropriate.
  */
-public class VerifyKmlDocumentTests {
+public class VerifyKmlResourceTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
 	private static DocumentBuilder docBuilder;
@@ -33,7 +33,7 @@ public class VerifyKmlDocumentTests {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
-	public VerifyKmlDocumentTests() {
+	public VerifyKmlResourceTests() {
 	}
 
 	@BeforeClass

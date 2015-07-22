@@ -20,16 +20,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Implements tests that apply to the kml:Document element.
+ * Implements tests that apply to container features (of type
+ * kml:AbstractContainerType): kml:Document and kml:Folder.
  * 
- * @see "OGC 12-007r1: OGC KML 2.3, 10.9.2"
- * @see "OGC 14-068r1: OGC KML 2.3 - Abstract Test Suite, Conformance Level 1"
+ * @see "OGC KML 2.3, 9.9: kml:Document"
+ * @see "OGC KML 2.3, 9.10: kml:Schema"
+ * @see "OGC KML 2.3 - Abstract Test Suite, Conformance Level 1"
  */
-public class DocumentTests extends CommonFeatureTests {
+public class ContainerTests extends CommonFeatureTests {
 
 	private SchemaChecker schemaChecker;
 
-	public DocumentTests() {
+	public ContainerTests() {
 		this.schemaChecker = new SchemaChecker();
 	}
 
@@ -73,24 +75,28 @@ public class DocumentTests extends CommonFeatureTests {
 	}
 
 	/**
-	 * Finds kml:Document elements in the KML resource that do not appear in an
-	 * update context. If none are found, all test methods defined in the class
-	 * are skipped.
+	 * Finds container elements (Folder, Document) in the KML document that do
+	 * not appear in an update context. If none are found, all test methods
+	 * defined in the class are skipped.
 	 */
 	@BeforeClass
-	public void findDocumentElements() {
-		findTargetElements("Document");
+	public void findContainerElements() {
+		findTargetElements("Folder", "Document");
 	}
 
 	/**
-	 * [Test] Verifies that a kml:Schema element is valid.
+	 * [Test] Verifies that a kml:Schema element (appearing in a kml:Document
+	 * context) is defined properly.
 	 */
 	@Test(description = "ATC-119")
 	public void validSchema() {
 		for (int i = 0; i < targetElements.getLength(); i++) {
-			Element doc = (Element) targetElements.item(i);
-			NodeList schemaList = doc.getElementsByTagNameNS(KML2.NS_NAME,
-					"Schema");
+			Element container = (Element) targetElements.item(i);
+			if (!container.getLocalName().equals("Document")) {
+				continue;
+			}
+			NodeList schemaList = container.getElementsByTagNameNS(
+					KML2.NS_NAME, "Schema");
 			for (int j = 0; j < schemaList.getLength(); j++) {
 				Assert.assertTrue(schemaChecker.isValid(schemaList.item(j)),
 						schemaChecker.getErrorMessages());

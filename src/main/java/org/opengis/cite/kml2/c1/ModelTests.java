@@ -71,7 +71,7 @@ public class ModelTests extends CommonFixture {
 	 * [Test] Verifies that a kml:Model element has a valid location (that
 	 * specifies the position of the model origin).
 	 */
-	@Test(description = "ATC-133, ATC-214")
+	@Test(description = "ATC-133, ATC-150")
 	public void modelLocation() {
 		JTSGeometryBuilder geomBuilder = new JTSGeometryBuilder();
 		Polygon crsPolygon = geomBuilder.buildPolygon(new Envelope(-180, 180,
