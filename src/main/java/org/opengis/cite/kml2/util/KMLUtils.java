@@ -45,6 +45,9 @@ import org.xml.sax.SAXException;
  */
 public class KMLUtils {
 
+	private static final Logger LOGR = Logger.getLogger(KMLUtils.class
+			.getPackage().getName());
+
 	/**
 	 * Parses the content of the given file as a KML resource and returns the
 	 * resulting DOM document node.
@@ -66,6 +69,8 @@ public class KMLUtils {
 			if (XMLUtils.isXML(fileStream)) {
 				kmlDoc = (Document) URIUtils.parseURI(file.toURI());
 			} else {
+				LOGR.log(Level.INFO,
+						"Reading KMZ resource from " + file.toURI());
 				kmlDoc = parseKMLDocumentInArchive(file);
 			}
 		}
