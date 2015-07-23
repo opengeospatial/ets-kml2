@@ -49,6 +49,7 @@ public class SuiteFixtureListener implements ISuiteListener {
 	 * fixture as the value of the attributes identified in the following table.
 	 *
 	 * <table border="1" style="border-collapse: collapse;">
+	 * <caption>Application schemas</caption>
 	 * <thead>
 	 * <tr>
 	 * <th>SuiteAttribute</th>

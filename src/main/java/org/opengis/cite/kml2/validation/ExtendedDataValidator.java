@@ -150,7 +150,7 @@ public class ExtendedDataValidator {
 	 * kml:Schema element (see ATC-126);</li>
 	 * <li>the values of all kml:SimpleData child elements conform to their
 	 * declared types.</li>
-	 * <ol>
+	 * </ol>
 	 * 
 	 * @param extData
 	 *            A kml:ExtendedData element.

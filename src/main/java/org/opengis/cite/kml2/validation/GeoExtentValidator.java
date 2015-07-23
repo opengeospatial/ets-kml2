@@ -112,13 +112,17 @@ public class GeoExtentValidator {
 	 * (the interior is to the left of the boundary curve), with the first
 	 * coordinate corresponding to the lower-left corner of the overlayed image;
 	 * </li>
-	 * <li>the quadrilateral is convex (every interior angle <= 180 degrees).</li>
+	 * <li>the quadrilateral is convex (every interior angle &lt;= 180 degrees).
+	 * </li>
 	 * </ol>
+	 * 
+	 * @param latlonQuad
+	 *            A kml:LatLonQuad element.
+	 * @return true if all constraints are satisfied; false otherwise.
 	 * 
 	 * @see "ATC-103: Valid geometry coordinates"
 	 * @see "ATC-149: LatLonQuad coordinates"
 	 */
-	// @Test(description = "ATC-103, ATC-149")
 	public boolean validateQuadrilateral(Node latlonQuad) {
 		JTSGeometryBuilder jtsBuilder = new JTSGeometryBuilder();
 		Polygon crsPolygon = jtsBuilder.buildPolygon(new Envelope(-180, 180,
@@ -161,9 +165,9 @@ public class GeoExtentValidator {
 	 * Validates a bounding box. The content of a kml:LatLon[Alt]Box element
 	 * must satisfy all of the following constraints:
 	 * <ol>
-	 * <li>kml:north > kml:south;</li>
-	 * <li>kml:east > kml:west;</li>
-	 * <li>kml:minAltitude <= kml:maxAltitude;</li>
+	 * <li>kml:north &gt; kml:south;</li>
+	 * <li>kml:east &gt; kml:west;</li>
+	 * <li>kml:minAltitude &lt;= kml:maxAltitude;</li>
 	 * <li>if kml:minAltitude and kml:maxAltitude are both present, then
 	 * kml:altitudeMode does not have the value "clampToGround".</li>
 	 * </ol>
@@ -173,9 +177,9 @@ public class GeoExtentValidator {
 	 * range extension (to &#177; 360):
 	 * </p>
 	 * <ul>
-	 * <li>kml:east - kml:west <= 360 (non-self-overlap)</li>
-	 * <li>if |kml:west| > 180 or |kml:east| > 180, then kml:east > 0 and
-	 * kml:west < 180 (uniqueness)</li>
+	 * <li>kml:east - kml:west &lt;= 360 (non-self-overlap)</li>
+	 * <li>if |kml:west| &gt; 180 or |kml:east| &gt; 180, then kml:east &gt; 0
+	 * and kml:west &lt; 180 (uniqueness)</li>
 	 * </ul>
 	 * 
 	 * @param boxNode

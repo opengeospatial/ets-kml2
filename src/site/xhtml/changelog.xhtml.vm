@@ -7,7 +7,16 @@
   <body>
     <h1>Release Notes</h1>
 
-    <h2>${project.version} (2015-07-10)</h2>
+    <h2>${project.version} (2015-07-23)</h2>
+    <p>This maintenance release includes several refactorings and improved unit test coverage.</p>
+    <ul>
+      <li style="list-style: square;">Reorganize feature tests (CL1)</li>
+      <li style="list-style: square;">Use JAX-RS Client in LinkValidator</li>
+      <li style="list-style: square;">Fix Javadoc errors when building with JDK 8</li>
+      <li style="list-style: square;">Add unit tests</li>
+    </ul>
+
+    <h2>0.2 (2015-07-10)</h2>
     <p>This update includes tests covering all conformance levels (CL1, CL2, CL3) 
     in accord with the specifications formally adopted by the OGC.</p>
 
