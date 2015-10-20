@@ -12,7 +12,7 @@
 
   <name>OGC KML 2.x Conformance Test Suite</name>
   <description>Verifies that a KML 2.x resource conforms to the relevant OGC 
-  specification (OGC 12-007r1, OGC 07-147r2).</description>
+  specification (OGC 12-007r2, OGC 07-147r2).</description>
   <url>http://opengeospatial.github.io/ets-kml2/</url>
   <licenses>
     <license>
@@ -123,7 +123,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.2</version>
+        <version>2.10.3</version>
         <configuration>
           <docfilessubdirs>true</docfilessubdirs>
           <show>package</show>
@@ -142,7 +142,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.5.2</version>
+        <version>2.6</version>
         <configuration>
           <archive>
             <manifest>

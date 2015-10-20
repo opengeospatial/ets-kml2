@@ -5,8 +5,8 @@
 This test suite verifies that a KML 2.x resource conforms to the following OGC 
 specifications:
 
-* _OGC KML, Version 2.3_ ([OGC 12-007r1](https://portal.opengeospatial.org/files/?artifact_id=62042&version=1)) 
-__Note__: this pre-release version is only available to OGC members
+* _OGC KML, Version 2.3_ ([OGC 12-007r2](http://docs.opengeospatial.org/is/12-007r2/12-007r2.html) 
+* _OGC KML 2.3 - Abstract Test Suite_ ([OGC 14-068r2](http://docs.opengeospatial.org/ts/14-068r2/14-068r2.html) 
 * _OGC KML, Version 2.2_ ([OGC 07-147r2](http://portal.opengeospatial.org/files/?artifact_id=27810))
 
 The KML specification defines three conformance levels indicating the relative 
