@@ -5,8 +5,8 @@
 This test suite verifies that a KML 2.x resource conforms to the following OGC 
 specifications:
 
-* _OGC KML, Version 2.3_ ([OGC 12-007r2](http://docs.opengeospatial.org/is/12-007r2/12-007r2.html) 
-* _OGC KML 2.3 - Abstract Test Suite_ ([OGC 14-068r2](http://docs.opengeospatial.org/ts/14-068r2/14-068r2.html) 
+* _OGC KML, Version 2.3_ ([OGC 12-007r2](http://docs.opengeospatial.org/is/12-007r2/12-007r2.html)) 
+* _OGC KML 2.3 - Abstract Test Suite_ ([OGC 14-068r2](http://docs.opengeospatial.org/ts/14-068r2/14-068r2.html)) 
 * _OGC KML, Version 2.2_ ([OGC 07-147r2](http://portal.opengeospatial.org/files/?artifact_id=27810))
 
 The KML specification defines three conformance levels indicating the relative 
@@ -15,12 +15,12 @@ increases the test coverage. The highest level (CL3) indicates full conformance,
 but a given application or user community may opt for a lower level of conformance. 
 All three levels will be implemented by the test suite:
 
-1. CL1: includes tests covering requirements that must be satisfied by every 
+1. __CL1__: includes tests covering requirements that must be satisfied by every 
 (minimally) conforming KML document.
-2. CL2: as for CL1, plus tests that address recommended constraints that should 
+2. __CL2__: as for CL1, plus tests that address recommended constraints that should 
 be satisfied; non-conformance at this level may hinder the utility, portability, 
 or interoperability of the resource.
-3. CL3: as for CL2, plus tests for optional constraints that are purely 
+3. __CL3__: as for CL2, plus tests for optional constraints that are purely 
 informative in nature.
 
 Visit the [project documentation website](http://opengeospatial.github.io/ets-kml2/) 
