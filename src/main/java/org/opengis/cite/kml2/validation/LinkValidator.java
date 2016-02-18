@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
@@ -178,8 +179,7 @@ public class LinkValidator {
 				ClientRequest req = HttpClientUtils.buildHeadRequest(uri, null,
 						mediaTypes);
 				ClientResponse rsp = this.httpClient.handle(req);
-				if (rsp.getStatus() == HttpURLConnection.HTTP_MOVED_PERM
-						|| rsp.getStatus() == HttpURLConnection.HTTP_SEE_OTHER) {
+				if (rsp.getStatusInfo().getFamily() == Response.Status.Family.REDIRECTION) {
 					// client won't automatically redirect from HTTP to HTTPS
 					URI newURI = rsp.getLocation();
 					req.setURI(newURI);
