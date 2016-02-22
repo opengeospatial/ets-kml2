@@ -3,7 +3,7 @@
 <organization>
   <name>OGC</name>
   <standard>
-    <name>OGC KML 2.x Conformance Test Suite</name>
+    <name>OGC KML 2.x</name>
     <version>
       <name>${spec-version}</name>
       <suite>

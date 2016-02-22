@@ -33,11 +33,8 @@ specifications: OGC KML 2.3 (OGC 12-007r1), OGC KML 2.2 (OGC 07-147r2).</ctl:des
           <div style="background:#F0F8FF" bgcolor="#F0F8FF">
             <p>The KML resource is checked against the following specifications:</p>
             <ul>
-              <li><em>OGC KML, Version 2.3</em> (<a target="_blank" type="application/zip"
-    href="https://portal.opengeospatial.org/files/?artifact_id=62042&amp;version=1">OGC 12-007r1</a>)
-                <div>
-                  <strong>Note:</strong> This pre-release version is only available to OGC members.
-                </div>
+              <li><em>OGC KML, Version 2.3</em> (<a target="_blank" type="text/html"
+    href="http://docs.opengeospatial.org/is/12-007r2/12-007r2.html">OGC 12-007r2</a>)
               </li>
               <li><em>OGC KML, Version 2.2</em> (<a target="_blank" type="application/pdf"
     href="http://portal.opengeospatial.org/files/?artifact_id=27810">OGC 07-147r2</a>)</li>
