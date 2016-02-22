@@ -148,7 +148,15 @@ public class LinkValidator {
 
 	/**
 	 * Checks that the link URI (href value) refers to an accessible resource
-	 * whose content type is compatible with an acceptable media type.
+	 * whose content type is compatible with an acceptable media type. The
+	 * resource is the target of a HEAD request; however if a 403 (Forbidden)
+	 * status code is received because the request was rejected, a GET request
+	 * will then be attempted.
+	 * <p>
+	 * If the URI contains tile parameters (for a large image), the single tile
+	 * at level 0 will be requested. That is, all tile parameters are replaced
+	 * with 0.
+	 * </p>
 	 * 
 	 * @param link
 	 *            An Element representing a link (of type kml:LinkType).
@@ -163,9 +171,12 @@ public class LinkValidator {
 					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(link)));
 			return;
 		}
-		URI uri = null;
+		String href = hrefList.item(0).getTextContent();
+		if (href.contains("$[")) { // contains tile parameters
+			href = href.replaceAll("\\$\\[\\w+]", "0");
+		}
+		URI uri = URI.create(href);
 		try {
-			uri = URI.create(hrefList.item(0).getTextContent());
 			if (!uri.isAbsolute()) {
 				uri = URIUtils.resolveRelativeURI(link.getOwnerDocument()
 						.getBaseURI(), uri.toString());
@@ -183,6 +194,13 @@ public class LinkValidator {
 					// client won't automatically redirect from HTTP to HTTPS
 					URI newURI = rsp.getLocation();
 					req.setURI(newURI);
+					rsp = this.httpClient.handle(req);
+				}
+				if (rsp.getStatus() == Response.Status.FORBIDDEN
+						.getStatusCode()) {
+					// some servers reject HEAD requests
+					req = HttpClientUtils
+							.buildGetRequest(uri, null, mediaTypes);
 					rsp = this.httpClient.handle(req);
 				}
 				if (rsp.getStatus() != HttpURLConnection.HTTP_OK) {

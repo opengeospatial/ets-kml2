@@ -85,7 +85,8 @@ public class ModelTests extends CommonFixture {
 						ErrorMessageKeys.MISSING_INFOSET_ITEM, "kml:Location",
 						XMLUtils.buildXPointer(model)));
 			}
-			Point jtsPoint = geomBuilder.buildPoint((Element) location.item(0));
+			Point jtsPoint = geomBuilder
+					.buildPointFromLocation((Element) location.item(0));
 			Assert.assertTrue(
 					crsPolygon.covers(jtsPoint),
 					ErrorMessage.format(ErrorMessageKeys.OUTSIDE_CRS,
