@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.opengis.cite</groupId>
     <artifactId>ets-common</artifactId>
-    <version>6</version>
+    <version>7-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ets-kml2</artifactId>
@@ -51,7 +51,7 @@
   <dependencies>
     <dependency>
       <groupId>org.opengis.cite.xerces</groupId>
-      <artifactId>xercesImpl-xsd11</artifactId>
+      <artifactId>xercesImpl-xsd11-shaded</artifactId>
       <version>2.12-beta-r1667115</version>
     </dependency>
     <dependency>
@@ -85,21 +85,6 @@
       <version>2.4</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.jena</groupId>
-      <artifactId>jena-iri</artifactId>
-      <version>1.1.2</version>      
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.opengis.cite.teamengine</groupId>
       <artifactId>teamengine-spi</artifactId>
     </dependency>
@@ -121,7 +106,6 @@
     <plugins>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.3</version>
         <configuration>
           <docfilessubdirs>true</docfilessubdirs>
           <show>package</show>

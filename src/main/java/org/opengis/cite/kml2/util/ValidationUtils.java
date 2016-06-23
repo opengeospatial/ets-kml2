@@ -21,7 +21,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.apache.xerces.impl.Constants;
+import org.opengis.cite.xerces.impl.Constants;
 import org.apache.xerces.util.XMLCatalogResolver;
 import org.opengis.cite.kml2.Namespaces;
 import org.opengis.cite.validation.SchematronValidator;
@@ -182,7 +182,10 @@ public class ValidationUtils {
 		switch (version) {
 		case "2.3":
 			factory = SchemaFactory
-					.newInstance(Constants.W3C_XML_SCHEMA11_NS_URI);
+					.newInstance(
+							Constants.W3C_XML_SCHEMA11_NS_URI,
+							"org.opengis.cite.xerces.jaxp.validation.XMLSchema11Factory",
+							null);
 			schemaURL = ValidationUtils.class.getResource(ROOT_PKG
 					+ "xsd/opengis/kml/2.3.0/ogckml23_xsd11.xsd");
 			break;
