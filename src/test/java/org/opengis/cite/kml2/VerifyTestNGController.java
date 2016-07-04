@@ -65,8 +65,6 @@ public class VerifyTestNGController {
 				outStream.toByteArray()));
 		TestNGController controller = new TestNGController();
 		Source results = controller.doTestRun(testRunArgs);
-		TestSuiteLogger.log(Level.FINE, XMLUtils
-				.writeNodeToString(DOMSource.class.cast(results).getNode()));
 		String xpath = "/testng-results/@failed";
 		XdmValue failed = XMLUtils.evaluateXPath2(results, xpath, null);
 		int nFailed = Integer.parseInt(failed.itemAt(0).getStringValue());
