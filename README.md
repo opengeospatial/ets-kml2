@@ -40,9 +40,12 @@ repository:
 
     <dependency>
       <groupId>org.opengis.cite.xerces</groupId> 
-      <artifactId>xercesImpl-xsd11</artifactId> 
+      <artifactId>xercesImpl-xsd11-shaded</artifactId> 
       <version>2.12-beta-r1667115</version> 
     </dependency>
+
+__Note__: The classes in this library have been relocated in order to avoid conflicts with other 
+components that depend on the latest public release of the Xerces2 Java implementation (2.11.0).
 
 In order to enable checking of assertions that may be defined in an XML Schema 
 1.1 grammar, the XPath 2.0 processor bundled with the Eclipse Web Tools Platform 
@@ -96,7 +99,7 @@ One of the build artifacts is an "all-in-one" JAR file that includes the test
 suite with all of its dependencies. This makes it very easy to execute the test 
 suite in a command shell like so:
 
-`java -jar ets-kml2-${version}-aio.jar  [test-run-props.xml]`
+`java -jar ets-kml2-${version}-aio.jar [-o|--outputDir $TMPDIR] [-d|--deleteSubjectOnFinish] [test-run-props.xml]`
 
 #### OGC test harness
 
