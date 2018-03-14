@@ -12,6 +12,9 @@
         <local-name>ets-kml2-${version}</local-name>
         <title>OGC KML 2.x Validator</title>
         <description>Validates the structure and content of OGC KML 2.x documents.</description>
+        <BasicConformanceClasses>
+          <conformanceClass>CL1</conformanceClass>
+        </BasicConformanceClasses>
       </suite>
       <revision>
         <name>${version}</name>
