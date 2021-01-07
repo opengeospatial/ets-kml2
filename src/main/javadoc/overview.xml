@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite>
+	<title>OGC KML 2.x Conformance Test Suite</title>
+	<description>
+	    This test suite verifies that a KML 2.x resource conforms to the following OGC specifications: 
+	    1. OGC KML, Version 2.3 (OGC 12-007r2) 2. OGC KML 2.3 - Abstract Test Suite (OGC 14-068r2) 
+	    3.OGC KML, Version 2.2 (OGC 07-147r2). The KML specification defines three conformance levels 
+	    indicating the relative importance or priority of a particular set of constraints; each level 
+	    successively increases the test coverage. The highest level (CL3) indicates full conformance, 
+	    but a given application or user community may opt for a lower level of conformance. All three 
+	    levels are implemented by the test suite:
+		CL1 - Includes tests covering requirements that must be satisfied by every (minimally) conforming KML resource.
+		CL2 - As for CL1, plus tests that address recommended constraints that should be satisfied; 
+		non-conformance at this level may hinder the utility, portability, or interoperability of the resource.
+		CL3 - As for CL2, plus tests for optional constraints that are purely informative in nature. 
+		The test run arguments are summarized in the following table. The obligation descriptor can 
+		have the following values: M (mandatory), O (optional), or C (conditional).
+	</description>
+	<testrunarguments>
+		<testrunargument>
+			<name>kml</name>
+			<valuedomain>URI</valuedomain>
+			<obligation>M</obligation>
+			<description>An absolute URI that refers to a KML resource. If the URI contains
+				any ampersand ('&amp;') characters they must be percent-encoded as '%26'.</description>
+		</testrunargument>
+		<testrunargument>
+			<name>lvl</name>
+			<valuedomain>Integer (1-3)</valuedomain>
+			<obligation>O</obligation>
+			<description>The conformance level (default value: 1).</description>
+		</testrunargument>
+	</testrunarguments>
+</testsuite>
