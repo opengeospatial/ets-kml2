@@ -24,9 +24,13 @@ import org.xml.sax.SAXException;
 public class VerifyCL2OverlayTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
+
 	private static DocumentBuilder docBuilder;
+
 	private static ITestContext testContext;
+
 	private static ISuite suite;
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -44,8 +48,7 @@ public class VerifyCL2OverlayTests {
 	}
 
 	@Test
-	public void photoOverlayMissingImagePyramid() throws SAXException,
-			IOException {
+	public void photoOverlayMissingImagePyramid() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("Tiling parameters and ImagePyramid are mutually inclusive");
 		URL url = this.getClass().getResource("/features/PhotoOverlay-004.xml");
@@ -67,4 +70,5 @@ public class VerifyCL2OverlayTests {
 		iut.findOverlayElements();
 		iut.photoOverlayForTiledImage();
 	}
+
 }

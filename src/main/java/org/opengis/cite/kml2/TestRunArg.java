@@ -14,8 +14,10 @@ public enum TestRunArg {
 	 */
 	LVL;
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return name().toLowerCase();
 	}
+
 }

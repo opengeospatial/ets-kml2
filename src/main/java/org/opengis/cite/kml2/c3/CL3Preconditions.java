@@ -6,24 +6,20 @@ import org.testng.ITestContext;
 import org.testng.annotations.BeforeTest;
 
 /**
- * Verifies that the preconditions for running CL3 tests are satisfied. If not,
- * they are all skipped.
+ * Verifies that the preconditions for running CL3 tests are satisfied. If not, they are
+ * all skipped.
  */
 public class CL3Preconditions {
 
 	/**
-	 * Checks the value of the {@link SuiteAttribute#LEVEL} attribute; its
-	 * (Integer) value must be 3.
-	 * 
-	 * @param testContext
-	 *            Information about the current test run.
+	 * Checks the value of the {@link org.opengis.cite.kml2.SuiteAttribute#LEVEL}
+	 * attribute; its (Integer) value must be 3.
+	 * @param testContext Information about the current test run.
 	 */
 	@BeforeTest
 	public void checkConformanceLevel(ITestContext testContext) {
-		Integer level = (Integer) testContext.getSuite().getAttribute(
-				SuiteAttribute.LEVEL.getName());
-		Assert.assertTrue(level == 3, String.format(
-				"Skipping tests for CL3 conformance (lvl = %d).", level));
+		Integer level = (Integer) testContext.getSuite().getAttribute(SuiteAttribute.LEVEL.getName());
+		Assert.assertTrue(level == 3, String.format("Skipping tests for CL3 conformance (lvl = %d).", level));
 	}
 
 }

@@ -31,7 +31,9 @@ import org.xml.sax.SAXException;
 public class VerifyXMLUtils {
 
 	private static final String ATOM_NS = "http://www.w3.org/2005/Atom";
+
 	private static final String EX_NS = "http://example.org/ns1";
+
 	private static DocumentBuilder docBuilder;
 
 	public VerifyXMLUtils() {
@@ -46,18 +48,14 @@ public class VerifyXMLUtils {
 
 	@Test
 	public void writeDocToString() throws SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/atom-feed.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/atom-feed.xml"));
 		String content = XMLUtils.writeNodeToString(doc);
-		assertTrue("String should start with '<feed'",
-				content.startsWith("<feed"));
+		assertTrue("String should start with '<feed'", content.startsWith("<feed"));
 	}
 
 	@Test
-	public void evaluateXPathExpression_match()
-			throws XPathExpressionException, SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/atom-feed.xml"));
+	public void evaluateXPathExpression_match() throws XPathExpressionException, SAXException, IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/atom-feed.xml"));
 		String expr = "/tns:feed/tns:author[ns1:phone]";
 		Map<String, String> nsBindings = new HashMap<String, String>();
 		nsBindings.put(ATOM_NS, "tns");
@@ -68,10 +66,8 @@ public class VerifyXMLUtils {
 	}
 
 	@Test
-	public void evaluateXPathExpression_noMatch()
-			throws XPathExpressionException, SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/atom-feed.xml"));
+	public void evaluateXPathExpression_noMatch() throws XPathExpressionException, SAXException, IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/atom-feed.xml"));
 		String expr = "/tns:feed/tns:author[ns1:blog]";
 		Map<String, String> nsBindings = new HashMap<String, String>();
 		nsBindings.put(ATOM_NS, "tns");
@@ -81,10 +77,8 @@ public class VerifyXMLUtils {
 	}
 
 	@Test(expected = RuntimeException.class)
-	public void evaluateXPathExpression_booleanResult() throws SAXException,
-			IOException, XPathExpressionException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/atom-feed.xml"));
+	public void evaluateXPathExpression_booleanResult() throws SAXException, IOException, XPathExpressionException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/atom-feed.xml"));
 		String expr = "count(//tns:entry) > 0";
 		Map<String, String> nsBindings = new HashMap<String, String>();
 		nsBindings.put(ATOM_NS, "tns");
@@ -102,50 +96,42 @@ public class VerifyXMLUtils {
 	}
 
 	@Test
-	public void evaluateXPath2ExpressionAgainstDocument() throws SAXException,
-			IOException, SaxonApiException, XPathException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/atom-feed.xml"));
+	public void evaluateXPath2ExpressionAgainstDocument()
+			throws SAXException, IOException, SaxonApiException, XPathException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/atom-feed.xml"));
 		String expr = "matches(//tns:entry/tns:title, '.*Robots')";
 		Map<String, String> nsBindings = new HashMap<String, String>();
 		nsBindings.put(ATOM_NS, "tns");
-		XdmValue result = XMLUtils.evaluateXPath2(new DOMSource(doc), expr,
-				nsBindings);
+		XdmValue result = XMLUtils.evaluateXPath2(new DOMSource(doc), expr, nsBindings);
 		assertTrue("Expected non-empty result.", result.size() > 0);
-		assertEquals("Result has unexpected string value.", "true", result
-				.itemAt(0).getStringValue());
+		assertEquals("Result has unexpected string value.", "true", result.itemAt(0).getStringValue());
 	}
 
 	@Test
-	public void evaluateXPath2ExpressionAgainstElement() throws SAXException,
-			IOException, SaxonApiException, XPathException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/atom-feed.xml"));
+	public void evaluateXPath2ExpressionAgainstElement()
+			throws SAXException, IOException, SaxonApiException, XPathException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/atom-feed.xml"));
 		Node entry = doc.getElementsByTagNameNS(ATOM_NS, "entry").item(0);
 		String expr = "matches(tns:title, '.*Robots')";
 		Map<String, String> nsBindings = new HashMap<String, String>();
 		nsBindings.put(ATOM_NS, "tns");
-		XdmValue result = XMLUtils.evaluateXPath2(new DOMSource(entry), expr,
-				nsBindings);
+		XdmValue result = XMLUtils.evaluateXPath2(new DOMSource(entry), expr, nsBindings);
 		assertTrue("Expected non-empty result.", result.size() > 0);
-		assertEquals("Result has unexpected string value.", "true", result
-				.itemAt(0).getStringValue());
+		assertEquals("Result has unexpected string value.", "true", result.itemAt(0).getStringValue());
 	}
 
 	@Test
 	public void expandCharacterEntity() {
 		String text = "Ce n&apos;est pas";
 		String result = XMLUtils.expandReferencesInText(text);
-		assertTrue("Expected result to contain an apostrophe (')",
-				result.contains("'"));
+		assertTrue("Expected result to contain an apostrophe (')", result.contains("'"));
 	}
 
 	@Test
 	public void expandNumericCharacterReference() {
 		String text = "Montr&#xe9;al";
 		String result = XMLUtils.expandReferencesInText(text);
-		assertEquals("Expected result to contain character é (U+00E9)",
-				"Montréal", result);
+		assertEquals("Expected result to contain character é (U+00E9)", "Montréal", result);
 	}
 
 	@Test
@@ -161,11 +147,10 @@ public class VerifyXMLUtils {
 
 	@Test
 	public void evaluateXPointer() throws SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml22/SharedStyle.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml22/SharedStyle.xml"));
 		Node result = XMLUtils.evaluateXPointer("defaultStyles", doc);
 		assertNotNull("Expected matching node.", result);
-		assertEquals("Node has unexpected [local name].", "Style",
-				result.getLocalName());
+		assertEquals("Node has unexpected [local name].", "Style", result.getLocalName());
 	}
+
 }

@@ -27,9 +27,9 @@ import org.w3c.dom.NodeList;
 import jakarta.ws.rs.core.MediaType;
 
 /**
- * Checks constraints to apply to kml:Style elements. The relevant type
- * definition is shown below (with extension points omitted).
- * 
+ * Checks constraints to apply to kml:Style elements. The relevant type definition is
+ * shown below (with extension points omitted).
+ *
  * <pre>
  * {@literal
  * <xsd:complexType name="StyleType" final="#all">
@@ -51,8 +51,16 @@ import jakarta.ws.rs.core.MediaType;
  */
 public class StyleChecker {
 
+	/**
+	 * 
+	 */
 	ValidationErrorHandler errHandler;
+
+	/**
+	 * 
+	 */
 	private LinkValidator linkChecker;
+
 	/**
 	 * Immutable set of all NetworkLink states (ListStyle/ItemIcon).
 	 */
@@ -75,9 +83,7 @@ public class StyleChecker {
 	}
 
 	/**
-	 * Returns all error messages reported during the last call to
-	 * <code>isValid</code>.
-	 * 
+	 * Returns all error messages reported during the last call to <code>isValid</code>.
 	 * @return A String containing the reported error messages (may be empty).
 	 */
 	public String getErrorMessages() {
@@ -86,15 +92,12 @@ public class StyleChecker {
 
 	/**
 	 * Validates a kml:Style element.
-	 * 
-	 * @param node
-	 *            A kml:Style element.
+	 * @param node A kml:Style element.
 	 * @return true if the style is valid; false otherwise.
 	 */
 	public boolean isValid(Node node) {
 		if (!node.getLocalName().equals("Style")) {
-			throw new IllegalArgumentException("Not a Style element: "
-					+ node.getLocalName());
+			throw new IllegalArgumentException("Not a Style element: " + node.getLocalName());
 		}
 		errHandler.reset();
 		Element style = (Element) node;
@@ -105,19 +108,16 @@ public class StyleChecker {
 
 	/**
 	 * Checks that a kml:IconStyle element satisfies all applicable constraints.
-	 * 
-	 * @param style
-	 *            A kml:Style element.
-	 * 
+	 * @param style A kml:Style element.
+	 *
 	 * @see "ATC-118: Icon element refers to image"
 	 */
 	void checkIconStyle(Element style) {
 		Node icon = null;
 		try {
-			icon = XMLUtils
-					.evaluateXPath(style, "kml:IconStyle/kml:Icon", null).item(
-							0);
-		} catch (XPathExpressionException e) {
+			icon = XMLUtils.evaluateXPath(style, "kml:IconStyle/kml:Icon", null).item(0);
+		}
+		catch (XPathExpressionException e) {
 		}
 		if (null != icon && !linkChecker.isValid(icon)) {
 			Iterator<ValidationError> errors = linkChecker.getErrors();
@@ -131,44 +131,36 @@ public class StyleChecker {
 
 	/**
 	 * Checks that a kml:ListStyle element satisfies all applicable constraints.
-	 * 
-	 * @param style
-	 *            A kml:Style element.
-	 * 
+	 * @param style A kml:Style element.
+	 *
 	 * @see "ATC-136: ItemIcon refers to image resource"
 	 */
 	void checkListStyle(Element style) {
 		NodeList itemIcons = null;
 		try {
-			itemIcons = XMLUtils.evaluateXPath(style,
-					"kml:ListStyle/kml:ItemIcon", null);
-		} catch (XPathExpressionException e) {
+			itemIcons = XMLUtils.evaluateXPath(style, "kml:ListStyle/kml:ItemIcon", null);
+		}
+		catch (XPathExpressionException e) {
 		}
 		for (int i = 0; i < itemIcons.getLength(); i++) {
 			Element itemIcon = (Element) itemIcons.item(i);
-			Node href = itemIcon.getElementsByTagNameNS(KML2.NS_NAME, "href")
-					.item(0);
+			Node href = itemIcon.getElementsByTagNameNS(KML2.NS_NAME, "href").item(0);
 			URI uri = URI.create(href.getTextContent().trim());
 			if (!uri.isAbsolute()) {
 				uri = uri.resolve(style.getOwnerDocument().getBaseURI());
 			}
 			try {
-				ETSAssert.assertReferentExists(uri,
-						MediaType.valueOf("image/*"));
-			} catch (AssertionError e) {
-				errHandler.addError(
-						ErrorSeverity.ERROR,
-						e.getMessage(),
-						new ErrorLocator(-1, -1, XMLUtils
-								.buildXPointer(itemIcon)));
+				ETSAssert.assertReferentExists(uri, MediaType.valueOf("image/*"));
 			}
-			Node state = itemIcon.getElementsByTagNameNS(KML2.NS_NAME, "state")
-					.item(0);
+			catch (AssertionError e) {
+				errHandler.addError(ErrorSeverity.ERROR, e.getMessage(),
+						new ErrorLocator(-1, -1, XMLUtils.buildXPointer(itemIcon)));
+			}
+			Node state = itemIcon.getElementsByTagNameNS(KML2.NS_NAME, "state").item(0);
 			if (null == state) {
 				continue;
 			}
-			List<String> stateList = Arrays.asList(state.getTextContent()
-					.trim().split("\\s"));
+			List<String> stateList = Arrays.asList(state.getTextContent().trim().split("\\s"));
 			Set<String> states = new HashSet<>(stateList);
 			// set intersection to determine presence of NetworkLink state
 			states.retainAll(NETWORK_LINK_STATE_SET);
@@ -176,13 +168,13 @@ public class StyleChecker {
 				// not in a shared style definition so check parent
 				QName feature = XMLUtils.getQName(style.getParentNode());
 				if (!feature.equals(new QName(KML2.NS_NAME, "NetworkLink"))) {
-					errHandler.addError(ErrorSeverity.ERROR, ErrorMessage
-							.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
-									"[ATC-136] ListStyle applies to NetworkLink, not "
-											+ feature), new ErrorLocator(-1,
-							-1, XMLUtils.buildXPointer(itemIcon)));
+					errHandler.addError(ErrorSeverity.ERROR,
+							ErrorMessage.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
+									"[ATC-136] ListStyle applies to NetworkLink, not " + feature),
+							new ErrorLocator(-1, -1, XMLUtils.buildXPointer(itemIcon)));
 				}
 			}
 		}
 	}
+
 }

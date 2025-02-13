@@ -25,11 +25,12 @@ import net.sf.saxon.s9api.XdmValue;
 /**
  * Verifies the results of executing a test run using the main controller
  * (TestNGController).
- * 
+ *
  */
 public class VerifyTestNGController {
 
 	private static DocumentBuilder docBuilder;
+
 	private Properties testRunProps;
 
 	@BeforeClass
@@ -61,4 +62,5 @@ public class VerifyTestNGController {
 		int nFailed = Integer.parseInt(failed.itemAt(0).getStringValue());
 		assertEquals("Unexpected number of fail verdicts.", 1, nFailed);
 	}
+
 }

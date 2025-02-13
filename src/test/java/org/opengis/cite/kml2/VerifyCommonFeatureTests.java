@@ -26,10 +26,15 @@ import org.xml.sax.SAXException;
 public class VerifyCommonFeatureTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
+
 	private static final String LVL = SuiteAttribute.LEVEL.getName();
+
 	private static DocumentBuilder docBuilder;
+
 	private static ITestContext testContext;
+
 	private static ISuite suite;
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -48,36 +53,31 @@ public class VerifyCommonFeatureTests {
 
 	@Test
 	public void validLocalStyleReference() throws SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml22/PlacemarkStyle-003.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml22/PlacemarkStyle-003.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		when(suite.getAttribute(SuiteAttribute.SHARED_STYLES.getName()))
-				.thenReturn(Collections.singleton("sn_blue-dot_copy3"));
+			.thenReturn(Collections.singleton("sn_blue-dot_copy3"));
 		CommonFeatureTests iut = new CommonFeatureTests();
 		iut.initCommonFixture(testContext);
-		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
-				"Placemark"));
+		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME, "Placemark"));
 		iut.getSharedStyles(testContext);
 		iut.validStyleReference();
 	}
 
 	@Test
-	public void validRemoteStyleReference() throws SAXException, IOException,
-			URISyntaxException {
+	public void validRemoteStyleReference() throws SAXException, IOException, URISyntaxException {
 		URL url = this.getClass().getResource("/kml22/Placemark-004.xml");
 		Document doc = docBuilder.parse(url.toString());
 		doc.setDocumentURI(url.toString());
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		CommonFeatureTests iut = new CommonFeatureTests();
 		iut.initCommonFixture(testContext);
-		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
-				"Placemark"));
+		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME, "Placemark"));
 		iut.validStyleReference();
 	}
 
 	@Test
-	public void invalidRemoteStyleReference() throws SAXException, IOException,
-			URISyntaxException {
+	public void invalidRemoteStyleReference() throws SAXException, IOException, URISyntaxException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("Node has unexpected QName: {http://www.opengis.net/kml/2.2}Document");
 		URL url = this.getClass().getResource("/kml22/Placemark-005.xml");
@@ -86,8 +86,7 @@ public class VerifyCommonFeatureTests {
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		CommonFeatureTests iut = new CommonFeatureTests();
 		iut.initCommonFixture(testContext);
-		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
-				"Placemark"));
+		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME, "Placemark"));
 		iut.validStyleReference();
 	}
 
@@ -95,15 +94,12 @@ public class VerifyCommonFeatureTests {
 	public void invalidLocalStyleReference() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("No matching shared style found for styleUrl");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml22/PlacemarkStyle-003.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml22/PlacemarkStyle-003.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
-		when(suite.getAttribute(SuiteAttribute.SHARED_STYLES.getName()))
-				.thenReturn(Collections.singleton("no-match"));
+		when(suite.getAttribute(SuiteAttribute.SHARED_STYLES.getName())).thenReturn(Collections.singleton("no-match"));
 		CommonFeatureTests iut = new CommonFeatureTests();
 		iut.initCommonFixture(testContext);
-		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
-				"Placemark"));
+		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME, "Placemark"));
 		iut.getSharedStyles(testContext);
 		iut.validStyleReference();
 	}
@@ -114,14 +110,12 @@ public class VerifyCommonFeatureTests {
 		thrown.expectMessage("2 schema validation error(s) detected");
 		thrown.expectMessage("Expected kml:styleURL or kml:Style element in every kml:Pair");
 		thrown.expectMessage("Expected atom:link with @rel = 'related'");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml22/Document-001.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml22/Document-001.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		when(suite.getAttribute(LVL)).thenReturn(2);
 		CommonFeatureTests iut = new CommonFeatureTests();
 		iut.initCommonFixture(testContext);
-		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
-				"Document"));
+		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME, "Document"));
 		iut.checkFeatureConstraints();
 	}
 
@@ -136,8 +130,8 @@ public class VerifyCommonFeatureTests {
 		when(suite.getAttribute(LVL)).thenReturn(2);
 		CommonFeatureTests iut = new CommonFeatureTests();
 		iut.initCommonFixture(testContext);
-		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME,
-				"Placemark"));
+		iut.setTargetElements(doc.getElementsByTagNameNS(KML2.NS_NAME, "Placemark"));
 		iut.validViewpoint();
 	}
+
 }

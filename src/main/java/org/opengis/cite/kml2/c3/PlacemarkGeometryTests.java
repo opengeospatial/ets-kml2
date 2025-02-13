@@ -19,24 +19,31 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * Checks CL3 constraints that apply to a KML geometry elements (that substitute
- * for kml:AbstractGeometryGroup).
- * 
+ * Checks CL3 constraints that apply to a KML geometry elements (that substitute for
+ * kml:AbstractGeometryGroup).
+ *
  * @see "OGC 14-068r2, OGC KML 2.3 - Abstract Test Suite: Conformance Level 3"
  */
 public class PlacemarkGeometryTests extends CommonFixture {
 
+	/**
+	 * 
+	 */
 	JTSGeometryBuilder geomBuilder = new JTSGeometryBuilder();
 
+	/**
+	 * <p>
+	 * Constructor for PlacemarkGeometryTests.
+	 * </p>
+	 */
 	public PlacemarkGeometryTests() {
 		super();
 		this.geomBuilder = new JTSGeometryBuilder();
 	}
 
 	/**
-	 * Finds kml:Placemark elements in the KML document that do not appear in an
-	 * update context. If none are found, all test methods defined in the class
-	 * are skipped.
+	 * Finds kml:Placemark elements in the KML document that do not appear in an update
+	 * context. If none are found, all test methods defined in the class are skipped.
 	 */
 	@BeforeClass
 	public void findPlacemarks() {
@@ -44,44 +51,40 @@ public class PlacemarkGeometryTests extends CommonFixture {
 	}
 
 	/**
-	 * [Test] Verifies that the rings comprising the boundary of a kml:Polygon
-	 * geometry satisfy the constraints listed below.
+	 * [Test] Verifies that the rings comprising the boundary of a kml:Polygon geometry
+	 * satisfy the constraints listed below.
 	 * <ol>
 	 * <li>no two rings cross (but they may intersect at a single point)</li>
 	 * <li>the (exterior) coordinates are specified in a counterclockwise order</li>
 	 * </ol>
-	 * 
+	 *
 	 * <p>
-	 * The surface of a polygon is oriented such that the interior is to the
-	 * left of a boundary curve. This means that the exterior boundary of the
-	 * surface runs counterclockwise when viewed from the side of the surface
-	 * indicated by the upward normal (the "top" of the surface); interior
-	 * boundaries are clockwise.
+	 * The surface of a polygon is oriented such that the interior is to the left of a
+	 * boundary curve. This means that the exterior boundary of the surface runs
+	 * counterclockwise when viewed from the side of the surface indicated by the upward
+	 * normal (the "top" of the surface); interior boundaries are clockwise.
 	 * </p>
 	 */
 	@Test(description = "ATC-301")
 	public void polygonBoundaryOrientation() {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element place = (Element) targetElements.item(i);
-			Node kmlPolygon = place.getElementsByTagNameNS(KML2.NS_NAME,
-					"Polygon").item(0);
+			Node kmlPolygon = place.getElementsByTagNameNS(KML2.NS_NAME, "Polygon").item(0);
 			if (null == kmlPolygon) {
 				continue;
 			}
 			Node outerRing;
 			try {
-				outerRing = XMLUtils.evaluateXPath(kmlPolygon,
-						"kml:outerBoundaryIs/kml:LinearRing", null).item(0);
+				outerRing = XMLUtils.evaluateXPath(kmlPolygon, "kml:outerBoundaryIs/kml:LinearRing", null).item(0);
 				Assert.assertNotNull(outerRing, "Missing ...");
-			} catch (XPathExpressionException e) {
+			}
+			catch (XPathExpressionException e) {
 			}
 			Element polygonElem = (Element) kmlPolygon;
 			Polygon polygon = geomBuilder.buildPolygon(polygonElem);
-			Coordinate[] exteriorCoords = polygon.getExteriorRing()
-					.getCoordinates();
-			Assert.assertTrue(CGAlgorithms.isCCW(exteriorCoords), ErrorMessage
-					.format(ErrorMessageKeys.EXT_BOUNDARY_ORIENT,
-							XMLUtils.buildXPointer(polygonElem)));
+			Coordinate[] exteriorCoords = polygon.getExteriorRing().getCoordinates();
+			Assert.assertTrue(CGAlgorithms.isCCW(exteriorCoords),
+					ErrorMessage.format(ErrorMessageKeys.EXT_BOUNDARY_ORIENT, XMLUtils.buildXPointer(polygonElem)));
 		}
 	}
 
@@ -92,16 +95,15 @@ public class PlacemarkGeometryTests extends CommonFixture {
 	public void simpleRing() {
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element place = (Element) targetElements.item(i);
-			Node kmlRing = place.getElementsByTagNameNS(KML2.NS_NAME,
-					"LinearRing").item(0);
+			Node kmlRing = place.getElementsByTagNameNS(KML2.NS_NAME, "LinearRing").item(0);
 			if (null == kmlRing) {
 				continue;
 			}
 			Element ringElem = (Element) kmlRing;
 			LinearRing ring = geomBuilder.buildLinearRing(ringElem);
-			Assert.assertTrue(ring.isSimple(), ErrorMessage.format(
-					ErrorMessageKeys.RING_NOT_SIMPLE,
-					XMLUtils.buildXPointer(ringElem)));
+			Assert.assertTrue(ring.isSimple(),
+					ErrorMessage.format(ErrorMessageKeys.RING_NOT_SIMPLE, XMLUtils.buildXPointer(ringElem)));
 		}
 	}
+
 }

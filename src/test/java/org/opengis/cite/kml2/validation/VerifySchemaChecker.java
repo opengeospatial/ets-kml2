@@ -23,6 +23,7 @@ public class VerifySchemaChecker {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
+
 	private static DocumentBuilder docBuilder;
 
 	@BeforeClass
@@ -68,30 +69,23 @@ public class VerifySchemaChecker {
 	}
 
 	@Test
-	public void checkSimpleFields_builtInDatatypes() throws SAXException,
-			IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/schemas/Schema-001.xml"));
-		Element schema = (Element) doc.getElementsByTagNameNS(KML2.NS_NAME,
-				"Schema").item(0);
+	public void checkSimpleFields_builtInDatatypes() throws SAXException, IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/schemas/Schema-001.xml"));
+		Element schema = (Element) doc.getElementsByTagNameNS(KML2.NS_NAME, "Schema").item(0);
 		SchemaChecker iut = new SchemaChecker();
 		iut.checkSimpleFields(schema);
 		assertTrue("Unexpected error.", iut.getErrorMessages().isEmpty());
 	}
 
 	@Test
-	public void checkSimpleFields_invalidDatatype() throws SAXException,
-			IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/schemas/Schema-002.xml"));
-		Element schema = (Element) doc.getElementsByTagNameNS(KML2.NS_NAME,
-				"Schema").item(0);
+	public void checkSimpleFields_invalidDatatype() throws SAXException, IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/schemas/Schema-002.xml"));
+		Element schema = (Element) doc.getElementsByTagNameNS(KML2.NS_NAME, "Schema").item(0);
 		SchemaChecker iut = new SchemaChecker();
 		iut.checkSimpleFields(schema);
 		assertFalse("Expected an error.", iut.getErrorMessages().isEmpty());
-		assertTrue(
-				"Expected error message to contain 'Unknown atomic type'",
-				iut.getErrorMessages().contains(
-						"Invalid data type: Unknown atomic type"));
+		assertTrue("Expected error message to contain 'Unknown atomic type'",
+				iut.getErrorMessages().contains("Invalid data type: Unknown atomic type"));
 	}
+
 }

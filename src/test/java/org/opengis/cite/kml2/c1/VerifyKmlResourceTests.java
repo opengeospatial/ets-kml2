@@ -21,15 +21,19 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- * Verifies the behavior of the KmlResourceTests class. Test stubs replace
- * fixture constituents where appropriate.
+ * Verifies the behavior of the KmlResourceTests class. Test stubs replace fixture
+ * constituents where appropriate.
  */
 public class VerifyKmlResourceTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
+
 	private static DocumentBuilder docBuilder;
+
 	private static ITestContext testContext;
+
 	private static ISuite suite;
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -45,19 +49,16 @@ public class VerifyKmlResourceTests {
 		dbf.setNamespaceAware(true);
 		docBuilder = dbf.newDocumentBuilder();
 		Schema kml22Schema = ValidationUtils.createKMLSchema("2.2");
-		when(suite.getAttribute(SuiteAttribute.KML22_SCHEMA.getName()))
-				.thenReturn(kml22Schema);
+		when(suite.getAttribute(SuiteAttribute.KML22_SCHEMA.getName())).thenReturn(kml22Schema);
 		Schema kml23Schema = ValidationUtils.createKMLSchema("2.3");
-		when(suite.getAttribute(SuiteAttribute.KML23_SCHEMA.getName()))
-				.thenReturn(kml23Schema);
+		when(suite.getAttribute(SuiteAttribute.KML23_SCHEMA.getName())).thenReturn(kml23Schema);
 	}
 
 	@Test
 	public void invalidKML22Document() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("cvc-complex-type.2.4.a: Invalid content was found");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml22/Placemark-001.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml22/Placemark-001.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		KmlResourceTests iut = new KmlResourceTests();
 		iut.initCommonFixture(testContext);
@@ -69,12 +70,12 @@ public class VerifyKmlResourceTests {
 	public void invalidKML23Document() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("cvc-assertion: Assertion evaluation");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml23/Placemark-001.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml23/Placemark-001.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		KmlResourceTests iut = new KmlResourceTests();
 		iut.initCommonFixture(testContext);
 		iut.getKMLSchemas(testContext);
 		iut.isSchemaValid();
 	}
+
 }

@@ -26,6 +26,7 @@ public class VerifyLinkValidator {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
+
 	private static DocumentBuilder docBuilder;
 
 	@BeforeClass
@@ -38,12 +39,10 @@ public class VerifyLinkValidator {
 	@Test
 	@Ignore("Works as expected, but requires a network connection")
 	public void validRemoteImageLink() throws SAXException, IOException {
-		Document link = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/links/Icon-001.xml"));
+		Document link = docBuilder.parse(this.getClass().getResourceAsStream("/links/Icon-001.xml"));
 		MediaType imageType = MediaType.valueOf("image/*");
 		LinkValidator iut = new LinkValidator(imageType);
-		assertTrue("Expected valid Link.",
-				iut.isValid(link.getDocumentElement()));
+		assertTrue("Expected valid Link.", iut.isValid(link.getDocumentElement()));
 		assertTrue("Expected no errors.", iut.getErrors().hasNext());
 	}
 
@@ -66,8 +65,7 @@ public class VerifyLinkValidator {
 		LinkValidator iut = new LinkValidator(imageType);
 		boolean isValid = iut.isValid(link.getDocumentElement());
 		assertFalse("Expected invalid Link.", isValid);
-		assertTrue("Unexpected error message.", iut.getErrorMessages()
-				.contains("URI is not accessible"));
+		assertTrue("Unexpected error message.", iut.getErrorMessages().contains("URI is not accessible"));
 	}
 
 	@Test
@@ -78,8 +76,7 @@ public class VerifyLinkValidator {
 		LinkValidator iut = new LinkValidator(2, imageType);
 		boolean isValid = iut.isValid(link.getDocumentElement());
 		assertFalse("Expected invalid Link.", isValid);
-		assertTrue("Unexpected error message.", iut.getErrorMessages()
-				.contains("not(kml:refreshInterval)"));
+		assertTrue("Unexpected error message.", iut.getErrorMessages().contains("not(kml:refreshInterval)"));
 	}
 
 }

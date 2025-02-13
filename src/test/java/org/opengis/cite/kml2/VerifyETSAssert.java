@@ -29,8 +29,11 @@ import jakarta.ws.rs.core.MediaType;
 public class VerifyETSAssert {
 
 	private static final String WADL_NS = "http://wadl.dev.java.net/2009/02";
+
 	private static DocumentBuilder docBuilder;
+
 	private static SchemaFactory factory;
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -52,15 +55,12 @@ public class VerifyETSAssert {
 		URL url = this.getClass().getResource("/Gamma.xml");
 		Schema schema = factory.newSchema();
 		Validator validator = schema.newValidator();
-		ETSAssert
-				.assertSchemaValid(validator, new StreamSource(url.toString()));
+		ETSAssert.assertSchemaValid(validator, new StreamSource(url.toString()));
 	}
 
 	@Test
-	public void assertXPathWithNamespaceBindings() throws SAXException,
-			IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/capabilities-simple.xml"));
+	public void assertXPathWithNamespaceBindings() throws SAXException, IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/capabilities-simple.xml"));
 		Map<String, String> nsBindings = new HashMap<String, String>();
 		nsBindings.put(WADL_NS, "ns1");
 		String xpath = "//ns1:resources";
@@ -71,25 +71,19 @@ public class VerifyETSAssert {
 	public void updateTargetIsRelative() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("The URI is not absolute");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml23/NetworkLinkControl-004.xml"));
-		Node uriRef = doc.getElementsByTagNameNS(KML2.NS_NAME, "targetHref")
-				.item(0);
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml23/NetworkLinkControl-004.xml"));
+		Node uriRef = doc.getElementsByTagNameNS(KML2.NS_NAME, "targetHref").item(0);
 		URI uri = URI.create(uriRef.getTextContent().trim());
 		ETSAssert.assertReferentExists(uri, MediaType.APPLICATION_XML_TYPE);
 	}
 
 	@Test
 	@Ignore("Works as expected, but avoid network connection")
-	public void updateTargetExistsAndIsAcceptable() throws SAXException,
-			IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml23/NetworkLinkControl-005.xml"));
-		Node uriRef = doc.getElementsByTagNameNS(KML2.NS_NAME, "targetHref")
-				.item(0);
+	public void updateTargetExistsAndIsAcceptable() throws SAXException, IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml23/NetworkLinkControl-005.xml"));
+		Node uriRef = doc.getElementsByTagNameNS(KML2.NS_NAME, "targetHref").item(0);
 		URI uri = URI.create(uriRef.getTextContent().trim());
-		ETSAssert.assertReferentExists(uri,
-				MediaType.valueOf(KML2.KML_MEDIA_TYPE));
+		ETSAssert.assertReferentExists(uri, MediaType.valueOf(KML2.KML_MEDIA_TYPE));
 	}
 
 	@Test
@@ -97,10 +91,8 @@ public class VerifyETSAssert {
 	public void updateTargetIsNotAcceptable() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("Unacceptable media type");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml23/NetworkLinkControl-005.xml"));
-		Node uriRef = doc.getElementsByTagNameNS(KML2.NS_NAME, "targetHref")
-				.item(0);
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml23/NetworkLinkControl-005.xml"));
+		Node uriRef = doc.getElementsByTagNameNS(KML2.NS_NAME, "targetHref").item(0);
 		URI uri = URI.create(uriRef.getTextContent().trim());
 		ETSAssert.assertReferentExists(uri, MediaType.TEXT_PLAIN_TYPE);
 	}

@@ -16,27 +16,31 @@ import org.testng.annotations.Test;
 import org.w3c.dom.Element;
 
 /**
- * Implements tests that apply to kml:LinearRing elements. The relevant test
- * cases from the abstract test suite are listed below:
+ * Implements tests that apply to kml:LinearRing elements. The relevant test cases from
+ * the abstract test suite are listed below:
  * <ul>
  * <li>ATC-103: Valid geometry coordinates</li>
  * <li>ATC-116: LinearRing coordinates</li>
  * </ul>
- * 
+ *
  * @see "OGC 14-068r1: OGC KML 2.3 - Abstract Test Suite, Conformance Level 1"
  */
 public class LinearRingTests extends CommonFixture {
 
 	private CoordinatesValidator coordsValidator;
 
+	/**
+	 * <p>
+	 * Constructor for LinearRingTests.
+	 * </p>
+	 */
 	public LinearRingTests() {
 		this.coordsValidator = new CoordinatesValidator();
 	}
 
 	/**
-	 * Finds kml:LinearRing elements in the KML document that do not appear in
-	 * an update context. If none are found, all test methods defined in the
-	 * class are skipped.
+	 * Finds kml:LinearRing elements in the KML document that do not appear in an update
+	 * context. If none are found, all test methods defined in the class are skipped.
 	 */
 	@BeforeClass
 	public void findLinearRingElements() {
@@ -44,40 +48,34 @@ public class LinearRingTests extends CommonFixture {
 	}
 
 	/**
-	 * [Test] Verifies that a kml:LinearRing element has valid coordinates. It
-	 * must contain a sequence of four or more coordinate tuples in the default
-	 * CRS. Furthermore, the first and last control points must be coincident
-	 * (i.e. the ring is explicitly closed).
+	 * [Test] Verifies that a kml:LinearRing element has valid coordinates. It must
+	 * contain a sequence of four or more coordinate tuples in the default CRS.
+	 * Furthermore, the first and last control points must be coincident (i.e. the ring is
+	 * explicitly closed).
 	 */
 	@Test(description = "ATC-103, ATC-116")
 	public void validLinearRingCoordinates() {
 		JTSGeometryBuilder geomBuilder = new JTSGeometryBuilder();
-		Polygon crsPolygon = geomBuilder.buildPolygon(new Envelope(-180, 180,
-				-90, 90));
+		Polygon crsPolygon = geomBuilder.buildPolygon(new Envelope(-180, 180, -90, 90));
 		for (int i = 0; i < targetElements.getLength(); i++) {
 			Element ring = (Element) targetElements.item(i);
-			Assert.assertTrue(coordsValidator.isValid(ring),
-					coordsValidator.getErrorMessages());
+			Assert.assertTrue(coordsValidator.isValid(ring), coordsValidator.getErrorMessages());
 			LinearRing jtsRing = null;
 			try {
 				jtsRing = geomBuilder.buildLinearRing(ring);
-			} catch (IllegalArgumentException ex) {
-				throw new AssertionError(ErrorMessage.format(
-						ErrorMessageKeys.OPEN_RING,
-						XMLUtils.buildXPointer(ring)));
 			}
-			Assert.assertTrue(
-					crsPolygon.covers(jtsRing),
-					ErrorMessage.format(ErrorMessageKeys.OUTSIDE_CRS,
-							jtsRing.toText()));
+			catch (IllegalArgumentException ex) {
+				throw new AssertionError(ErrorMessage.format(ErrorMessageKeys.OPEN_RING, XMLUtils.buildXPointer(ring)));
+			}
+			Assert.assertTrue(crsPolygon.covers(jtsRing),
+					ErrorMessage.format(ErrorMessageKeys.OUTSIDE_CRS, jtsRing.toText()));
 		}
 	}
 
 	/**
-	 * [Test] Verifies that a kml:LinearRing element has a valid altitudeMode
-	 * value as determined by the values of its kml:extrude and kml:tessellate
-	 * elements. This test applies only to rings that do not constitute the
-	 * boundary of a polygon.
+	 * [Test] Verifies that a kml:LinearRing element has a valid altitudeMode value as
+	 * determined by the values of its kml:extrude and kml:tessellate elements. This test
+	 * applies only to rings that do not constitute the boundary of a polygon.
 	 */
 	@Test(description = "ATC-112, ATC-113")
 	public void validAltitudeMode() {
@@ -89,4 +87,5 @@ public class LinearRingTests extends CommonFixture {
 			}
 		}
 	}
+
 }

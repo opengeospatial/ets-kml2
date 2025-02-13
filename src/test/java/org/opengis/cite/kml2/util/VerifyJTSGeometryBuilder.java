@@ -28,6 +28,7 @@ public class VerifyJTSGeometryBuilder {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
+
 	private static DocumentBuilder docBuilder;
 
 	public VerifyJTSGeometryBuilder() {
@@ -42,32 +43,27 @@ public class VerifyJTSGeometryBuilder {
 
 	@Test
 	public void buildPolygonNoHoles() throws SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/geom/Polygon.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/geom/Polygon.xml"));
 		JTSGeometryBuilder iut = new JTSGeometryBuilder();
 		Polygon polygon = iut.buildPolygon(doc.getDocumentElement());
 		assertNotNull(polygon);
-		assertEquals("Unexpected number of interior rings.", 0,
-				polygon.getNumInteriorRing());
+		assertEquals("Unexpected number of interior rings.", 0, polygon.getNumInteriorRing());
 	}
 
 	@Test
 	public void buildPolygonWithHole() throws SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/geom/PolygonWithHole.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/geom/PolygonWithHole.xml"));
 		JTSGeometryBuilder iut = new JTSGeometryBuilder();
 		Polygon polygon = iut.buildPolygon(doc.getDocumentElement());
 		assertNotNull(polygon);
-		assertEquals("Unexpected number of interior rings.", 1,
-				polygon.getNumInteriorRing());
+		assertEquals("Unexpected number of interior rings.", 1, polygon.getNumInteriorRing());
 	}
 
 	@Test
 	public void buildPolygonWithOpenExterior() throws SAXException, IOException {
 		thrown.expect(IllegalArgumentException.class);
 		thrown.expectMessage("Points of LinearRing do not form a closed linestring");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/geom/PolygonNotClosed.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/geom/PolygonNotClosed.xml"));
 		JTSGeometryBuilder iut = new JTSGeometryBuilder();
 		Polygon polygon = iut.buildPolygon(doc.getDocumentElement());
 		assertNull(polygon);
@@ -77,42 +73,34 @@ public class VerifyJTSGeometryBuilder {
 	public void buildPolygonWithHoleOutside() throws SAXException, IOException {
 		thrown.expect(IllegalArgumentException.class);
 		thrown.expectMessage("Inner boundary [1] not inside outer boundary");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/geom/PolygonWithHoleOutside.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/geom/PolygonWithHoleOutside.xml"));
 		JTSGeometryBuilder iut = new JTSGeometryBuilder();
 		Polygon polygon = iut.buildPolygon(doc.getDocumentElement());
 		assertNull(polygon);
 	}
 
 	@Test
-	public void buildPolygonFromConvexLatLonQuad() throws SAXException,
-			IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/geom/LatLonQuad.xml"));
-		Node coords = doc.getDocumentElement()
-				.getElementsByTagNameNS(KML2.NS_NAME, "coordinates").item(0);
+	public void buildPolygonFromConvexLatLonQuad() throws SAXException, IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/geom/LatLonQuad.xml"));
+		Node coords = doc.getDocumentElement().getElementsByTagNameNS(KML2.NS_NAME, "coordinates").item(0);
 		JTSGeometryBuilder iut = new JTSGeometryBuilder();
 		Polygon polygon = iut.buildPolygonFromCoordinates(coords);
-		assertEquals("Unexpected number of vertices.", 5,
-				polygon.getNumPoints());
+		assertEquals("Unexpected number of vertices.", 5, polygon.getNumPoints());
 		Coordinate expected = new Coordinate(81.601884, 44.160723);
-		assertTrue("Expected first coord: " + expected.toString(), polygon
-				.getExteriorRing().getCoordinateN(0).equals2D(expected));
+		assertTrue("Expected first coord: " + expected.toString(),
+				polygon.getExteriorRing().getCoordinateN(0).equals2D(expected));
 	}
 
 	@Test
-	public void buildPolygonFromConcaveLatLonQuad() throws SAXException,
-			IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/geom/LatLonQuad-NonConvex.xml"));
-		Node coords = doc.getDocumentElement()
-				.getElementsByTagNameNS(KML2.NS_NAME, "coordinates").item(0);
+	public void buildPolygonFromConcaveLatLonQuad() throws SAXException, IOException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/geom/LatLonQuad-NonConvex.xml"));
+		Node coords = doc.getDocumentElement().getElementsByTagNameNS(KML2.NS_NAME, "coordinates").item(0);
 		JTSGeometryBuilder iut = new JTSGeometryBuilder();
 		Polygon polygon = iut.buildPolygonFromCoordinates(coords);
-		assertEquals("Unexpected number of vertices.", 5,
-				polygon.getNumPoints());
+		assertEquals("Unexpected number of vertices.", 5, polygon.getNumPoints());
 		Coordinate expected = new Coordinate(-123, 50.0);
-		assertTrue("Expected first coord: " + expected.toString(), polygon
-				.getExteriorRing().getCoordinateN(0).equals2D(expected));
+		assertTrue("Expected first coord: " + expected.toString(),
+				polygon.getExteriorRing().getCoordinateN(0).equals2D(expected));
 	}
+
 }

@@ -23,6 +23,7 @@ public class VerifyRegionValidator {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
+
 	private static DocumentBuilder docBuilder;
 
 	@BeforeClass
@@ -48,8 +49,7 @@ public class VerifyRegionValidator {
 		RegionValidator iut = new RegionValidator(3);
 		boolean isValid = iut.isValid(region.getDocumentElement());
 		assertFalse("Expected inivalid Link.", isValid);
-		assertTrue("Expected error message to contain 'ATC-306'", iut
-				.getErrorMessages().contains("ATC-306"));
+		assertTrue("Expected error message to contain 'ATC-306'", iut.getErrorMessages().contains("ATC-306"));
 	}
 
 }

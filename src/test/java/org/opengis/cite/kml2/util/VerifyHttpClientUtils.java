@@ -20,8 +20,7 @@ public class VerifyHttpClientUtils {
 	@Test
 	public void acceptableXmlMediaType() {
 		MediaType xmlType = MediaType.APPLICATION_XML_TYPE;
-		boolean result = ClientUtils.contentIsAcceptable(
-				"application/atom+xml", xmlType);
+		boolean result = ClientUtils.contentIsAcceptable("application/atom+xml", xmlType);
 		assertTrue(result);
 	}
 
@@ -29,8 +28,7 @@ public class VerifyHttpClientUtils {
 	public void generalXmlMediaTypeIsUnacceptable() {
 		MediaType atomMediaType = MediaType.APPLICATION_ATOM_XML_TYPE;
 		// general type is not substitutable for specific subtype
-		boolean result = ClientUtils.contentIsAcceptable("application/xml",
-				atomMediaType);
+		boolean result = ClientUtils.contentIsAcceptable("application/xml", atomMediaType);
 		assertFalse("Expected invalid Link.", result);
 	}
 

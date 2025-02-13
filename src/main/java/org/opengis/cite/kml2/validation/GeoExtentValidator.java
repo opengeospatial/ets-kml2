@@ -25,27 +25,33 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Validates the content of an element that represents a geographic extent (that
- * is, it substitutes directly or indirectly for kml:AbstractExtentGroup). The
- * allowed elements include the following, although not all are permitted in
- * every context:
+ * Validates the content of an element that represents a geographic extent (that is, it
+ * substitutes directly or indirectly for kml:AbstractExtentGroup). The allowed elements
+ * include the following, although not all are permitted in every context:
  * <ul>
  * <li>kml:LatLonBox</li>
  * <li>kml:LatLonAltBox</li>
  * <li>kml:LatLonQuad</li>
  * </ul>
- * 
  */
 public class GeoExtentValidator {
 
 	private static final String BOX_NORTH = "north";
+
 	private static final String BOX_SOUTH = "south";
+
 	private static final String BOX_EAST = "east";
+
 	private static final String BOX_WEST = "west";
+
 	private static final String BOX_MIN_ALT = "minAltitude";
+
 	private static final String BOX_MAX_ALT = "maxAltitude";
+
 	private static final Map<String, Double> DEFAULT_BOX = initDefaultBox();
+
 	private ValidationErrorHandler errHandler;
+
 	private CoordinatesValidator coordsValidator;
 
 	private static Map<String, Double> initDefaultBox() {
@@ -69,7 +75,6 @@ public class GeoExtentValidator {
 
 	/**
 	 * Returns the error messages reported during the last validation episode.
-	 * 
 	 * @return A String containing error messages (may be empty).
 	 */
 	public String getErrorMessages() {
@@ -78,7 +83,6 @@ public class GeoExtentValidator {
 
 	/**
 	 * Returns the errors reported during the last validation episode.
-	 * 
 	 * @return An iterator over the reported validation errors.
 	 */
 	public Iterator<ValidationError> getErrors() {
@@ -92,167 +96,146 @@ public class GeoExtentValidator {
 		errHandler.reset();
 	}
 
+	/**
+	 * <p>
+	 * validGeoExtent.
+	 * </p>
+	 * @param node a {@link org.w3c.dom.Node} object
+	 * @return a boolean
+	 */
 	public boolean validGeoExtent(Node node) {
 		errHandler.reset();
 		boolean isValid = false;
 		if (node.getLocalName().endsWith("Box")) {
 			isValid = validateBox(node);
-		} else {
+		}
+		else {
 			isValid = validateQuadrilateral(node);
 		}
 		return isValid;
 	}
 
 	/**
-	 * Checks that a kml:LatLonQuad element has valid coordinates and satisfies
-	 * the following additional constraints:
+	 * Checks that a kml:LatLonQuad element has valid coordinates and satisfies the
+	 * following additional constraints:
 	 * <ol>
-	 * <li>the four coordinate tuples are specified in counter-clockwise order
-	 * (the interior is to the left of the boundary curve), with the first
-	 * coordinate corresponding to the lower-left corner of the overlayed image;
-	 * </li>
-	 * <li>the quadrilateral is convex (every interior angle &lt;= 180 degrees).
-	 * </li>
+	 * <li>the four coordinate tuples are specified in counter-clockwise order (the
+	 * interior is to the left of the boundary curve), with the first coordinate
+	 * corresponding to the lower-left corner of the overlayed image;</li>
+	 * <li>the quadrilateral is convex (every interior angle &lt;= 180 degrees).</li>
 	 * </ol>
-	 * 
-	 * @param latlonQuad
-	 *            A kml:LatLonQuad element.
+	 * @param latlonQuad A kml:LatLonQuad element.
 	 * @return true if all constraints are satisfied; false otherwise.
-	 * 
 	 * @see "ATC-103: Valid geometry coordinates"
 	 * @see "ATC-149: LatLonQuad coordinates"
 	 */
 	public boolean validateQuadrilateral(Node latlonQuad) {
 		JTSGeometryBuilder jtsBuilder = new JTSGeometryBuilder();
-		Polygon crsPolygon = jtsBuilder.buildPolygon(new Envelope(-180, 180,
-				-90, 90));
+		Polygon crsPolygon = jtsBuilder.buildPolygon(new Envelope(-180, 180, -90, 90));
 		Element quad = (Element) latlonQuad;
-		Assert.assertTrue(coordsValidator.isValid(quad),
-				coordsValidator.getErrorMessages());
+		Assert.assertTrue(coordsValidator.isValid(quad), coordsValidator.getErrorMessages());
 		Polygon jtsPolygon = null;
 		try {
-			Node coords = quad.getElementsByTagNameNS(KML2.NS_NAME,
-					"coordinates").item(0);
+			Node coords = quad.getElementsByTagNameNS(KML2.NS_NAME, "coordinates").item(0);
 			jtsPolygon = jtsBuilder.buildPolygonFromCoordinates(coords);
-		} catch (IllegalArgumentException ex) {
-			errHandler.addError(
-					ErrorSeverity.ERROR,
-					ErrorMessage.format(ErrorMessageKeys.POLYGON_BOUNDARY,
-							ex.getMessage()),
+		}
+		catch (IllegalArgumentException ex) {
+			errHandler.addError(ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.POLYGON_BOUNDARY, ex.getMessage()),
 					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(quad)));
 		}
 		if (!crsPolygon.covers(jtsPolygon)) {
-			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
-					ErrorMessageKeys.OUTSIDE_CRS, jtsPolygon.toText()),
+			errHandler.addError(ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.OUTSIDE_CRS, jtsPolygon.toText()),
 					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(quad)));
 		}
 		if (!CGAlgorithms.isCCW(jtsPolygon.getCoordinates())) {
-			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
-					ErrorMessageKeys.RING_NOT_CCW, jtsPolygon.toText()),
+			errHandler.addError(ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.RING_NOT_CCW, jtsPolygon.toText()),
 					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(quad)));
 		}
 		// if convex, should be topologically equivalent to convex hull
 		if (!jtsPolygon.convexHull().equalsTopo(jtsPolygon)) {
-			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
-					ErrorMessageKeys.QUAD_NOT_CONVEX, jtsPolygon.toText()),
+			errHandler.addError(ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.QUAD_NOT_CONVEX, jtsPolygon.toText()),
 					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(quad)));
 		}
 		return !errHandler.errorsDetected();
 	}
 
 	/**
-	 * Validates a bounding box. The content of a kml:LatLon[Alt]Box element
-	 * must satisfy all of the following constraints:
+	 * Validates a bounding box. The content of a kml:LatLon[Alt]Box element must satisfy
+	 * all of the following constraints:
 	 * <ol>
 	 * <li>kml:north &gt; kml:south;</li>
 	 * <li>kml:east &gt; kml:west;</li>
 	 * <li>kml:minAltitude &lt;= kml:maxAltitude;</li>
-	 * <li>if kml:minAltitude and kml:maxAltitude are both present, then
-	 * kml:altitudeMode does not have the value "clampToGround".</li>
+	 * <li>if kml:minAltitude and kml:maxAltitude are both present, then kml:altitudeMode
+	 * does not have the value "clampToGround".</li>
 	 * </ol>
-	 * 
+	 *
 	 * <p>
-	 * Some additional constraints were introduced in KML 2.3 with the longitude
-	 * range extension (to &#177; 360):
+	 * Some additional constraints were introduced in KML 2.3 with the longitude range
+	 * extension (to &#177; 360):
 	 * </p>
 	 * <ul>
 	 * <li>kml:east - kml:west &lt;= 360 (non-self-overlap)</li>
-	 * <li>if |kml:west| &gt; 180 or |kml:east| &gt; 180, then kml:east &gt; 0
-	 * and kml:west &lt; 180 (uniqueness)</li>
+	 * <li>if |kml:west| &gt; 180 or |kml:east| &gt; 180, then kml:east &gt; 0 and
+	 * kml:west &lt; 180 (uniqueness)</li>
 	 * </ul>
-	 * 
-	 * @param boxNode
-	 *            An Element node that contains a bounding box element
-	 *            (kml:LatLon[Alt]Box).
+	 * @param boxNode An Element node that contains a bounding box element
+	 * (kml:LatLon[Alt]Box).
 	 * @return true if the box satisfies all constraints; false otherwise.
 	 */
 	boolean validateBox(Node boxNode) {
 		if (null == boxNode || !boxNode.getLocalName().startsWith("LatLon")) {
-			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
-					ErrorMessageKeys.MISSING_INFOSET_ITEM, "kml:LatLon*"),
+			errHandler.addError(ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.MISSING_INFOSET_ITEM, "kml:LatLon*"),
 					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(boxNode)));
 			return false;
 		}
-		Map<String, Double> boxProps = getNumericProperties(boxNode,
-				DEFAULT_BOX);
+		Map<String, Double> boxProps = getNumericProperties(boxNode, DEFAULT_BOX);
 		if (boxProps.get(BOX_NORTH) <= boxProps.get(BOX_SOUTH)) {
-			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
-					ErrorMessageKeys.CONSTRAINT_VIOLATION,
-					"[kml:LatLonAltBox] kml:north > kml:south"),
+			errHandler.addError(ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
+							"[kml:LatLonAltBox] kml:north > kml:south"),
 					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(boxNode)));
 		}
 		if (boxProps.get(BOX_EAST) <= boxProps.get(BOX_WEST)) {
-			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
-					ErrorMessageKeys.CONSTRAINT_VIOLATION,
-					"[kml:LatLonAltBox] kml:east > kml:west"),
+			errHandler.addError(ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
+							"[kml:LatLonAltBox] kml:east > kml:west"),
 					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(boxNode)));
 		}
 		if (boxProps.get(BOX_MIN_ALT) > boxProps.get(BOX_MAX_ALT)) {
-			errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(
-					ErrorMessageKeys.CONSTRAINT_VIOLATION,
-					"[kml:LatLonAltBox] kml:minAltitude <= kml:maxAltitude"),
+			errHandler.addError(ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
+							"[kml:LatLonAltBox] kml:minAltitude <= kml:maxAltitude"),
 					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(boxNode)));
 		}
 		if (boxProps.get(BOX_EAST) - boxProps.get(BOX_WEST) > 360) {
-			errHandler
-					.addError(
-							ErrorSeverity.ERROR,
-							ErrorMessage
-									.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
-											"[kml:LatLonAltBox] kml:east - kml:west <= 360 (non-self-overlap)"),
-							new ErrorLocator(-1, -1, XMLUtils
-									.buildXPointer(boxNode)));
+			errHandler.addError(ErrorSeverity.ERROR,
+					ErrorMessage.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
+							"[kml:LatLonAltBox] kml:east - kml:west <= 360 (non-self-overlap)"),
+					new ErrorLocator(-1, -1, XMLUtils.buildXPointer(boxNode)));
 		}
-		if (Math.abs(boxProps.get(BOX_WEST)) > 180
-				|| Math.abs(boxProps.get(BOX_EAST)) > 180) {
+		if (Math.abs(boxProps.get(BOX_WEST)) > 180 || Math.abs(boxProps.get(BOX_EAST)) > 180) {
 			if (boxProps.get(BOX_EAST) <= 0 || boxProps.get(BOX_WEST) >= 180) {
-				errHandler
-						.addError(
-								ErrorSeverity.ERROR,
-								ErrorMessage
-										.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
-												"[kml:LatLonAltBox] kml:east > 0 and kml:west < 180 (uniqueness)"),
-								new ErrorLocator(-1, -1, XMLUtils
-										.buildXPointer(boxNode)));
+				errHandler.addError(ErrorSeverity.ERROR,
+						ErrorMessage.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
+								"[kml:LatLonAltBox] kml:east > 0 and kml:west < 180 (uniqueness)"),
+						new ErrorLocator(-1, -1, XMLUtils.buildXPointer(boxNode)));
 			}
 		}
-		if ((boolean) XMLUtils.evaluateXPath(boxNode,
-				"kml:minAltitude and kml:maxAltitude", null,
+		if ((boolean) XMLUtils.evaluateXPath(boxNode, "kml:minAltitude and kml:maxAltitude", null,
 				XPathConstants.BOOLEAN)) {
 			Element latLonAltBox = Element.class.cast(boxNode);
-			Node altMode = latLonAltBox.getElementsByTagNameNS(KML2.NS_NAME,
-					"altitudeMode").item(0);
-			String altModeValue = (null != altMode) ? altMode.getTextContent()
-					.trim() : KML2.DEFAULT_ALT_MODE;
+			Node altMode = latLonAltBox.getElementsByTagNameNS(KML2.NS_NAME, "altitudeMode").item(0);
+			String altModeValue = (null != altMode) ? altMode.getTextContent().trim() : KML2.DEFAULT_ALT_MODE;
 			if (altModeValue.equals(KML2.DEFAULT_ALT_MODE)) {
-				errHandler
-						.addError(
-								ErrorSeverity.ERROR,
-								ErrorMessage
-										.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
-												"[ATC-108] kml:altitudeMode != 'clampToGround' in kml:LatLonAltBox with kml:minAltitude and kml:maxAltitude"),
-								new ErrorLocator(-1, -1, XMLUtils
-										.buildXPointer(boxNode)));
+				errHandler.addError(ErrorSeverity.ERROR, ErrorMessage.format(ErrorMessageKeys.CONSTRAINT_VIOLATION,
+						"[ATC-108] kml:altitudeMode != 'clampToGround' in kml:LatLonAltBox with kml:minAltitude and kml:maxAltitude"),
+						new ErrorLocator(-1, -1, XMLUtils.buildXPointer(boxNode)));
 			}
 
 		}
@@ -260,18 +243,14 @@ public class GeoExtentValidator {
 	}
 
 	/**
-	 * Builds a Map containing the numeric values conveyed by the child elements
-	 * of the given node. The keys are the local names of the elements that
-	 * contain a parsable number (double).
-	 * 
-	 * @param node
-	 *            A node expected to contain child elements.
-	 * @param defaults
-	 *            A collection of default values.
+	 * Builds a Map containing the numeric values conveyed by the child elements of the
+	 * given node. The keys are the local names of the elements that contain a parsable
+	 * number (double).
+	 * @param node A node expected to contain child elements.
+	 * @param defaults A collection of default values.
 	 * @return A Map containing numeric values.
 	 */
-	Map<String, Double> getNumericProperties(Node node,
-			Map<String, Double> defaults) {
+	Map<String, Double> getNumericProperties(Node node, Map<String, Double> defaults) {
 		if (null == defaults) {
 			defaults = new HashMap<String, Double>();
 		}
@@ -285,7 +264,8 @@ public class GeoExtentValidator {
 			try {
 				Double value = Double.valueOf(child.getTextContent());
 				properties.put(child.getLocalName(), value);
-			} catch (NumberFormatException ex) {
+			}
+			catch (NumberFormatException ex) {
 				continue;
 			}
 		}

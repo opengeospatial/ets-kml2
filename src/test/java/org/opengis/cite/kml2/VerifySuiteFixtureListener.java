@@ -22,6 +22,7 @@ import org.w3c.dom.Document;
 public class VerifySuiteFixtureListener {
 
 	private static XmlSuite xmlSuite;
+
 	private static ISuite suite;
 
 	public VerifySuiteFixtureListener() {
@@ -63,10 +64,9 @@ public class VerifySuiteFixtureListener {
 		SuiteFixtureListener iut = new SuiteFixtureListener();
 		iut.onStart(suite);
 		verify(suite).setAttribute(ArgumentMatchers.eq(SuiteAttribute.LEVEL.getName()),
-		        ArgumentMatchers.isA(Integer.class));
-		verify(suite).setAttribute(
-		        ArgumentMatchers.eq(SuiteAttribute.TEST_SUBJECT.getName()),
-		        ArgumentMatchers.isA(Document.class));
+				ArgumentMatchers.isA(Integer.class));
+		verify(suite).setAttribute(ArgumentMatchers.eq(SuiteAttribute.TEST_SUBJECT.getName()),
+				ArgumentMatchers.isA(Document.class));
 	}
 
 }

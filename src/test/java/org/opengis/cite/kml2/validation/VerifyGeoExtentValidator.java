@@ -25,6 +25,7 @@ public class VerifyGeoExtentValidator {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
+
 	private static DocumentBuilder docBuilder;
 
 	@BeforeClass
@@ -45,15 +46,12 @@ public class VerifyGeoExtentValidator {
 	}
 
 	@Test
-	public void invalidRegionExtent_nonuniqueLongitudes() throws SAXException,
-			IOException {
+	public void invalidRegionExtent_nonuniqueLongitudes() throws SAXException, IOException {
 		URL url = this.getClass().getResource("/extents/Box-002.xml");
 		Document box = docBuilder.parse(url.toString());
 		GeoExtentValidator iut = new GeoExtentValidator();
-		assertFalse("Expected invalid LatLonAltBox.",
-				iut.validateBox(box.getDocumentElement()));
-		assertTrue("Unexpected error message.",
-				iut.getErrorMessages().contains("uniqueness"));
+		assertFalse("Expected invalid LatLonAltBox.", iut.validateBox(box.getDocumentElement()));
+		assertTrue("Unexpected error message.", iut.getErrorMessages().contains("uniqueness"));
 	}
 
 	@Test
@@ -61,12 +59,9 @@ public class VerifyGeoExtentValidator {
 		URL url = this.getClass().getResource("/extents/LatLonQuad-001.xml");
 		Document quad = docBuilder.parse(url.toString());
 		GeoExtentValidator iut = new GeoExtentValidator();
-		assertFalse("Expected invalid LatLonQuad.",
-				iut.validateQuadrilateral(quad.getDocumentElement()));
-		assertTrue(
-				"Unexpected error message.",
-				iut.getErrorMessages().contains(
-						"boundary ring is not oriented counter-clockwise"));
+		assertFalse("Expected invalid LatLonQuad.", iut.validateQuadrilateral(quad.getDocumentElement()));
+		assertTrue("Unexpected error message.",
+				iut.getErrorMessages().contains("boundary ring is not oriented counter-clockwise"));
 	}
 
 	@Test
@@ -74,10 +69,8 @@ public class VerifyGeoExtentValidator {
 		URL url = this.getClass().getResource("/extents/Box-001.xml");
 		Document box = docBuilder.parse(url.toString());
 		GeoExtentValidator iut = new GeoExtentValidator();
-		Map<String, Double> boxProperties = iut.getNumericProperties(
-				box.getDocumentElement(), null);
-		assertEquals("Unexpected value for 'east' edge", 28.125,
-				boxProperties.get("east"), 0.001);
+		Map<String, Double> boxProperties = iut.getNumericProperties(box.getDocumentElement(), null);
+		assertEquals("Unexpected value for 'east' edge", 28.125, boxProperties.get("east"), 0.001);
 	}
 
 }
