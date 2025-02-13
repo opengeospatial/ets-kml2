@@ -7,8 +7,6 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.glassfish.jersey.client.ClientRequest;
-import org.glassfish.jersey.client.ClientResponse;
 import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;

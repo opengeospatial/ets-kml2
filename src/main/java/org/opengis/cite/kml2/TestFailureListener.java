@@ -3,7 +3,6 @@ package org.opengis.cite.kml2;
 import java.nio.charset.StandardCharsets;
 
 import org.glassfish.jersey.client.ClientRequest;
-import org.glassfish.jersey.client.ClientResponse;
 import org.opengis.cite.kml2.util.ClientUtils;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.testng.ITestResult;

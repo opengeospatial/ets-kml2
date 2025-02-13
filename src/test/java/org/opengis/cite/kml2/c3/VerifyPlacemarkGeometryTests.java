@@ -1,6 +1,7 @@
 package org.opengis.cite.kml2.c3;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 

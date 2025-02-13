@@ -1,6 +1,9 @@
 package org.opengis.cite.kml2.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,11 +16,6 @@ import java.util.zip.ZipException;
 
 import javax.xml.transform.stream.StreamSource;
 
-import net.sf.saxon.s9api.ItemType;
-import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.XdmNode;
-import net.sf.saxon.s9api.XdmValue;
-
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,6 +23,11 @@ import org.junit.rules.ExpectedException;
 import org.opengis.cite.kml2.KML2;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import net.sf.saxon.s9api.ItemType;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmValue;
 
 /**
  * Verifies the behavior of the KMLUtils class.

@@ -21,11 +21,11 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.opengis.cite.xerces.impl.Constants;
 import org.apache.xerces.util.XMLCatalogResolver;
 import org.opengis.cite.kml2.Namespaces;
 import org.opengis.cite.validation.SchematronValidator;
 import org.opengis.cite.validation.ValidationErrorHandler;
+import org.opengis.cite.xerces.impl.Constants;
 import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
 
