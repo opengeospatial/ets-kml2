@@ -2,6 +2,8 @@ package org.opengis.cite.kml2.c1;
 
 import javax.xml.xpath.XPathExpressionException;
 
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.cite.kml2.CommonFixture;
 import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
@@ -14,9 +16,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * Implements tests that apply to kml:Polygon elements. The relevant test cases

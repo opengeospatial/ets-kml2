@@ -1,5 +1,7 @@
 package org.opengis.cite.kml2.validation;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
@@ -10,9 +12,6 @@ import org.opengis.cite.validation.ValidationErrorHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Checks that the content of a kml:Track element satisfies all applicable

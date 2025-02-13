@@ -18,6 +18,14 @@ import java.util.zip.ZipFile;
 
 import javax.xml.transform.Source;
 
+import org.apache.commons.io.IOUtils;
+import org.opengis.cite.kml2.AltitudeMode;
+import org.opengis.cite.kml2.KML2;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
 import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.ItemType;
 import net.sf.saxon.s9api.ItemTypeFactory;
@@ -29,14 +37,6 @@ import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XdmNodeKind;
 import net.sf.saxon.s9api.XdmSequenceIterator;
 import net.sf.saxon.s9api.XdmValue;
-
-import org.apache.commons.io.IOUtils;
-import org.opengis.cite.kml2.AltitudeMode;
-import org.opengis.cite.kml2.KML2;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 /**
  * 

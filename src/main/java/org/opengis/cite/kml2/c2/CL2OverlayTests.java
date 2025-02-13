@@ -1,6 +1,5 @@
 package org.opengis.cite.kml2.c2;
 
-import javax.ws.rs.core.MediaType;
 
 import org.opengis.cite.kml2.CommonFixture;
 import org.opengis.cite.kml2.ETSAssert;
@@ -14,6 +13,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Checks CL2 constraints that apply to a overlay features (kml:GroundOverlay,

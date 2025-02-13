@@ -1,11 +1,11 @@
 package org.opengis.cite.kml2.validation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
 
-import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -16,6 +16,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Verifies the behavior of the LinkValidator class.

@@ -8,16 +8,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javax.ws.rs.core.MediaType;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-
-import net.sf.saxon.s9api.ItemType;
-import net.sf.saxon.s9api.ItemTypeFactory;
-import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.XdmValue;
 
 import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
@@ -31,6 +23,14 @@ import org.opengis.cite.validation.ValidationErrorHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import jakarta.ws.rs.core.MediaType;
+import net.sf.saxon.s9api.ItemType;
+import net.sf.saxon.s9api.ItemTypeFactory;
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.QName;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XdmValue;
 
 /**
  * Checks constraints to apply to kml:Schema elements. The relevant type

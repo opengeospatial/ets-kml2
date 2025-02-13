@@ -2,6 +2,10 @@ package org.opengis.cite.kml2.c3;
 
 import javax.xml.xpath.XPathExpressionException;
 
+import org.locationtech.jts.algorithm.CGAlgorithms;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.cite.kml2.CommonFixture;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
@@ -13,11 +17,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import com.vividsolutions.jts.algorithm.CGAlgorithms;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * Checks CL3 constraints that apply to a KML geometry elements (that substitute

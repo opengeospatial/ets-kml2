@@ -1,6 +1,5 @@
 package org.opengis.cite.kml2.c1;
 
-import javax.ws.rs.core.MediaType;
 
 import org.opengis.cite.kml2.CommonFeatureTests;
 import org.opengis.cite.kml2.ErrorMessage;
@@ -13,6 +12,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Implements tests that apply to kml:NetworkLink elements. Outside of an update

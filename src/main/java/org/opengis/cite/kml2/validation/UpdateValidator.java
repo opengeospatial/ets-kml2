@@ -3,7 +3,6 @@ package org.opengis.cite.kml2.validation;
 import java.net.URI;
 import java.net.URL;
 
-import javax.ws.rs.core.MediaType;
 import javax.xml.transform.dom.DOMSource;
 
 import org.opengis.cite.kml2.ETSAssert;
@@ -14,6 +13,8 @@ import org.opengis.cite.validation.ErrorSeverity;
 import org.opengis.cite.validation.ValidationErrorHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * The relevant type definition for kml:Update is shown below; it may appear

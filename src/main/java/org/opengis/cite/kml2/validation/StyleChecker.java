@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.ws.rs.core.MediaType;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -24,6 +23,8 @@ import org.opengis.cite.validation.ValidationErrorHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Checks constraints to apply to kml:Style elements. The relevant type

@@ -14,7 +14,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.testng.ISuite;
 import org.testng.xml.XmlSuite;
 import org.w3c.dom.Document;
@@ -62,11 +62,11 @@ public class VerifySuiteFixtureListener {
 		when(xmlSuite.getParameters()).thenReturn(params);
 		SuiteFixtureListener iut = new SuiteFixtureListener();
 		iut.onStart(suite);
-		verify(suite).setAttribute(Matchers.eq(SuiteAttribute.LEVEL.getName()),
-				Matchers.isA(Integer.class));
+		verify(suite).setAttribute(ArgumentMatchers.eq(SuiteAttribute.LEVEL.getName()),
+		        ArgumentMatchers.isA(Integer.class));
 		verify(suite).setAttribute(
-				Matchers.eq(SuiteAttribute.TEST_SUBJECT.getName()),
-				Matchers.isA(Document.class));
+		        ArgumentMatchers.eq(SuiteAttribute.TEST_SUBJECT.getName()),
+		        ArgumentMatchers.isA(Document.class));
 	}
 
 }

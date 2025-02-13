@@ -8,7 +8,7 @@ import java.util.logging.Level;
 
 import javax.xml.validation.Schema;
 
-import org.opengis.cite.kml2.util.HttpClientUtils;
+import org.opengis.cite.kml2.util.ClientUtils;
 import org.opengis.cite.kml2.util.KMLUtils;
 import org.opengis.cite.kml2.util.TestSuiteLogger;
 import org.opengis.cite.kml2.util.URIUtils;
@@ -19,7 +19,7 @@ import org.testng.ISuiteListener;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.sun.jersey.api.client.Client;
+import jakarta.ws.rs.client.Client;
 
 /**
  * A listener that performs various tasks before and after a test suite is run,
@@ -105,7 +105,7 @@ public class SuiteFixtureListener implements ISuiteListener {
 		Map<String, String> params = suite.getXmlSuite().getParameters();
 		TestSuiteLogger.log(Level.CONFIG,
 				"Suite parameters\n" + params.toString());
-		Integer level = new Integer(1);
+		Integer level = Integer.valueOf(1);
 		if (null != params.get(TestRunArg.LVL.toString())) {
 			try {
 				int lvlParam = Integer.parseInt(params.get(TestRunArg.LVL
@@ -163,7 +163,7 @@ public class SuiteFixtureListener implements ISuiteListener {
 	 *            The test suite instance.
 	 */
 	void registerHttpClient(ISuite suite) {
-		Client client = HttpClientUtils.buildClient();
+		Client client = ClientUtils.buildClient();
 		if (null != client) {
 			suite.setAttribute(SuiteAttribute.CLIENT.getName(), client);
 		}

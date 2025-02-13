@@ -7,6 +7,9 @@ import java.util.Map;
 
 import javax.xml.xpath.XPathConstants;
 
+import org.locationtech.jts.algorithm.CGAlgorithms;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
@@ -20,10 +23,6 @@ import org.testng.Assert;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.vividsolutions.jts.algorithm.CGAlgorithms;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * Validates the content of an element that represents a geographic extent (that

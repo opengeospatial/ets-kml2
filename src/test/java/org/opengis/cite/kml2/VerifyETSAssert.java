@@ -6,7 +6,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.core.MediaType;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,6 +23,8 @@ import org.junit.rules.ExpectedException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import jakarta.ws.rs.core.MediaType;
 
 public class VerifyETSAssert {
 

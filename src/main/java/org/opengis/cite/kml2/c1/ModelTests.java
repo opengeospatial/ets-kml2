@@ -2,9 +2,11 @@ package org.opengis.cite.kml2.c1;
 
 import java.net.URI;
 
-import javax.ws.rs.core.MediaType;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.cite.kml2.CommonFixture;
 import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
@@ -21,9 +23,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Implements tests that apply to kml:Model elements. Outside of an update

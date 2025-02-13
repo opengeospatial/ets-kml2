@@ -1,14 +1,12 @@
 package org.opengis.cite.kml2;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Map;
 
-import javax.ws.rs.core.MediaType;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.opengis.cite.kml2.util.HttpClientUtils;
+import org.glassfish.jersey.client.ClientRequest;
+import org.opengis.cite.kml2.util.ClientUtils;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.testng.ITestContext;
 import org.testng.SkipException;
@@ -19,9 +17,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientRequest;
-import com.sun.jersey.api.client.ClientResponse;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Response;
 
 /**
  * A supporting base class that sets up a common test fixture. These
@@ -36,7 +33,7 @@ public class CommonFixture {
 	/** An HTTP request message. */
 	protected ClientRequest request;
 	/** An HTTP response message. */
-	protected ClientResponse response;
+	protected Response response;
 	/** A DOM Document representing the main KML document. */
 	protected Document kmlDoc;
 	/** The elements to which the tests apply. */
@@ -134,34 +131,12 @@ public class CommonFixture {
 	 *            null).
 	 * @return A Document representing the entity.
 	 *
-	 * @see HttpClientUtils#getResponseEntityAsDocument(com.sun.jersey.api.client.ClientResponse,
+	 * @see ClientUtils#getResponseEntityAsDocument(com.sun.jersey.api.client.ClientResponse,
 	 *      java.lang.String)
 	 */
-	public Document getResponseEntityAsDocument(ClientResponse response,
+	public Document getResponseEntityAsDocument(Response response,
 			String targetURI) {
-		return HttpClientUtils.getResponseEntityAsDocument(response, targetURI);
-	}
-
-	/**
-	 * Builds an HTTP request message that uses the GET method. This convenience
-	 * method wraps a static method call to facilitate unit testing (Mockito
-	 * workaround).
-	 *
-	 * @param endpoint
-	 *            A URI indicating the target resource.
-	 * @param qryParams
-	 *            A Map containing query parameters (may be null);
-	 * @param mediaTypes
-	 *            A list of acceptable media types; if not specified, generic
-	 *            XML ("application/xml") is preferred.
-	 * @return A ClientRequest object.
-	 *
-	 * @see HttpClientUtils#buildGetRequest(java.net.URI, java.util.Map,
-	 *      javax.ws.rs.core.MediaType...)
-	 */
-	public ClientRequest buildGetRequest(URI endpoint,
-			Map<String, String> qryParams, MediaType... mediaTypes) {
-		return HttpClientUtils.buildGetRequest(endpoint, qryParams, mediaTypes);
+		return ClientUtils.getResponseEntityAsDocument(response, targetURI);
 	}
 
 	@DataProvider(name = "targetElementsProvider")

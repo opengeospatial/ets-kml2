@@ -7,14 +7,13 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import org.glassfish.jersey.client.ClientRequest;
+import org.glassfish.jersey.client.ClientResponse;
 import org.opengis.cite.kml2.ETSAssert;
 import org.opengis.cite.kml2.ErrorMessage;
 import org.opengis.cite.kml2.ErrorMessageKeys;
 import org.opengis.cite.kml2.KML2;
-import org.opengis.cite.kml2.util.HttpClientUtils;
+import org.opengis.cite.kml2.util.ClientUtils;
 import org.opengis.cite.kml2.util.URIUtils;
 import org.opengis.cite.kml2.util.XMLUtils;
 import org.opengis.cite.validation.ErrorLocator;
@@ -25,9 +24,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientRequest;
-import com.sun.jersey.api.client.ClientResponse;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 /**
  * Checks that the content of a kml:Link or kml:Icon element satisfies all
@@ -75,7 +74,7 @@ public class LinkValidator {
 	public LinkValidator(MediaType... mediaTypes) {
 		this.errHandler = new ValidationErrorHandler();
 		this.mediaTypes = mediaTypes;
-		this.httpClient = HttpClientUtils.buildClient();
+		this.httpClient = ClientUtils.buildClient();
 	}
 
 	/**
@@ -187,21 +186,19 @@ public class LinkValidator {
 					throw new FileNotFoundException("File not found");
 				}
 			} else {
-				ClientRequest req = HttpClientUtils.buildHeadRequest(uri, null,
+				Response rsp = ClientUtils.buildHeadRequest(uri, null,
 						mediaTypes);
-				ClientResponse rsp = this.httpClient.handle(req);
 				if (rsp.getStatusInfo().getFamily() == Response.Status.Family.REDIRECTION) {
 					// client won't automatically redirect from HTTP to HTTPS
 					URI newURI = rsp.getLocation();
-					req.setURI(newURI);
-					rsp = this.httpClient.handle(req);
+					rsp = ClientUtils.buildHeadRequest(newURI, null,
+                                                mediaTypes);
 				}
 				if (rsp.getStatus() == Response.Status.FORBIDDEN
 						.getStatusCode()) {
 					// some servers reject HEAD requests
-					req = HttpClientUtils
-							.buildGetRequest(uri, null, mediaTypes);
-					rsp = this.httpClient.handle(req);
+				    rsp = ClientUtils.buildGetRequest(uri, null,
+                                            mediaTypes);
 				}
 				if (rsp.getStatus() != HttpURLConnection.HTTP_OK) {
 					errHandler.addError(ErrorSeverity.ERROR, ErrorMessage
@@ -209,8 +206,8 @@ public class LinkValidator {
 									rsp.getStatus()), new ErrorLocator(-1, -1,
 							XMLUtils.buildXPointer(link)));
 				}
-				String contentType = rsp.getType().toString();
-				if (!HttpClientUtils.contentIsAcceptable(contentType,
+				String contentType = rsp.getMediaType().toString();
+				if (!ClientUtils.contentIsAcceptable(contentType,
 						mediaTypes)) {
 					errHandler.addError(
 							ErrorSeverity.ERROR,

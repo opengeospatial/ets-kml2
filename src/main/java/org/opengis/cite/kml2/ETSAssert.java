@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.core.MediaType;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -24,12 +23,10 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import net.sf.saxon.value.BooleanValue;
-
 import org.apache.jena.iri.IRI;
 import org.apache.jena.iri.IRIException;
 import org.apache.jena.iri.IRIFactory;
-import org.opengis.cite.kml2.util.HttpClientUtils;
+import org.opengis.cite.kml2.util.ClientUtils;
 import org.opengis.cite.kml2.util.KMLUtils;
 import org.opengis.cite.kml2.util.NamespaceBindings;
 import org.opengis.cite.kml2.util.XMLUtils;
@@ -40,6 +37,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import jakarta.ws.rs.core.MediaType;
+import net.sf.saxon.value.BooleanValue;
 
 /**
  * Provides a set of custom assertion methods.
@@ -195,7 +195,7 @@ public class ETSAssert {
 			msg.append(e.getMessage());
 			throw new AssertionError(msg);
 		}
-		DOMResult result = validator.validate(xmlSource);
+		DOMResult result = (DOMResult) validator.validate(xmlSource);
 		Assert.assertFalse(validator.ruleViolationsDetected(), ErrorMessage
 				.format(ErrorMessageKeys.NOT_SCHEMA_VALID,
 						validator.getRuleViolationCount(),
@@ -323,7 +323,7 @@ public class ETSAssert {
 							ErrorMessageKeys.UNEXPECTED_STATUS, uri));
 				}
 				String contentType = urlConn.getContentType();
-				if (!HttpClientUtils.contentIsAcceptable(contentType,
+				if (!ClientUtils.contentIsAcceptable(contentType,
 						acceptableTypes)) {
 					throw new AssertionError(ErrorMessage.format(
 							ErrorMessageKeys.UNACCEPTABLE_MEDIA_TYPE,
