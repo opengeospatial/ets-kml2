@@ -1,6 +1,9 @@
 package org.opengis.cite.kml2.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,8 +38,7 @@ public class VerifyURIUtils {
 		URI uriRef = URI.create("http://www.w3schools.com/xml/note.xml");
 		Document doc = (Document) URIUtils.parseURI(uriRef);
 		assertNotNull(doc);
-		assertEquals("Document element has unexpected [local name].", "note",
-				doc.getDocumentElement().getLocalName());
+		assertEquals("Document element has unexpected [local name].", "note", doc.getDocumentElement().getLocalName());
 	}
 
 	@Ignore
@@ -50,32 +52,25 @@ public class VerifyURIUtils {
 	}
 
 	@Test
-	public void resolveClasspathResource() throws SAXException, IOException,
-			URISyntaxException {
+	public void resolveClasspathResource() throws SAXException, IOException, URISyntaxException {
 		URL url = this.getClass().getResource("/atom-feed.xml");
 		Document doc = (Document) URIUtils.parseURI(url.toURI());
 		assertNotNull(doc);
-		assertEquals("Document element has unexpected [local name].", "feed",
-				doc.getDocumentElement().getLocalName());
+		assertEquals("Document element has unexpected [local name].", "feed", doc.getDocumentElement().getLocalName());
 	}
 
 	@Test
-	public void resolveFileRefWithXInclude() throws SAXException, IOException,
-			URISyntaxException {
+	public void resolveFileRefWithXInclude() throws SAXException, IOException, URISyntaxException {
 		File file = new File("src/test/resources/Alpha-xinclude.xml");
 		Document doc = (Document) URIUtils.parseURI(file.toURI());
 		assertNotNull(doc);
-		assertEquals("Document element has unexpected [local name].", "Alpha",
-				doc.getDocumentElement().getLocalName());
-		NodeList nodes = doc.getDocumentElement().getElementsByTagNameNS(
-				"http://www.example.net/gamma", "Gamma");
-		assertEquals("Expected element {http://www.example.net/gamma}Gamma", 1,
-				nodes.getLength());
+		assertEquals("Document element has unexpected [local name].", "Alpha", doc.getDocumentElement().getLocalName());
+		NodeList nodes = doc.getDocumentElement().getElementsByTagNameNS("http://www.example.net/gamma", "Gamma");
+		assertEquals("Expected element {http://www.example.net/gamma}Gamma", 1, nodes.getLength());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void resolveMissingClasspathResource() throws SAXException,
-			URISyntaxException, IOException {
+	public void resolveMissingClasspathResource() throws SAXException, URISyntaxException, IOException {
 		URL url = this.getClass().getResource("/alpha.xml");
 		URI uri = (null != url) ? url.toURI() : null;
 		Document doc = (Document) URIUtils.parseURI(uri);
@@ -83,13 +78,12 @@ public class VerifyURIUtils {
 	}
 
 	@Test
-	public void parseURIWithFragment() throws SAXException, URISyntaxException,
-			IOException {
+	public void parseURIWithFragment() throws SAXException, URISyntaxException, IOException {
 		URL url = this.getClass().getResource("/kml22/SharedStyle.xml");
 		URI uri = URI.create(url.toString() + "#defaultStyles");
 		Node node = URIUtils.parseURI(uri);
 		assertNotNull("Expected subresource.", node);
-		assertEquals("Node has unexpected [local name].", "Style",
-				node.getLocalName());
+		assertEquals("Node has unexpected [local name].", "Style", node.getLocalName());
 	}
+
 }

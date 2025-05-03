@@ -18,6 +18,14 @@ import java.util.zip.ZipFile;
 
 import javax.xml.transform.Source;
 
+import org.apache.commons.io.IOUtils;
+import org.opengis.cite.kml2.AltitudeMode;
+import org.opengis.cite.kml2.KML2;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
 import net.sf.saxon.s9api.Axis;
 import net.sf.saxon.s9api.ItemType;
 import net.sf.saxon.s9api.ItemTypeFactory;
@@ -30,47 +38,32 @@ import net.sf.saxon.s9api.XdmNodeKind;
 import net.sf.saxon.s9api.XdmSequenceIterator;
 import net.sf.saxon.s9api.XdmValue;
 
-import org.apache.commons.io.IOUtils;
-import org.opengis.cite.kml2.AltitudeMode;
-import org.opengis.cite.kml2.KML2;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
 /**
- * 
- * Provides various utility methods for reading or manipulating KML and KMZ
- * resources.
+ *
+ * Provides various utility methods for reading or manipulating KML and KMZ resources.
  */
 public class KMLUtils {
 
-	private static final Logger LOGR = Logger.getLogger(KMLUtils.class
-			.getPackage().getName());
+	private static final Logger LOGR = Logger.getLogger(KMLUtils.class.getPackage().getName());
 
 	/**
-	 * Parses the content of the given file as a KML resource and returns the
-	 * resulting DOM document node.
-	 * 
-	 * @param file
-	 *            A file containing a KML resource (KML or KMZ).
-	 * @return A Document object representing a KML document (the root element
-	 *         is kml:kml), or null if one cannot be found.
-	 * @throws IOException
-	 *             If the file cannot be read for some reason (e.g. it doesn't
-	 *             exist).
-	 * @throws SAXException
-	 *             If the file does not contain well-formed XML.
+	 * Parses the content of the given file as a KML resource and returns the resulting
+	 * DOM document node.
+	 * @param file A file containing a KML resource (KML or KMZ).
+	 * @return A Document object representing a KML document (the root element is
+	 * kml:kml), or null if one cannot be found.
+	 * @throws java.io.IOException If the file cannot be read for some reason (e.g. it
+	 * doesn't exist).
+	 * @throws org.xml.sax.SAXException If the file does not contain well-formed XML.
 	 */
-	public static Document parseKMLDocument(File file) throws IOException,
-			SAXException {
+	public static Document parseKMLDocument(File file) throws IOException, SAXException {
 		Document kmlDoc = null;
 		try (FileInputStream fileStream = new FileInputStream(file)) {
 			if (XMLUtils.isXML(fileStream)) {
 				kmlDoc = (Document) URIUtils.parseURI(file.toURI());
-			} else {
-				LOGR.log(Level.INFO,
-						"Reading KMZ resource from " + file.toURI());
+			}
+			else {
+				LOGR.log(Level.INFO, "Reading KMZ resource from " + file.toURI());
 				kmlDoc = parseKMLDocumentInArchive(file);
 			}
 		}
@@ -78,33 +71,23 @@ public class KMLUtils {
 	}
 
 	/**
-	 * Reads the given KMZ archive file and parses the first root-level KML
-	 * document found within it. The main KML document is conventionally named
-	 * <em>doc.kml</em> but this is not required; the {@code .kml} extension is
-	 * expected, however.
-	 * 
-	 * @param file
-	 *            A File object that presumably represents a KMZ file (ZIP
-	 *            archive).
-	 * @return A KML document, or {@code null} if a root-level KML file could
-	 *         not be found in the archive.
-	 * @throws IOException
-	 *             The file is not a valid ZIP archive or some other I/O error
-	 *             occurred.
-	 * @throws SAXException
-	 *             If a KML document was found but it is not well-formed.
-	 * 
-	 * 
+	 * Reads the given KMZ archive file and parses the first root-level KML document found
+	 * within it. The main KML document is conventionally named <em>doc.kml</em> but this
+	 * is not required; the {@code .kml} extension is expected, however.
+	 * @param file A File object that presumably represents a KMZ file (ZIP archive).
+	 * @return A KML document, or {@code null} if a root-level KML file could not be found
+	 * in the archive.
+	 * @throws java.io.IOException The file is not a valid ZIP archive or some other I/O
+	 * error occurred.
+	 * @throws org.xml.sax.SAXException If a KML document was found but it is not
+	 * well-formed.
 	 * @see "OGC 12-007r1, Annex C: KMZ Files (Normative)"
-	 * @see <a
-	 *      href="https://developers.google.com/kml/documentation/kmzarchives">What
-	 *      is a KMZ File?</a>
+	 * @see <a href="https://developers.google.com/kml/documentation/kmzarchives">What is
+	 * a KMZ File?</a>
 	 */
-	public static Document parseKMLDocumentInArchive(File file)
-			throws IOException, SAXException {
+	public static Document parseKMLDocumentInArchive(File file) throws IOException, SAXException {
 		if (!file.exists()) {
-			throw new IllegalArgumentException("File does not exist: "
-					+ file.getAbsolutePath());
+			throw new IllegalArgumentException("File does not exist: " + file.getAbsolutePath());
 		}
 		Document mainKMLDoc = null;
 		try (ZipFile zipFile = new ZipFile(file)) {
@@ -125,9 +108,8 @@ public class KMLUtils {
 					mainKMLDoc = (Document) URIUtils.parseURI(destFile.toURI());
 				}
 				if (TestSuiteLogger.isLoggable(Level.FINER)) {
-					TestSuiteLogger.log(Level.FINER, String.format(
-							"Extracted %d bytes to %s", nBytes,
-							destFile.toURI()));
+					TestSuiteLogger.log(Level.FINER,
+							String.format("Extracted %d bytes to %s", nBytes, destFile.toURI()));
 				}
 			}
 		}
@@ -135,46 +117,39 @@ public class KMLUtils {
 	}
 
 	/**
-	 * Finds KML elements selected by the given XPath expression and returns
-	 * their identifiers. This method can be used to find custom schemas and
-	 * shared styles that occur in a KML document and may be referenced by
-	 * identifier.
+	 * Finds KML elements selected by the given XPath expression and returns their
+	 * identifiers. This method can be used to find custom schemas and shared styles that
+	 * occur in a KML document and may be referenced by identifier.
 	 * <p>
 	 * A shared style is any element that may substitute for
-	 * kml:AbstractStyleSelectorGroup (kml:Style, kml:StyleMap) that satisfies
-	 * all of the following conditions:
+	 * kml:AbstractStyleSelectorGroup (kml:Style, kml:StyleMap) that satisfies all of the
+	 * following conditions:
 	 * </p>
 	 * <ol>
 	 * <li>its parent element is kml:Document</li>
 	 * <li>it has a non-empty 'id' attribute value</li>
 	 * </ol>
-	 * 
+	 *
 	 * <p>
-	 * A custom schema (kml:Schema) may be defined in order to add user-defined
-	 * data that occurs within a child kml:ExtendedData element of a KML
-	 * feature.
+	 * A custom schema (kml:Schema) may be defined in order to add user-defined data that
+	 * occurs within a child kml:ExtendedData element of a KML feature.
 	 * </p>
-	 * 
-	 * @param kmlSource
-	 *            A Source for reading a KML document.
-	 * @param xpath
-	 *            An XPath (2.0) expression that selects the KML objects of
-	 *            interest.
-	 * @return A set (possibly empty) of identifiers for shared resources
-	 *         defined in the source.
-	 * 
+	 * @param kmlSource A Source for reading a KML document.
+	 * @param xpath An XPath (2.0) expression that selects the KML objects of interest.
+	 * @return A set (possibly empty) of identifiers for shared resources defined in the
+	 * source.
 	 * @see "OGC KML 2.3, 6.4: Shared Styles"
 	 * @see "OGC KML 2.3, 9.10: Schema"
 	 */
-	public static Set<String> findElementIdentifiers(Source kmlSource,
-			String xpath) {
+	public static Set<String> findElementIdentifiers(Source kmlSource, String xpath) {
 		XdmValue results = null;
 		Set<String> idSet = new HashSet<String>();
 		try {
 			results = XMLUtils.evaluateXPath2(kmlSource, xpath, null);
-		} catch (SaxonApiException e) {
-			Logger.getLogger(KMLUtils.class.getName()).log(Level.WARNING,
-					"Failed to evaluate XPath expression: " + xpath, e);
+		}
+		catch (SaxonApiException e) {
+			Logger.getLogger(KMLUtils.class.getName())
+				.log(Level.WARNING, "Failed to evaluate XPath expression: " + xpath, e);
 			return idSet;
 		}
 		for (XdmItem item : results) {
@@ -200,39 +175,31 @@ public class KMLUtils {
 	 * <li>clampToSeaFloor</li>
 	 * <li>relativeToSeaFloor</li>
 	 * </ul>
-	 * 
-	 * @param element
-	 *            A KML element.
+	 * @param element A KML element.
 	 * @return The AltitudeMode that applies this element, or the default if not
-	 *         explicitly set.
+	 * explicitly set.
 	 */
 	public static AltitudeMode getAltitudeMode(Element element) {
 		AltitudeMode altMode = AltitudeMode.CLAMP_TO_GROUND;
-		Node altitudeMode = element.getElementsByTagNameNS(KML2.NS_NAME,
-				"altitudeMode").item(0);
-		Node seafloorAltitudeMode = element.getElementsByTagNameNS(
-				KML2.NS_NAME, "seaFloorAltitudeMode").item(0);
+		Node altitudeMode = element.getElementsByTagNameNS(KML2.NS_NAME, "altitudeMode").item(0);
+		Node seafloorAltitudeMode = element.getElementsByTagNameNS(KML2.NS_NAME, "seaFloorAltitudeMode").item(0);
 		if (null != seafloorAltitudeMode) {
-			altMode = AltitudeMode.fromString(seafloorAltitudeMode
-					.getTextContent().trim());
-		} else if (null != altitudeMode) {
-			altMode = AltitudeMode.fromString(altitudeMode.getTextContent()
-					.trim());
+			altMode = AltitudeMode.fromString(seafloorAltitudeMode.getTextContent().trim());
+		}
+		else if (null != altitudeMode) {
+			altMode = AltitudeMode.fromString(altitudeMode.getTextContent().trim());
 		}
 		return altMode;
 	}
 
 	/**
 	 * Gets information about the fields declared in a custom schema.
-	 * 
-	 * @param schema
-	 *            A node representing a kml:Schema element.
+	 * @param schema A node representing a kml:Schema element.
 	 * @return A Map containing the names (keys) and data types of the fields
-	 *         (kml:SimpleField, kml:SimpleArrayField) declared in the schema.
+	 * (kml:SimpleField, kml:SimpleArrayField) declared in the schema.
 	 */
 	public static Map<String, ItemType> getDeclaredFields(XdmNode schema) {
-		if (null == schema
-				|| !schema.getNodeName().getLocalName().equals("Schema")) {
+		if (null == schema || !schema.getNodeName().getLocalName().equals("Schema")) {
 			throw new IllegalArgumentException("Not a kml:Schema element.");
 		}
 		Map<String, ItemType> schemaFields = new HashMap<>();
@@ -243,12 +210,12 @@ public class KMLUtils {
 		while (childItr.hasNext()) {
 			XdmNode child = (XdmNode) childItr.next();
 			if (child.getNodeKind().equals(XdmNodeKind.ELEMENT)) {
-				QName typeName = new QName("http://www.w3.org/2001/XMLSchema",
-						child.getAttributeValue(type));
+				QName typeName = new QName("http://www.w3.org/2001/XMLSchema", child.getAttributeValue(type));
 				ItemType atomicType;
 				try {
 					atomicType = typeFactory.getAtomicType(typeName);
-				} catch (SaxonApiException e) {
+				}
+				catch (SaxonApiException e) {
 					// xs:anyAtomicType
 					atomicType = ItemType.ANY_ATOMIC_VALUE;
 				}

@@ -22,6 +22,7 @@ public class VerifyCoordinatesValidator {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
+
 	private static DocumentBuilder docBuilder;
 
 	@BeforeClass
@@ -33,35 +34,27 @@ public class VerifyCoordinatesValidator {
 
 	@Test
 	public void pointWithoutCoordinates() throws SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/geom/PointNoCoordinates.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/geom/PointNoCoordinates.xml"));
 		CoordinatesValidator iut = new CoordinatesValidator();
-		assertFalse("Expected invalid Point.",
-				iut.isValid(doc.getDocumentElement()));
-		assertTrue("Unexpected error message.",
-				iut.getErrorMessages().contains("No kml:coordinates element found"));
+		assertFalse("Expected invalid Point.", iut.isValid(doc.getDocumentElement()));
+		assertTrue("Unexpected error message.", iut.getErrorMessages().contains("No kml:coordinates element found"));
 	}
 
 	@Test
 	public void validPoint() throws SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/geom/Point-001.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/geom/Point-001.xml"));
 		CoordinatesValidator iut = new CoordinatesValidator();
-		assertTrue("Expected valid Point.",
-				iut.isValid(doc.getDocumentElement()));
+		assertTrue("Expected valid Point.", iut.isValid(doc.getDocumentElement()));
 		assertTrue("Expected no errors.", iut.getErrorMessages().isEmpty());
 	}
 
 	@Test
 	public void invalidLinearRing() throws SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/geom/LinearRing-001.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/geom/LinearRing-001.xml"));
 		CoordinatesValidator iut = new CoordinatesValidator();
-		assertFalse("Expected invalid LinearRing.",
-				iut.isValid(doc.getDocumentElement()));
-		assertTrue(
-				"Unexpected error message.",
-				iut.getErrorMessages().contains(
-						"LinearRing element must contain four or more"));
+		assertFalse("Expected invalid LinearRing.", iut.isValid(doc.getDocumentElement()));
+		assertTrue("Unexpected error message.",
+				iut.getErrorMessages().contains("LinearRing element must contain four or more"));
 	}
+
 }

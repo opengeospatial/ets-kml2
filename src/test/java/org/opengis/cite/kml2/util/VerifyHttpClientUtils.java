@@ -3,11 +3,11 @@ package org.opengis.cite.kml2.util;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import javax.ws.rs.core.MediaType;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Verifies the behavior of the HttpClientUtils class.
@@ -20,8 +20,7 @@ public class VerifyHttpClientUtils {
 	@Test
 	public void acceptableXmlMediaType() {
 		MediaType xmlType = MediaType.APPLICATION_XML_TYPE;
-		boolean result = HttpClientUtils.contentIsAcceptable(
-				"application/atom+xml", xmlType);
+		boolean result = ClientUtils.contentIsAcceptable("application/atom+xml", xmlType);
 		assertTrue(result);
 	}
 
@@ -29,8 +28,7 @@ public class VerifyHttpClientUtils {
 	public void generalXmlMediaTypeIsUnacceptable() {
 		MediaType atomMediaType = MediaType.APPLICATION_ATOM_XML_TYPE;
 		// general type is not substitutable for specific subtype
-		boolean result = HttpClientUtils.contentIsAcceptable("application/xml",
-				atomMediaType);
+		boolean result = ClientUtils.contentIsAcceptable("application/xml", atomMediaType);
 		assertFalse("Expected invalid Link.", result);
 	}
 

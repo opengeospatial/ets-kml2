@@ -40,25 +40,20 @@ public class VerifyValidationUtils {
 	public void testBuildSchematronValidator() {
 		String schemaRef = "http://schemas.opengis.net/gml/3.2.1/SchematronConstraints.xml";
 		String phase = "";
-		SchematronValidator result = ValidationUtils.buildSchematronValidator(
-				schemaRef, phase);
+		SchematronValidator result = ValidationUtils.buildSchematronValidator(schemaRef, phase);
 		assertNotNull(result);
 	}
 
 	@Test
-	public void extractRelativeSchemaReference() throws FileNotFoundException,
-			XMLStreamException {
+	public void extractRelativeSchemaReference() throws FileNotFoundException, XMLStreamException {
 		File xmlFile = new File("src/test/resources/Alpha-1.xml");
-		Set<URI> xsdSet = ValidationUtils.extractSchemaReferences(
-				new StreamSource(xmlFile), null);
+		Set<URI> xsdSet = ValidationUtils.extractSchemaReferences(new StreamSource(xmlFile), null);
 		URI schemaURI = xsdSet.iterator().next();
-		assertTrue("Expected schema reference */xsd/alpha.xsd", schemaURI
-				.toString().endsWith("/xsd/alpha.xsd"));
+		assertTrue("Expected schema reference */xsd/alpha.xsd", schemaURI.toString().endsWith("/xsd/alpha.xsd"));
 	}
 
 	@Test
-	public void buildKML22SchemaAndParseInvalidDocument() throws SAXException,
-			IOException {
+	public void buildKML22SchemaAndParseInvalidDocument() throws SAXException, IOException {
 		thrown.expect(SAXParseException.class);
 		thrown.expectMessage("cvc-complex-type.2.4.a: Invalid content was found");
 		Schema schema = ValidationUtils.createKMLSchema("2015.04");
@@ -66,14 +61,12 @@ public class VerifyValidationUtils {
 		ValidatorHandler vHandler = schema.newValidatorHandler();
 		XMLReader parser = XMLReaderFactory.createXMLReader();
 		parser.setContentHandler(vHandler);
-		InputStream byteStream = getClass().getResourceAsStream(
-				"/kml22/Placemark-001.xml");
+		InputStream byteStream = getClass().getResourceAsStream("/kml22/Placemark-001.xml");
 		parser.parse(new InputSource(byteStream));
 	}
 
 	@Test
-	public void buildKML23SchemaAndParseInvalidDocument() throws SAXException,
-			IOException {
+	public void buildKML23SchemaAndParseInvalidDocument() throws SAXException, IOException {
 		thrown.expect(SAXParseException.class);
 		thrown.expectMessage("cvc-assertion: Assertion evaluation");
 		Schema schema = ValidationUtils.createKMLSchema("2.3");
@@ -81,8 +74,8 @@ public class VerifyValidationUtils {
 		ValidatorHandler vHandler = schema.newValidatorHandler();
 		XMLReader parser = XMLReaderFactory.createXMLReader();
 		parser.setContentHandler(vHandler);
-		InputStream byteStream = getClass().getResourceAsStream(
-				"/kml23/Placemark-001.xml");
+		InputStream byteStream = getClass().getResourceAsStream("/kml23/Placemark-001.xml");
 		parser.parse(new InputSource(byteStream));
 	}
+
 }

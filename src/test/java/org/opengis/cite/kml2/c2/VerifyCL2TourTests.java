@@ -1,6 +1,7 @@
 package org.opengis.cite.kml2.c2;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,9 +25,13 @@ import org.xml.sax.SAXException;
 public class VerifyCL2TourTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
+
 	private static DocumentBuilder docBuilder;
+
 	private static ITestContext testContext;
+
 	private static ISuite suite;
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -47,8 +52,7 @@ public class VerifyCL2TourTests {
 	public void flyToHasNoMode() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("Expected kml:flyToMode in kml:FlyTo");
-		URL url = this.getClass().getResource(
-				"/kml23/Tour-AnimatedUpdate-1.xml");
+		URL url = this.getClass().getResource("/kml23/Tour-AnimatedUpdate-1.xml");
 		Document doc = docBuilder.parse(url.toString());
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		CL2TourTests iut = new CL2TourTests();

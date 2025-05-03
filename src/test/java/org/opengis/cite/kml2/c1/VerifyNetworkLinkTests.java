@@ -25,9 +25,13 @@ import org.xml.sax.SAXException;
 public class VerifyNetworkLinkTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
+
 	private static DocumentBuilder docBuilder;
+
 	private static ITestContext testContext;
+
 	private static ISuite suite;
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -68,4 +72,5 @@ public class VerifyNetworkLinkTests {
 		iut.findNetworkLinkElements();
 		iut.validLink();
 	}
+
 }

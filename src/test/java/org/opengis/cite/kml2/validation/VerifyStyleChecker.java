@@ -25,6 +25,7 @@ public class VerifyStyleChecker {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
+
 	private static DocumentBuilder docBuilder;
 
 	@BeforeClass
@@ -41,23 +42,18 @@ public class VerifyStyleChecker {
 		StyleChecker iut = new StyleChecker();
 		boolean isValid = iut.isValid(link.getDocumentElement());
 		assertFalse("Expected invalid Link.", isValid);
-		assertTrue("Expected 'URI is not accessible'.", iut.getErrorMessages()
-				.contains("URI is not accessible"));
+		assertTrue("Expected 'URI is not accessible'.", iut.getErrorMessages().contains("URI is not accessible"));
 	}
 
 	@Test
-	public void fetchingItemIconNotInNetworkLink() throws SAXException,
-			IOException {
+	public void fetchingItemIconNotInNetworkLink() throws SAXException, IOException {
 		URL url = this.getClass().getResource("/features/Placemark-103.xml");
-		Node style = docBuilder.parse(url.toString())
-				.getElementsByTagNameNS(KML2.NS_NAME, "Style").item(0);
+		Node style = docBuilder.parse(url.toString()).getElementsByTagNameNS(KML2.NS_NAME, "Style").item(0);
 		StyleChecker iut = new StyleChecker();
 		boolean isValid = iut.isValid(style);
 		assertFalse("Expected invalid style.", isValid);
-		assertTrue(
-				"Expected message with 'ListStyle applies to NetworkLink'",
-				iut.getErrorMessages().contains(
-						"ListStyle applies to NetworkLink"));
+		assertTrue("Expected message with 'ListStyle applies to NetworkLink'",
+				iut.getErrorMessages().contains("ListStyle applies to NetworkLink"));
 	}
 
 }

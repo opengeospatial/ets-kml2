@@ -25,9 +25,13 @@ import org.xml.sax.SAXException;
 public class VerifyTourTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
+
 	private static DocumentBuilder docBuilder;
+
 	private static ITestContext testContext;
+
 	private static ISuite suite;
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -46,8 +50,7 @@ public class VerifyTourTests {
 
 	@Test
 	public void animatedUpdate_ok() throws SAXException, IOException {
-		URL url = this.getClass().getResource(
-				"/kml23/Tour-AnimatedUpdate-1.xml");
+		URL url = this.getClass().getResource("/kml23/Tour-AnimatedUpdate-1.xml");
 		Document doc = docBuilder.parse(url.toString());
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		TourTests iut = new TourTests();
@@ -60,8 +63,7 @@ public class VerifyTourTests {
 	public void animatedUpdate_invalidChange() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("KML object must not have @id in update context");
-		URL url = this.getClass().getResource(
-				"/kml23/Tour-AnimatedUpdate-2.xml");
+		URL url = this.getClass().getResource("/kml23/Tour-AnimatedUpdate-2.xml");
 		Document doc = docBuilder.parse(url.toString());
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		TourTests iut = new TourTests();
@@ -74,8 +76,7 @@ public class VerifyTourTests {
 	public void generalTourConstraints() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("Expected kml:playMode in kml:TourControl element");
-		URL url = this.getClass().getResource(
-				"/kml23/Tour-AnimatedUpdate-2.xml");
+		URL url = this.getClass().getResource("/kml23/Tour-AnimatedUpdate-2.xml");
 		Document doc = docBuilder.parse(url.toString());
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		TourTests iut = new TourTests();
@@ -83,4 +84,5 @@ public class VerifyTourTests {
 		iut.findTourElements();
 		iut.checkTourConstraints();
 	}
+
 }

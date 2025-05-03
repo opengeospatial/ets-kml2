@@ -1,6 +1,7 @@
 package org.opengis.cite.kml2.c1;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,9 +29,13 @@ import org.xml.sax.SAXException;
 public class VerifyTimeSpanTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
+
 	private static DocumentBuilder docBuilder;
+
 	private static ITestContext testContext;
+
 	private static ISuite suite;
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -49,8 +54,7 @@ public class VerifyTimeSpanTests {
 
 	@Test
 	public void validTimeSpan() throws SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/time/TimeSpan-valid.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/time/TimeSpan-valid.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		TimeSpanTests iut = new TimeSpanTests();
 		iut.initCommonFixture(testContext);
@@ -62,8 +66,7 @@ public class VerifyTimeSpanTests {
 	public void invalidTimeSpan() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("kml:end is not after kml:begin");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/time/TimeSpan-invalid.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/time/TimeSpan-invalid.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		TimeSpanTests iut = new TimeSpanTests();
 		iut.initCommonFixture(testContext);
@@ -72,27 +75,19 @@ public class VerifyTimeSpanTests {
 	}
 
 	@Test
-	public void validDefiniteTimeInterval() throws SAXException, IOException,
-			XPathExpressionException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/time/TimeSpan-valid.xml"));
-		NodeList timeInstants = XMLUtils.evaluateXPath(
-				doc.getDocumentElement(), "kml:begin | kml:end", null);
+	public void validDefiniteTimeInterval() throws SAXException, IOException, XPathExpressionException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/time/TimeSpan-valid.xml"));
+		NodeList timeInstants = XMLUtils.evaluateXPath(doc.getDocumentElement(), "kml:begin | kml:end", null);
 		TimeSpanTests iut = new TimeSpanTests();
-		assertTrue("Expected valid time interval.",
-				iut.isValidDefiniteTimeInterval(timeInstants));
+		assertTrue("Expected valid time interval.", iut.isValidDefiniteTimeInterval(timeInstants));
 	}
 
 	@Test
-	public void invalidDefiniteTimeInterval() throws SAXException, IOException,
-			XPathExpressionException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/time/TimeSpan-invalid.xml"));
-		NodeList timeInstants = XMLUtils.evaluateXPath(
-				doc.getDocumentElement(), "kml:begin | kml:end", null);
+	public void invalidDefiniteTimeInterval() throws SAXException, IOException, XPathExpressionException {
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/time/TimeSpan-invalid.xml"));
+		NodeList timeInstants = XMLUtils.evaluateXPath(doc.getDocumentElement(), "kml:begin | kml:end", null);
 		TimeSpanTests iut = new TimeSpanTests();
-		assertFalse("Expected invalid time interval.",
-				iut.isValidDefiniteTimeInterval(timeInstants));
+		assertFalse("Expected invalid time interval.", iut.isValidDefiniteTimeInterval(timeInstants));
 	}
 
 }

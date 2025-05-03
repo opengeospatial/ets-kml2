@@ -1,6 +1,7 @@
 package org.opengis.cite.kml2.c1;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
@@ -23,9 +24,13 @@ import org.xml.sax.SAXException;
 public class VerifyPolygonTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
+
 	private static DocumentBuilder docBuilder;
+
 	private static ITestContext testContext;
+
 	private static ISuite suite;
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -46,8 +51,7 @@ public class VerifyPolygonTests {
 	public void invalidPolygonInPlacemark() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("Inner boundary [1] not inside outer boundary");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml23/Placemark-003.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml23/Placemark-003.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		PolygonTests iut = new PolygonTests();
 		iut.initCommonFixture(testContext);

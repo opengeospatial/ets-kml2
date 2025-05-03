@@ -1,6 +1,7 @@
 package org.opengis.cite.kml2.c1;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
@@ -23,9 +24,13 @@ import org.xml.sax.SAXException;
 public class VerifyContainerTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
+
 	private static DocumentBuilder docBuilder;
+
 	private static ITestContext testContext;
+
 	private static ISuite suite;
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -46,8 +51,7 @@ public class VerifyContainerTests {
 	public void schemaHasInvalidSimpleFieldType() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("Invalid data type: Unknown atomic type");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/schemas/Schema-002.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/schemas/Schema-002.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		ContainerTests iut = new ContainerTests();
 		iut.initCommonFixture(testContext);
@@ -57,8 +61,7 @@ public class VerifyContainerTests {
 
 	@Test
 	public void validFolder() throws SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml22/Folder-001.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml22/Folder-001.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		ContainerTests iut = new ContainerTests();
 		iut.initCommonFixture(testContext);
@@ -66,4 +69,5 @@ public class VerifyContainerTests {
 		iut.atomAuthor();
 		iut.phoneNumber();
 	}
+
 }

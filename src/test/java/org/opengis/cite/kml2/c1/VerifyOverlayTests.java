@@ -25,9 +25,13 @@ import org.xml.sax.SAXException;
 public class VerifyOverlayTests {
 
 	private static final String SUBJ = SuiteAttribute.TEST_SUBJECT.getName();
+
 	private static DocumentBuilder docBuilder;
+
 	private static ITestContext testContext;
+
 	private static ISuite suite;
+
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
@@ -61,8 +65,7 @@ public class VerifyOverlayTests {
 	public void quadBoundaryIsNotCCW() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("is not oriented counter-clockwise");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml23/GroundOverlay-001.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml23/GroundOverlay-001.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		OverlayTests iut = new OverlayTests();
 		iut.initCommonFixture(testContext);
@@ -74,8 +77,7 @@ public class VerifyOverlayTests {
 	public void quadIsNotConvex() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("is not convex");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/kml23/GroundOverlay-002.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/kml23/GroundOverlay-002.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		OverlayTests iut = new OverlayTests();
 		iut.initCommonFixture(testContext);
@@ -84,12 +86,10 @@ public class VerifyOverlayTests {
 	}
 
 	@Test
-	public void photoOverlayHasIncompleteView() throws SAXException,
-			IOException {
+	public void photoOverlayHasIncompleteView() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("2 schema validation error(s) detected");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/features/PhotoOverlay-003.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/features/PhotoOverlay-003.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		OverlayTests iut = new OverlayTests();
 		iut.initCommonFixture(testContext);
@@ -98,12 +98,10 @@ public class VerifyOverlayTests {
 	}
 
 	@Test
-	public void groundOverlayIsMissingAltitude() throws SAXException,
-			IOException {
+	public void groundOverlayIsMissingAltitude() throws SAXException, IOException {
 		thrown.expect(AssertionError.class);
 		thrown.expectMessage("Expected kml:altitude element when kml:altitudeMode = 'absolute'");
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/features/GroundOverlay-001.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/features/GroundOverlay-001.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		OverlayTests iut = new OverlayTests();
 		iut.initCommonFixture(testContext);
@@ -113,12 +111,12 @@ public class VerifyOverlayTests {
 
 	@Test
 	public void validGroundOverlay() throws SAXException, IOException {
-		Document doc = docBuilder.parse(this.getClass().getResourceAsStream(
-				"/features/GroundOverlay-002.xml"));
+		Document doc = docBuilder.parse(this.getClass().getResourceAsStream("/features/GroundOverlay-002.xml"));
 		when(suite.getAttribute(SUBJ)).thenReturn(doc);
 		OverlayTests iut = new OverlayTests();
 		iut.initCommonFixture(testContext);
 		iut.findOverlayElements();
 		iut.checkOverlayConstraints();
 	}
+
 }
